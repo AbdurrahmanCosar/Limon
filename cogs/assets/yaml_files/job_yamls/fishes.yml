@@ -1,0 +1,34 @@
+---
+
+priceByFishSize: 3
+
+veryLowLevelFish:
+  anchovy: {name: Hamsi, price: 300}
+  bonito: {name: Palamut, price: 350}
+  carp: {name: Sazan, price: 400}
+
+lowLevelFish:
+  tuna: {name: Orkinos, price: 650}
+  sardine: {name: Sardalya, price: 754}
+  perch: {name: Levrek, price: 600}
+  mackerel: {name: Uskumru, price: 650}
+
+mediumLevelFish:
+  fangricoral: {name: "Fangri Mercan", price: 700}
+  bluefish: {name: "Lüfer", price: 690}
+  trout: {name: Alabalık, price: 720}
+  barbun: {name: Barbun, price: 710}
+
+highLevelFish:
+  salmon: {name: Somon, price: 800}
+  turbotfish: {name: "Kalkan Balığı", price: 830}
+  swordfish: {name: "Kılıç Balığı", price: 840}
+  pelicaneel: {name: "Pelikan Yılan Balığı", price: 950}
+  shrimp: {name: Karides, price: 850}
+
+veryHighLevelFish:
+  octopus: {name: Ahtapot, price: 880}
+  orca: {name: "Katil Balina", price: 1100}
+  largehammerheadshark: {name:  "Büyük Çekiçbaşlı Köpekbalığı", price: 900}
+  shark: {name: "Köpekbalığı", price: 860}
+  lionfishwithantennae: {name: "Antenli Aslan Balığı", price: 930}

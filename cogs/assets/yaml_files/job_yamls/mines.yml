@@ -1,0 +1,48 @@
+---
+priceByMineKg: 2
+
+
+veryLowLevelMine:
+  lead: {name: Kurşun, price: 1000}
+  zinc: {name: Çinko, price: 1100}
+  coal: {name: Kömür, price: 900}
+  boron: {name: Bor, price: 950}
+  copper: {name: Bakır, price : 1200}
+  manganese: {name: Manganez, price: 1050}
+
+lowLevelMine:
+  chrome: {name: Krom, price: 1400}
+  iron: {name: Demir, price: 1300}
+  aluminium: {name: Alüminyum, price: 1350}
+  trona: {name: Trona, price: 1500}
+  gypsum: {name: Alçı Taşı, price: 1250}
+
+mediumLevelMine:
+  magnesite: {name: Magnezit, price: 1900}
+  lignite: {name: Linyit, price: 2000}
+  phosphate: {name: Fosfat, price: 2100}
+  wolfram: {name: Volfram, price: 2050}
+  barite: {name: Barit, price: 1980}
+  sulphur: {name: Kükürt, price: 2150}
+  antimony: {name: Antimon, price: 2200}
+  bauxite: {name: Boksit, price: 2250}
+
+highLevelMine:
+  silver: {name: Gümüş, price: 3000}
+  gold: {name: Altın, price: 4800}
+  platinum: {name: Platinyum, price: 5050}
+  opal: {name: Opal Taşı, price: 5200}
+  amethyst: {name: Ametist, price: 5100}
+  citrine: {name: Sitrin, price: 5150}
+
+veryHighLevelMine:
+  rodium: {name: Rodyum, price: 5000}
+  paladium: {name: Paladyum, price: 5500}
+  diamond: {name: Elmas, price: 8000}
+  iridium: {name: İridyum, price: 4900}
+  renium: {name: Renyum, price: 5100}
+  uranium: {name: Uranyum, price: 6300}
+  osmium: {name: Osmiyum, price: 6000}
+  rutenium: {name: Rutenyum, price: 5800}
+  emerald: {name: Zümrüt, price: 6100}
+  rubies: {name: Yakutlar, price: 6200}

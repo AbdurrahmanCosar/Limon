@@ -1,0 +1,33 @@
+---
+priceByWoodSize: 3
+
+veryLowLevelWood:
+  pine: {name: Çam Ağacı, price: 300}
+  oak: {name: Meşe Ağacı, price: 400}
+  hornbeam: {name: Gürgen Ağaacı, price: 500}
+
+lowLevelWood:
+  redtree: {name: Kızıl Ağaç, price: 700}
+  laden: {name: Ladin Ağacı, price: 800}
+  cedar: {name: Sedir Ağacı, price: 900}
+
+mediumLevelWood:
+  beech: {name: Kayın Ağacı, price: 1100}
+  maple: {name: Akçaağaç, price: 1200}
+  elm: {name: Karaağaç, price: 1300}
+  cypress: {name: Selvi Ağacı, price: 1400}
+  poplar: {name: Kavak Ağacı, price: 1350}
+
+highLevelWood:
+  afrikakaraagac: {name: Afrika Karaağaç, price: 1700}
+  pinkivory: {name: Pembe Fildişi Ağacı, price: 1800}
+  lifetree: {name: Hayat Ağacı, price: 1900}
+  agarwood: {name: Agarwood (Öd Ağacı), price: 2000}
+  indiansandalwood: {name: Hint Sandal Ağacı, price: 2500}
+
+veryHighLevelWood:
+  dalbergia: {name: Hint Gül Ağacı, price: 3000}
+  cocobolo: {name: Cocobolo Ağacı, price: 3150}
+  purplewood: {name: Mor Ahşap Ağacı, price: 3300}
+  ebony: {name: Abanoz Ağacı, price: 4000}
+  bubinga: {name: Bubinga Ağacı, price: 5700}

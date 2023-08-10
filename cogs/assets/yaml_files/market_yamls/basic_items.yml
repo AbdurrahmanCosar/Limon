@@ -1,0 +1,28 @@
+---
+
+pickaxe:
+  miningvehicle: {custom_id: "miningvehicle",name: Maden Aracı, price: 50000}
+  reinforcedpickaxe: {custom_id: "reinforcedpickaxe",name: Güçlendirilmiş Kazma, price: 23000}
+  goldenpickaxe: {custom_id: "goldenpickaxe",name: Altın Kazma, price: 15000}
+  steelpickaxe: {custom_id: "steelpickaxe",name: Çelik Kazma, price: 9000}
+  stonepickaxe: {custom_id: "stonepickaxe", name: Taş Kazma, price: 7000}
+
+fishingrod:
+  fishnet: {custom_id: "fishnet", name: Balık Ağı, price: 60000, discounted_price: 70000}
+  harpoon: {custom_id: "harpoon", name: Zıpkın, price: 20000, discounted_price: 20000}
+  rod: {custom_id: "rod", name: Olta, price: 3500, discounted_price: 2500}
+
+bow:
+  trap: {custom_id: "trap",name: Kapan, price: 100000}
+  crossbow: {custom_id: "crossbow", name: Arbalet, price: 20000, discounted_price: 14999}
+  accuratebow: {custom_id: "accuratebow", name: İsabetli Yay, price: 14000, discounted_price: 12499}
+  silverbow: {custom_id: "silverbow", name: Gümüş Yay, price: 7000, discounted_price: 7499}
+  copperbow: {custom_id: "copperbow", name: Bakır Yay, price: 4000, discounted_price: 4999}
+  woodenbow: {custom_id: "woodenbow", name: Tahta Yay, price: 2000, discounted_price: 2999}
+
+axe:
+  enchantedaxe: {custom_id: "enchantedaxe", name: Büyülü Balta, price: 55000}
+  reinforcedaxe: {custom_id: "reinforcedaxe", name: Güçlendirilmiş Balta, price: 16000}
+  goldenaxe: {custom_id: "goldenaxe", name: Altın Balta, price: 8000}
+  steelaxe: {custom_id: "steelaxe", name: Çelik Balta, price: 4000}
+  stoneaxe: {custom_id: "stoneaxe", name: Taş Balta, price: 2500}

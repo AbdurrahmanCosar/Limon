@@ -1,0 +1,7 @@
+---
+
+fishfood:
+  livefishfood: {name: "Canlı Balık Yemi", unit: 10, price: 1000, fish_type: highLevelFish}
+  proteinfood: {name: "Protein Yemleri", unit: 10, price: 750, fish_type: mediumLevelFish}
+  frozenfishfood: {name: "Dondurulmuş Balık Yemi", unit: 10, price: 500, fish_type: lowLevelFish}
+  dryfishfood: {name: "Kuru Balık Yemi", unit: 10, price: 250, fish_type: veryLowLevelFish}
