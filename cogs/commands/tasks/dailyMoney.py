@@ -27,6 +27,7 @@ class DailyMoneyTask(commands.Cog):
         self.daily_money_amount += money
 
         await collection.update_many(
+            {},
             {
                 "$inc" : {
                     "accumulated_money": self.daily_money_amount
@@ -34,9 +35,12 @@ class DailyMoneyTask(commands.Cog):
             }
         )
 
-        print("Daily money gave the users")
+        print("Users were given money daily")
 
     @daily_money_task.before_loop
     async def before_daily_money_task(self):
         print('waiting...')
         await self.bot.wait_until_ready()
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(DailyMoneyTask(bot))
