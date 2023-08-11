@@ -1,0 +1,64 @@
+"""
+ * Limon Bot for Discord
+ * Copyright (C) 2022 AbdurrahmanCosar
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+"""
+
+from asyncio import sleep
+from discord import app_commands, Interaction
+from discord.app_commands import Choice
+from discord.ext import commands
+from cogs.utils.constants import Gamble, Emojis
+from cogs.utils.database.fetchdata import create_wallet
+from random import randint
+
+morelicash = Emojis.morelicash
+
+boxes = {
+    # 'boxName': [boxPrice, mixValue, maxValue]
+    "woodenBox": ["Tahta", 10000, 7000, 20000],
+    "silverBox": ["Gümüş", 20000, 17000, 30000],
+    "goldenBox": ["Altın", 50000, 35000, 60000],
+    "platinBox": ["Platin", 70000, 59000, 80000],
+    "diamondBox": ["Elmas", 100000, 50000, 210000]
+}
+
+
+class OpenBox(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+    @app_commands.command(name="open-box", description="Open a box and get rich")
+    @app_commands.describe(box="Select a box")
+    @app_commands.choices(box=[
+        Choice(name=f"Tahta Kasa - {boxes.get('woodenBox'):,}LC", value="woodenBox"),
+        Choice(name=f"Gümüş Kasa - {boxes.get('silverBox'):,}LC" , value="silverBox"),
+        Choice(name=f"Altın Kasa - {boxes.get('goldenBox'):,}LC", value="goldenBox"),
+        Choice(name=f"Platin Kasa - {boxes.get('platinBox'):,}LC", value="platinBox"),
+        Choice(name=f"Elmas Kasa - {boxes.get('diamondBox'):,}LC", value="diamondBox"),
+    ])
+    async def openbox(self, interaction: Interaction, box: str):
+        
+        user = interaction.user
+        user_data, collection = await create_wallet(self.bot, user.id)
+
+        selected_box = boxes.get(box)
+        reward = randint(selected_box[2], selected_box[3])
+        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward}LC** çıktı. Kâr: `**%{(reward - selected_box[1]) / 100}**`"
+
+        user_data["cash"] -= selected_box[1]
+        user_data["cash"] += reward
+        await collection.replace_one({"_id": user.id}, )
+
+        await interaction.response.send_message(content = ":gift: Kutu açılıyor..")
+        await sleep(4)
+        await interaction.edit_original_response(content = message)
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(OpenBox(bot))
+
+
+
+
+
