@@ -12,6 +12,7 @@ Gamble = _Gamble()
 
 
 class _Emojis:
+    enought_balance = "" # will be add
     licash = "<:LiCash:1065713526217392260>"
     morelicash = "<:morelicash:1065713539572052054>"
     coinback = "<:coinback:1063599851440451686>"
