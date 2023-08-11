@@ -11,6 +11,7 @@ from discord.app_commands import Choice
 from discord.ext import commands
 from cogs.utils.constants import Gamble, Emojis
 from cogs.utils.database.fetchdata import create_wallet
+from cogs.utils.functions import balance_check
 from random import randint
 
 morelicash = Emojis.morelicash
@@ -42,8 +43,10 @@ class OpenBox(commands.Cog):
         
         user = interaction.user
         user_data, collection = await create_wallet(self.bot, user.id)
+        
 
         selected_box = boxes.get(box)
+        await balance_check(interaction, user_data["cash"], selected_box[1])
         reward = randint(selected_box[2], selected_box[3])
         message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward}LC** çıktı. Kâr: `**%{(reward - selected_box[1]) / 100}**`"
 
