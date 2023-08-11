@@ -11,13 +11,10 @@ from discord.ext import commands
 import traceback
 import sys
 import time
-from yaml import Loader, load
+from cogs.utils.constants import Emojis
 
-yaml_file = open("assets/yaml_files/emojis.yml", "rb")
-emojis = load(yaml_file, Loader=Loader)
-
-clock = emojis['clock']
-cross = emojis["cross"]
+clock = Emojis.clock
+cross = Emojis.cross
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot: commands.Bot):
