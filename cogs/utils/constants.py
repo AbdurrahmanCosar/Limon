@@ -5,6 +5,11 @@
  * For more information, see README.md and LICENSE
 """
 
+class _Link:
+    support_server = "https://discord.gg/8YX57rBGTM"
+
+Link = _Link
+
 class _Gamble:
     max_bet_value = 100000
 
@@ -48,3 +53,9 @@ class _Emojis:
     decline = "<:decline:1066371673189789696>"
 
 Emojis = _Emojis()
+
+class _Channels:
+    suggestions = 1063608269404381255
+    report = None
+
+Channels = _Channels
