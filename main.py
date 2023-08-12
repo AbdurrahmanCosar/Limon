@@ -24,6 +24,7 @@ class Limon(commands.Bot):
         self.initial_extensions = self.extension_loader()
 
     async def on_ready(self):
+        self.uptime = discord.utils.utcnow()
         print("{} is online!".format(self.user.name))
 
     def extension_loader(self):
