@@ -9,7 +9,8 @@ async def create_wallet(bot, _id):
     db = bot.database["limon"]
     collection = db["wallet"]
 
-    if await collection.find_one({"_id": _id}) == None:
+    existing_data = await collection.find_one({"_id": _id})
+    if existing_data is None:
         new_data = {
             "_id": _id,
             "cash": 10000,
@@ -32,7 +33,8 @@ async def create_career_data(bot, _id):
     db = bot.database["limon"]
     collection = db["career"]
 
-    if await collection.find_one({"_id": _id}) == None:
+    existing_data = await collection.find_one({"_id": _id})
+    if existing_data is None:
         new_data = {
             "_id": _id,
             "points": {
@@ -43,9 +45,11 @@ async def create_career_data(bot, _id):
                 "send_point": 0,
                 "gamble_point": 0
             },
-            "verified": False
+            "verified": False,
+            "elite": False
         }
         await collection.insert_one(new_data)
+    
     return await collection.find_one({"_id": _id}), collection
 
 
@@ -53,10 +57,12 @@ async def create_inventory_data(bot, _id):
     db = bot.database["limon"]
     collection = db["inventory"]
 
-    if await collection.find_one({"_id": _id}) == None:
+    existing_data = await collection.find_one({"_id": _id})
+    if existing_data is None:
         new_data = {
             "_id": _id,
             "items": {}
         }
         await collection.insert_one(new_data)
+    
     return await collection.find_one({"_id": _id}), collection
