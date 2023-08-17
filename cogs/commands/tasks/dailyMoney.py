@@ -13,8 +13,8 @@ from random import randint
 class DailyMoneyTask(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.daily_money_task.start()
         self.daily_money_amount = 1000
+        self.daily_money_task.start()
 
     @tasks.loop(hours=24)
     async def daily_money_task(self):
