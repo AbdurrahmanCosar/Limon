@@ -1,7 +1,13 @@
 ---
 
-fishfood:
-  livefishfood: {name: "Canlı Balık Yemi", unit: 10, price: 1000, fish_type: highLevelFish}
-  proteinfood: {name: "Protein Yemleri", unit: 10, price: 750, fish_type: mediumLevelFish}
-  frozenfishfood: {name: "Dondurulmuş Balık Yemi", unit: 10, price: 500, fish_type: lowLevelFish}
-  dryfishfood: {name: "Kuru Balık Yemi", unit: 10, price: 250, fish_type: veryLowLevelFish}
+fishfoods:
+  livefishfood: {name: "Canlı Balık Yemi", unit: 10, price: 0}
+  proteinfood: {name: "Protein Yemleri", unit: 10, price: 0}
+  frozenfishfood: {name: "Dondurulmuş Balık Yemi", unit: 10, price: 0}
+  dryfishfood: {name: "Kuru Balık Yemi", unit: 10, price: 0}
+
+ammo:
+  arrow: {name: "Ok", unit: 10, price: 0}
+  ammo: {name: "Mermi Kutusu", unit: 10, price: 0}
+
+  

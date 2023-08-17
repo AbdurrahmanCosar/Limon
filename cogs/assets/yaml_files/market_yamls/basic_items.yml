@@ -1,28 +1,21 @@
 ---
 
-pickaxe:
-  miningvehicle: {custom_id: "miningvehicle",name: Maden Aracı, price: 50000}
-  reinforcedpickaxe: {custom_id: "reinforcedpickaxe",name: Güçlendirilmiş Kazma, price: 23000}
-  goldenpickaxe: {custom_id: "goldenpickaxe",name: Altın Kazma, price: 15000}
-  steelpickaxe: {custom_id: "steelpickaxe",name: Çelik Kazma, price: 9000}
-  stonepickaxe: {custom_id: "stonepickaxe", name: Taş Kazma, price: 7000}
+fishing:
+  fishingrod: {name: "Olta", price: 0}
+  harpoon: {name: "Zıpkın", price: 0}
+  fishnet: {name: "Balık Ağı", price: 0}
 
-fishingrod:
-  fishnet: {custom_id: "fishnet", name: Balık Ağı, price: 60000, discounted_price: 70000}
-  harpoon: {custom_id: "harpoon", name: Zıpkın, price: 20000, discounted_price: 20000}
-  rod: {custom_id: "rod", name: Olta, price: 3500, discounted_price: 2500}
+hunting:
+  bow: {name: "Yay", ammo: "arrow",price: 0}
+  rifle: {name: "Av Tüfeği", ammo: "ammo",price: 0}
+  trap: {cname: "Kapan", ammo: null, price: 0}
 
-bow:
-  trap: {custom_id: "trap",name: Kapan, price: 100000}
-  crossbow: {custom_id: "crossbow", name: Arbalet, price: 20000, discounted_price: 14999}
-  accuratebow: {custom_id: "accuratebow", name: İsabetli Yay, price: 14000, discounted_price: 12499}
-  silverbow: {custom_id: "silverbow", name: Gümüş Yay, price: 7000, discounted_price: 7499}
-  copperbow: {custom_id: "copperbow", name: Bakır Yay, price: 4000, discounted_price: 4999}
-  woodenbow: {custom_id: "woodenbow", name: Tahta Yay, price: 2000, discounted_price: 2999}
+forestry:
+  bigvehicle: {type: "vehicle", name: "ScorpionKing - Büyük", average_tree: 10, liter_per_tree: 4, gas_tank_liter: 180, price: 0}
+  smallvehicle: {type: "vehicle", name: "HR46X - Küçük", average_tree: 6, liter_per_tree: 2, gas_tank_liter: 130, price: 0}
+  axe: {type: "manual", name: "Balta", price: 0}
 
-axe:
-  enchantedaxe: {custom_id: "enchantedaxe", name: Büyülü Balta, price: 55000}
-  reinforcedaxe: {custom_id: "reinforcedaxe", name: Güçlendirilmiş Balta, price: 16000}
-  goldenaxe: {custom_id: "goldenaxe", name: Altın Balta, price: 8000}
-  steelaxe: {custom_id: "steelaxe", name: Çelik Balta, price: 4000}
-  stoneaxe: {custom_id: "stoneaxe", name: Taş Balta, price: 2500}
+mining:
+  bigvehicle: {type: "vehicle", name: "Büyük Maden Aracı", average_mine: 4, liter_per_mine: 5, gas_tank_liter: 200, price: 0}
+  smallvehicle: {type: "vehicle", name: "Küçük Maden Aracı", average_mine: 2, liter_per_mine: 3, gas_tank_liter: 150, price: 0}
+  pickaxe: {type: "manual", name: "Kazma", price: 0}
