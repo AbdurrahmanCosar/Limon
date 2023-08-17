@@ -37,16 +37,16 @@ async def create_career_data(bot, _id):
     if existing_data is None:
         new_data = {
             "_id": _id,
-            "points": {
-                "fisher_point": 0,
-                "hunter_point": 0,
-                "miner_point": 0,
-                "forester_point": 0,
-                "send_point": 0,
-                "gamble_point": 0
+            "xp": {
+                "fisher_xp": 0,
+                "hunter_xp": 0,
+                "miner_xp": 0,
+                "forester_xp": 0,
+                "send_xp": 0,
+                "gamble_xp": 0
             },
             "verified": False,
-            "elite": False
+            "old_user": False
         }
         await collection.insert_one(new_data)
     
@@ -61,6 +61,12 @@ async def create_inventory_data(bot, _id):
     if existing_data is None:
         new_data = {
             "_id": _id,
+            "jobs_results": {
+                "fishes": [],
+                "mines": [],
+                "hunts": [],
+                "wood": []
+            },
             "items": {}
         }
         await collection.insert_one(new_data)
