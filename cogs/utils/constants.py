@@ -15,6 +15,15 @@ class _Gamble:
 
 Gamble = _Gamble()
 
+class _Game:
+    FuelPerLiter: 4
+    FishPricePerSize: 3
+    MinePricePerKG: 2
+    WoodPricePerKG: 3
+    AxeRefreshPrice: 10000
+    PickaxeRefreshPrice: 15000
+
+Game = _Game()
 
 class _Emojis:
     enought_balance = "" # will be add
