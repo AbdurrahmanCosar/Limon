@@ -48,4 +48,4 @@ class Limon(commands.Bot):
         if self.testing_guild_id:
             guild = discord.Object(self.testing_guild_id)
             self.tree.copy_global_to(guild=guild)
-        await self.tree.sync()
+        await self.tree.sync()  
