@@ -12,9 +12,11 @@ enought_balance = Emojis.enought_balance
 async def balance_check(interaction, user_cash, required_amount):
 
     if user_cash < required_amount:
-        return await interaction.response.send_message(
+        await interaction.response.send_message(
             content = f"{enought_balance} Yeterli bakiyeniz bulunmuyor! {user_cash-required_amount:,} LiCash eksik!",
             ephemeral = True)
+        return False
+    return True
     
 async def add_xp(client, _id, xp_category):
     xp_types = [
