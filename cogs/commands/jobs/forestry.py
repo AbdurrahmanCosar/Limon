@@ -9,7 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
-from cogs.utils.functions import add_point
+from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
 from random import choice, randint
@@ -17,7 +17,7 @@ from random import choice, randint
 basic_items_yaml = open("cogs/assets/yaml_files/market_yamls/basic_items.yml", "rb")
 basic_item = load(basic_items_yaml, Loader=Loader)
 
-wood_yaml = open("cogs/assets/yaml_files/job/yamls/wood.yml", "rb")
+wood_yaml = open("cogs/assets/yaml_files/job_yamls/wood.yml", "rb")
 wood = load(wood_yaml, Loader=Loader)
 
 

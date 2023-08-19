@@ -9,7 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
-from cogs.utils.functions import add_point
+from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
 from random import choice, randint
