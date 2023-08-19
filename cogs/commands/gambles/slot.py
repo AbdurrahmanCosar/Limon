@@ -7,11 +7,13 @@
 from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
-from cogs.utils.constants import Emojis
+from cogs.utils.constants import Gamble, Emojis
 from cogs.utils.functions import balance_check, add_xp
 from cogs.utils.database.fetchdata import create_wallet
 import random as r
 
+
+MAX_BET_VALUE = Gamble.max_bet_value
 slot_left = Emojis.slotleft
 slot_mid = Emojis.slotmid
 slot_right = Emojis.slotright
@@ -45,7 +47,7 @@ class Slot(commands.Cog):
 
     @app_commands.command(name="slot", description="Play slot")
     @app_commands.describe(amount="Enter the bet amount")
-    async def slot(self, interaction: Interaction, amount: app_commands.Range[int, 1, 6]):
+    async def slot(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
 
         user = interaction.user
         user_data, collection = await create_wallet(self.bot, user.id)
