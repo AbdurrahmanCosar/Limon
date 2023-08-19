@@ -9,6 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.app_commands import Choice
 from discord.ext import commands
+from cogs.utils.functions import add_xp
 from cogs.utils.constants import Gamble, Emojis
 from cogs.utils.database.fetchdata import create_wallet
 from cogs.utils.functions import balance_check
@@ -17,7 +18,7 @@ from random import randint
 morelicash = Emojis.morelicash
 
 boxes = {
-    # 'boxName': [boxPrice, mixValue, maxValue]
+    # 'boxName': [name, boxPrice, mixValue, maxValue]
     "woodenBox": ["Tahta", 10000, 7000, 20000],
     "silverBox": ["Gümüş", 20000, 17000, 30000],
     "goldenBox": ["Altın", 50000, 35000, 60000],
@@ -30,14 +31,31 @@ class OpenBox(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        
+        user = interaction.user
+        data = interaction.data
+        
+        for i in data["options"]:
+            if i["name"] == "box":
+                value = i["value"]
+                user_data, collection = await create_wallet(self.bot, user.id)
+                check = balance_check(interaction, user_data["cash"], boxes[value][1])
+                
+                if check:
+                    await add_xp(self.bot, user.id, "gamble_xp")
+                    return True
+                return False
+            return False
+
     @app_commands.command(name="open-box", description="Open a box and get rich")
     @app_commands.describe(box="Select a box")
     @app_commands.choices(box=[
-        Choice(name=f"Tahta Kasa - {boxes.get('woodenBox'):,}LC", value="woodenBox"),
-        Choice(name=f"Gümüş Kasa - {boxes.get('silverBox'):,}LC" , value="silverBox"),
-        Choice(name=f"Altın Kasa - {boxes.get('goldenBox'):,}LC", value="goldenBox"),
-        Choice(name=f"Platin Kasa - {boxes.get('platinBox'):,}LC", value="platinBox"),
-        Choice(name=f"Elmas Kasa - {boxes.get('diamondBox'):,}LC", value="diamondBox"),
+        Choice(name=f"Tahta Kasa - {boxes['woodenBox'][1]:,}LC", value="woodenBox"),
+        Choice(name=f"Gümüş Kasa - {boxes['silverBox'][1]:,}LC" , value="silverBox"),
+        Choice(name=f"Altın Kasa - {boxes['goldenBox'][1]:,}LC", value="goldenBox"),
+        Choice(name=f"Platin Kasa - {boxes['platinBox'][1]:,}LC", value="platinBox"),
+        Choice(name=f"Elmas Kasa - {boxes['diamondBox'][1]:,}LC", value="diamondBox"),
     ])
     async def openbox(self, interaction: Interaction, box: str):
         

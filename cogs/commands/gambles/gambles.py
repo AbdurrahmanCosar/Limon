@@ -9,6 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.app_commands import Choice
 from discord.ext import commands
+from cogs.utils.functions import add_xp
 from cogs.utils.database.fetchdata import create_wallet
 from cogs.utils.constants import Gamble, Emojis
 from cogs.utils.functions import balance_check
@@ -26,15 +27,25 @@ class Gambles(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    async def register_data(self):
-        pass
-
     async def interaction_check(self, interaction: Interaction) -> bool:
-        pass
+        
+        user = interaction.user
+        data = interaction.data
+        
+        for i in data["options"]:
+            if i["name"] == "amount":
+                value = i["value"]
+                user_data, collection = await create_wallet(self.bot, user.id)
+                check = balance_check(interaction, user_data["cash"], value)
+                
+                if check:
+                    await add_xp(self.bot, user.id, "gamble_xp")
+                    return True
+                return False
+            return False
 
     @app_commands.command(name="coinflip", description="Play coinflip")
     @app_commands.describe(amount="Enter the bet amount")
-    @app_commands.Group(name = "gamble")
     async def coinflip(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
 
         user = interaction.user
@@ -74,11 +85,11 @@ class Gambles(commands.Cog):
         await collecion.replace_one({"_id": user.id}, user_data)
         await interaction.response.send_message(content = message)
     
-    @app_commands.comman(name="roll", description="Roll the dice and make LiCash")
+    @app_commands.command(name="roll", description="Roll the dice and make LiCash")
     @app_commands.describe(choose="Choose", amount="Enter the bet amount")
     @app_commands.choices(choose = [
-        Choice(name="Çift", value=0),
-        Choice(name="Tek", value=1)
+        Choice(name="Çift", value="0"),
+        Choice(name="Tek", value="1")
     ])
     async def roll(self, interaction: Interaction, choose: str, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
         
@@ -89,7 +100,7 @@ class Gambles(commands.Cog):
         dice = randint(1,12)
         message = ""
 
-        if (dice % 2 == 0 and choose == 0) or (dice % 2 != 0 and choose == 1):
+        if (dice % 2 == 0 and int(choose) == 0) or (dice % 2 != 0 and int(choose) == 1):
             user_data["cash"] += amount
             message = f"{morelicash} Tebrikler! Iki zar sonucu **{dice}** geldi ve tam **{amount*2:,}LC** kazandınız."
         else:
@@ -103,6 +114,6 @@ class Gambles(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Gamble(bot))
+    await bot.add_cog(Gambles(bot))
 
     
