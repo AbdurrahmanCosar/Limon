@@ -70,7 +70,7 @@ class Forestry(commands.Cog):
             message = ":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
             inventory["jobs_results"]["wood"].append(f"{tree}_{size}")            
         
-        await add_point(self.bot, user.id, "forester_xp")
+        await add_xp(self.bot, user.id, "forester_xp")
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.send_message(content = ":evergreen_tree: Kesmek için bir ağaç arıyoruz..")
         await sleep(4)

@@ -67,7 +67,7 @@ class Mining(commands.Cog):
             message = ":diamond: Harika! Madenden {weight}kg ağırlığında {name} çıkardınız."
             inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
 
-        await add_point(self.bot, user.id, "miner_xp")
+        await add_xp(self.bot, user.id, "miner_xp")
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.send_message(content = ":pickaxe: Madene iniyoruz..")
         await sleep(6)

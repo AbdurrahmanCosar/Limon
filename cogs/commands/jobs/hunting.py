@@ -78,7 +78,7 @@ class Hunting(commands.Cog):
             inventory["ammo"][required_ammo] -= 1
             inventory["jobs_results"]["hunts"].append(hunt)
 
-        await add_point(self.bot, user.id, "hunter_xp")
+        await add_xp(self.bot, user.id, "hunter_xp")
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.send_message(content = first_mesage)
         await sleep(4)

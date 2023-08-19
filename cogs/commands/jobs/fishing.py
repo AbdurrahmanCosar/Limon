@@ -113,7 +113,7 @@ class Fishing(commands.Cog):
             message = f":fishing_pole_and_fish: **Harika!** {size}cm uzunluğunda bir {name} yakaladınız."
             inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
         
-        await add_point(self.bot, user.id, "fisher_xp")
+        await add_xp(self.bot, user.id, "fisher_xp")
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.send_message(content = first_message)
         await sleep(4)
