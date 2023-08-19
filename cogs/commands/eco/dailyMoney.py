@@ -7,17 +7,13 @@
 
 from discord import app_commands, Interaction
 from discord.ext import commands
-import datetime
+from cogs.utils.constants import Emojis
 from cogs.utils.database.fetchdata import create_wallet
-from random import randint
-from yaml import Loader, load
 
-yaml_file = open("assets/yaml_files/emojis.yml", "rb")
-emojis =load(yaml_file, Loader=Loader)
 
-wallet = emojis["limonbank"]
-morelicash = emojis["morelicash"]
-clock = emojis["clock"]
+wallet = Emojis.limonbank
+morelicash = Emojis.morelicash
+clock = Emojis.clock
 
 class DailyMoney(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -35,6 +31,7 @@ class DailyMoney(commands.Cog):
         accumulated_money = 0
 
         await collection.replace_one({"_id": interaction.user.id}, user_data)
-
         await interaction.response.send_message(content = f"{morelicash} Günlük kazancınız **{accumulated_money:,}LC**")
         
+async def setup(bot: commands.Bot):
+    await bot.add_cog(DailyMoney(bot))
