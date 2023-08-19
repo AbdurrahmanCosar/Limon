@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
 """
 
-from error import ErrorHandler
+from .error import ErrorHandler
 from discord.ext import commands
 
 async def setup(bot: commands.Bot):
