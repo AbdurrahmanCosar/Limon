@@ -16,11 +16,12 @@ class Limon(commands.Bot):
             self,
             *args,
             testing_guild_id: Optional[int] = None,
+            database_connecion: str,
             **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.testing_guild_id = testing_guild_id
-        self.database = motor.motor_asyncio.AsyncIOMotorClient("DB_CONNECTION")
+        self.database = motor.motor_asyncio.AsyncIOMotorClient(database_connecion)
         self.initial_extensions = self.extension_loader()
 
     async def on_ready(self):
