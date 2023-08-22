@@ -58,18 +58,18 @@ class Mining(commands.Cog):
                 name, weight, mine = self.mine_goose()
                 excavated_mine.append([name, weight])
                 inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
-                excavated_mine_ = [f":diamond: {mine[0]} - {mine[1]}m\n" for mine_list in excavated_mine for mine in excavated_mine]
-                message = f":pickaxe: Aracımız geri döndü. İşte çıkardığı madenler:\n{excavated_mine_}"
+                excavated_mine_ = [f":gem: {mine[0]} - {mine[1]}m\n" for mine_list in excavated_mine for mine in excavated_mine]
+                message = f":pick: Aracımız geri döndü. İşte çıkardığı madenler:\n{excavated_mine_}"
 
         else:
             name, weight, mine = self.mine_goose()
 
-            message = ":diamond: Harika! Madenden {weight}kg ağırlığında {name} çıkardınız."
+            message = f":gem: Harika! Madenden {weight}kg ağırlığında {name} çıkardınız."
             inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
 
         await add_xp(self.bot, user.id, "miner_xp")
         await collection.replace_one({"_id": user.id}, inventory)
-        await interaction.response.send_message(content = ":pickaxe: Madene iniyoruz..")
+        await interaction.response.send_message(content = ":pick: Madene iniyoruz..")
         await sleep(6)
         await interaction.edit_original_response(content = message)
 

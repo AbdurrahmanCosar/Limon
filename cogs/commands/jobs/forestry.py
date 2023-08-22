@@ -67,7 +67,7 @@ class Forestry(commands.Cog):
         else:
             name, size, tree = self.cut_down_tree()
 
-            message = ":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
+            message = f":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
             inventory["jobs_results"]["wood"].append(f"{tree}_{size}")            
         
         await add_xp(self.bot, user.id, "forester_xp")
