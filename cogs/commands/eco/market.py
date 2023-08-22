@@ -11,6 +11,8 @@ market = load(yaml_file, Loader=Loader)
 fishfoods = market["fishfoods"]
 ammonution = market["ammo"]
 
+new_emoji = Emojis.new
+
 class FishingFoodDropdown(ui.Select):
     def __init__(self):
 
