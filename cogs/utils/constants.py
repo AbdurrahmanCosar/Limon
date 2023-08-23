@@ -19,7 +19,7 @@ class _Game:
     FuelPerLiter: 4
     FishPricePerSize: 3
     MinePricePerKG: 2
-    WoodPricePerKG: 3
+    WoodPricePerMeter: 3
     AxeRefreshPrice: 10000
     PickaxeRefreshPrice: 15000
 
