@@ -9,6 +9,7 @@ from discord import app_commands, Interaction, Embed, SelectOption, ButtonStyle,
 from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.functions import balance_check
+from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
 from yaml import load, Loader
 
@@ -255,16 +256,6 @@ class MiningEquipmentDropdown(ui.Select):
         await i_collection.replace_one({"_id": user.id}, user_inventory)
 
         await interaction.response.send_message(content = message)
-
-class CloseButton(ui.Button):
-    def __init__(self, user_id):
-        self.id = user_id
-        super().__init__(label="Kapat", style=ButtonStyle.danger)
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.id:
-            return await interaction.response.send_message(content = f"{cross} Bu menüyü kapatma izniniz bulunmuyor!", ephemeral = True)
-        await interaction.message.delete()
 
 
 class SecondaryButtonMenu(ui.View):

@@ -9,6 +9,7 @@ from discord import app_commands, Interaction, Embed, SelectOption, ButtonStyle,
 from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.functions import balance_check
+from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
 from yaml import Loader, load
 
@@ -116,7 +117,9 @@ class ButtonMenu(ui.View):
 
         embed = Embed()
         embed.set_author(name="Menüden satın almak istediğiniz yem türünü seçiniz.")
-        view = ui.View().add_item(FishingFoodDropdown())
+        view = ui.View()
+        view.add_item(FishingFoodDropdown())
+        view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
     
     @ui.button(label = "Mühimmat", style = ButtonStyle.blurple)
@@ -124,7 +127,9 @@ class ButtonMenu(ui.View):
 
         embed = Embed()
         embed.set_author(name="Menüden satın almak istediğiniz mühimmat türünü seçiniz.")
-        view = ui.View().add_item(AmmoDropdown())
+        view = ui.View()
+        view.add_item(AmmoDropdown())
+        view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
     
 class Market(commands.Cog):
