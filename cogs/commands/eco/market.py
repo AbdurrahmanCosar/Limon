@@ -145,8 +145,8 @@ class Market(commands.Cog):
             Bazı iş için gerekli araçları buradan LiCash karşılığında satın alabilirsiniz.
             Aşağıdaki butonlara tıklayarak açılan menüden istediğinizi satın alın. """,
             color = 0x2b2d31)
-        
-        await interaction.response.send_message(embed=embed, view=ButtonMenu())
+        view = ButtonMenu().add_item(CloseButton(interaction.user.id))
+        await interaction.response.send_message(embed=embed, view=view)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Market(bot))

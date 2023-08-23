@@ -7,8 +7,8 @@
 
 from discord import app_commands, Interaction, Embed, ButtonStyle, ui
 from discord.ext import commands
-from discord.interactions import Interaction
 from cogs.utils.constants import Emojis
+from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_inventory_data
 from yaml import Loader, load
 
@@ -29,6 +29,8 @@ hunts_list = load(hunt_file, Loader = Loader)
 item_yaml = open("cogs/assets/yaml_files/market_yamls/basic_items.yml", "rb")
 items = load(item_yaml, Loader = Loader) 
 
+# WILL BE ADD GAS STATION
+
 class ButtonMenu(ui.View):
     def __init__(self, uid, client):
         super().__init__()
@@ -48,6 +50,7 @@ class ButtonMenu(ui.View):
             else:
                 x.disabled = True
     
+
     @ui.button(label = "Ekipmanlar", style = ButtonStyle.blurple, custom_id = "equipments_button")
     async def equipments_button(self, interaction: Interaction, button):
         self.disable_buttons("equipments_button")
@@ -221,7 +224,7 @@ class Inventory(commands.Cog):
         embed.add_field(name=":shopping_bags: Çanta", value="Bu menüde balıklarınızı, avlarınızı, odunlarınızı ve madenlerinizi görüntüleyebilirsiniz.", inline=False)
         embed.add_field(name=":truck: Garaj",value="Bu menüde iş için satın aldığınızı araçları ve durumlarını görüntüleyebilirsiniz", inline=False)
 
-        view = ButtonMenu(interaction.user.id, self.bot)
+        view = ButtonMenu(interaction.user.id, self.bot).add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed=embed, view=view)
 
 async def setup(bot: commands.Bot):
