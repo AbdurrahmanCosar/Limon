@@ -93,7 +93,7 @@ class Fishing(commands.Cog):
             inventory["fishfoods"][food] - 1
 
 
-        if rod["name"] == "fishnet":
+        if rod["custom_id"] == "fishnet":
             caught_fishes = []
             fish_count = randint(3,5)
 

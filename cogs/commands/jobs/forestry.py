@@ -49,11 +49,11 @@ class Forestry(commands.Cog):
         equipment["durability"] -= 4
 
 
-        if basic_item["forestry"][equipment]["type"] != "vehicle":
-            average_tree = basic_item["forestry"][equipment]["average_tree"]
+        if basic_item["forestry"][equipment["custom_id"]]["type"] != "vehicle":
+            average_tree = basic_item["forestry"][equipment["custom_id"]]["average_tree"]
             tree_count = randint(average_tree - 1, average_tree + 1)
 
-            equipment["fuel"] -= (basic_item["forestry"][equipment]["liter_per_tree"] * tree_count)
+            equipment["fuel"] -= (basic_item["forestry"][equipment["custom_id"]]["liter_per_tree"] * tree_count)
 
             felled_tree = []
 

@@ -58,7 +58,7 @@ class Hunting(commands.Cog):
                 ephemeral=True)
         
         
-        if weapon == "trap":
+        if weapon["custom_id"] == "trap":
             trap_count = randint(2,4)
             preyed_hunts = []
 

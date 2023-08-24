@@ -69,17 +69,17 @@ class ButtonMenu(ui.View):
 
         if ("mining" in user_items) and (items["mining"][user_items["mining"]] == "manual"):
             u_item = user_items["mining"]
-            i_item = items["mining"][u_item]
+            i_item = items["mining"][u_item["custom_id"]]
             message += f":pick: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
 
         if ("fishing" in user_items):
             u_item = user_items["fishing"]
-            i_item = items["fishing"][u_item]
+            i_item = items["fishing"][u_item["custom_id"]]
             message += f":fishing_pole_and_fish: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
 
         if ("hunting" in user_items):
             u_item = user_items["hunting"]
-            i_item = items["hunting"][u_item]
+            i_item = items["hunting"][u_item["custom_id"]]
             message += f":bow_and_arrow: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
 
         if len(message) == 0:
@@ -179,7 +179,7 @@ class ButtonMenu(ui.View):
         if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]] =="vehicle"):
             
             u_vehicle = user_items["forestry"] # in user iventory
-            i_vehicle = items["forestry"][u_vehicle] # in basic_items.yml file
+            i_vehicle = items["forestry"][u_vehicle["custom_id"]] # in basic_items.yml file
             forestry_vehice_message = f"""
             ***{i_vehicle['name']}***\n
             🪵`Ortalama Ağaç: {i_vehicle['average_tree']}`
@@ -190,7 +190,7 @@ class ButtonMenu(ui.View):
 
         if ("mining" in user_items) and (items["mining"][user_items["mining"]] == "vehicle"):
             u_vehicle = user_items["mining"] # in user iventory
-            i_vehicle = items["minig"][u_vehicle] # in basic_items.yml file
+            i_vehicle = items["minig"][u_vehicle["custom_id"]] # in basic_items.yml file
             mining_vehice_message = f"""
             ***{i_vehicle['name']}***\n
             💎`Ortalama Maden: {i_vehicle['average_tree']}`

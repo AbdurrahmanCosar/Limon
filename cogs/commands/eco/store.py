@@ -72,7 +72,7 @@ class FishingEquipmentDropdown(ui.Select):
         if await balance_check(interaction, user_wallet["cash"], price) is False:
             return
 
-        data = {"fishing": {"durability": durability}}
+        data = {"fishing": {"custom_id": value,"durability": durability}}
 
         user_inventory["items"].update(data)
         user_wallet["cash"] -= price
@@ -127,7 +127,7 @@ class HuntingEquipmentDropdown(ui.Select):
         if await balance_check(interaction, user_wallet["cash"], price) is False:
             return
 
-        data = {"hunting": {"durability": durability}}
+        data = {"hunting": {"custom_id": value, "durability": durability}}
 
         user_inventory["items"].update(data)
         user_wallet["cash"] -= price
@@ -182,11 +182,11 @@ class ForestryEquipmentDropdown(ui.Select):
             return
 
         if forestry_item["type"] == "vehicle":
-            data = {"forestry": {"durability": 100, "fuel": forestry_item["gas_tank_liter"]}}
+            data = {"forestry": {"custom_id": value, "durability": 100, "fuel": forestry_item["gas_tank_liter"]}}
             message = f"""{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n
             `🪵Ortalama Ağaç: {forestry_item['average_tree']}`\n🪫`Yakıt Tüketimi/Ağaç: {forestry_item['liter_per_tree']}`\n⛽`Yakıt Deposu: {forestry_item['gas_tank_liter']}L`"""
         else:
-            data = {"forestry": {"durability": 100}}
+            data = {"forestry": {"custom_id": value, "durability": 100}}
             message = f"{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız."
 
         user_wallet -= price
@@ -242,11 +242,11 @@ class MiningEquipmentDropdown(ui.Select):
             return
 
         if mining_item["type"] == "vehicle":
-            data = {"mining": {"durability": 100, "fuel": mining_item["gas_tank_liter"]}}
+            data = {"mining": {"custom_id": value, "durability": 100, "fuel": mining_item["gas_tank_liter"]}}
             message = f"""{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n
             `💎Ortalama Maden: {mining_item['average_mine']}`\n🪫`Yakıt Tüketimi/Maden: {mining_item['liter_per_mine']}`\n⛽`Yakıt Deposu: {mining_item['gas_tank_liter']}L`"""
         else:
-            data = {"mining": {"durability": 100}}
+            data = {"mining": {"custom_id": value, "durability": 100}}
             message = f"{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız."
 
         user_wallet -= price
@@ -317,6 +317,7 @@ class Store(commands.Cog):
             color = 0x2b2d31)
         
         view = PrimaryButtonMenu()
+        view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
             
 async def setup(bot: commands.Bot):
