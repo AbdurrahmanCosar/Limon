@@ -9,6 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.cooldown import cooldown_for_jobs
 from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
@@ -32,20 +33,13 @@ class Forestry(commands.Cog):
         return name, size, tree
 
     @app_commands.command(name="forestry", description="Go lumberjack!")
+    @app_commands.checks.dynamic_cooldown(cooldown_for_jobs())
     async def forestry(self, interaction: Interaction):
         
         user = interaction.user
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
-        if "forestry" not in inventory["items"]:
-            return await interaction.response.send_message(
-                content=f"{Emojis.cross} Ağaç kesebilmek için bir ormancılık ekipmanına sahip olmalısınız!",
-                ephemeral=True)
-
         equipment = inventory["items"]["forestry"]
-
-        if equipment["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
         equipment["durability"] -= 4
 
 

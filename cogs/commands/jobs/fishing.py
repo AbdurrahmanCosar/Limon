@@ -10,6 +10,7 @@ from discord import app_commands, Interaction
 from discord.app_commands import Choice
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.cooldown import cooldown_for_jobs
 from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
@@ -62,31 +63,15 @@ class Fishing(commands.Cog):
     @app_commands.command(name = "fishing", description="Go fishing!")
     @app_commands.describe(food = "Oltanıza hangi yemi takacaksınız?")
     @app_commands.autocomplete(food=food_autocompletion)
+    @app_commands.checks.dynamic_cooldown(cooldown_for_jobs())
     async def fishing(self, interaction: Interaction, food: Optional[str]):
 
         user = interaction.user
         inventory, collection = await create_inventory_data(self.bot, user.id)
-
-        # Rod Check
-
-        if "fishing" not in inventory["items"]:
-            return await interaction.response.send_message(
-                content=f"{Emojis.cross} Balık tutabilmek için bir balıkçılık ekipmanına sahip olmalısınız!",
-                ephemeral=True)
-
-        # User's rod
+        
         rod = inventory["items"]["fishing"]
-        """*
-        rod: {custom_id: "harpoon", durability: 96}
-        """
-        
-        if rod["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Oltanız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
         rod["durability"] -= 4
-
-        # Fish List
         
-
         if (food is None) and (rod["custom_id"] == "fishingrod"):
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} Hey, yem takmayı unuttun! Yem olmadan balık tutamayız.", ephemeral= True)
         elif (food is not None):

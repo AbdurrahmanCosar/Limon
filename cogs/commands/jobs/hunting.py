@@ -9,6 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.cooldown import cooldown_for_jobs
 from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
@@ -31,31 +32,16 @@ class Hunting(commands.Cog):
         return name, hunt
 
     @app_commands.command(name = "hunting", description = "Go hunting!")
+    @app_commands.checks.dynamic_cooldown(cooldown_for_jobs())
     async def hunting(self, interaction: Interaction):
 
         user = interaction.user
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
-        # Equipment and ammo check
-        if ("hunting" not in inventory["items"]):
-            return await interaction.response.send_message(
-                content=f"{Emojis.cross} Avcılık yapabilmek için bir av ekipmanına ihtiyacınız var.",
-                ephemeral=True)
-        
         weapon = inventory["items"]["hunting"]
         required_ammo = market_items["hunting"][weapon]["ammo"]
-
-        if weapon["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanın eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
         weapon["durability"] -= 4
 
-        if (
-            required_ammo != None and
-            ("ammo" not in inventory or inventory["ammo"][required_ammo] == 0)    
-        ):
-            return await interaction.response.send_message(
-                content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", 
-                ephemeral=True)
         
         
         if weapon["custom_id"] == "trap":
