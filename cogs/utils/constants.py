@@ -67,9 +67,10 @@ class _Channels:
     suggestions = 1063608269404381255
     report = None
 
-class _Admin:
+class _Users:
     admins = [529577110197764096, 1047996741397532763]
+    bot = 994143430504620072
 
-Admin = _Admin()
+Users = _Users()
 
 Channels = _Channels
