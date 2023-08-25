@@ -11,6 +11,7 @@ from discord.app_commands import Choice
 from discord.ext import commands
 from cogs.utils.functions import add_xp
 from cogs.utils.database.fetchdata import create_wallet
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.constants import Gamble, Emojis
 from cogs.utils.functions import balance_check
 from random import randint
@@ -46,6 +47,7 @@ class Gambles(commands.Cog):
 
     @app_commands.command(name="coinflip", description="Play coinflip")
     @app_commands.describe(amount="Enter the bet amount")
+    @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def coinflip(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
 
         user = interaction.user
@@ -67,6 +69,7 @@ class Gambles(commands.Cog):
 
     @app_commands.command(name="guess-number", description="[1-5] Guess the number and make LiCash")
     @app_commands.describe(guessnum="Enter your guess [1-5]", amount="Enter the bet amount")
+    @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def guessnumber(self, interaction: Interaction, guessnum: app_commands.Range[int, 1,5], amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
 
         user = interaction.user
@@ -87,6 +90,7 @@ class Gambles(commands.Cog):
     
     @app_commands.command(name="roll", description="Roll the dice and make LiCash")
     @app_commands.describe(choose="Choose", amount="Enter the bet amount")
+    @app_commands.checks.dynamic_cooldown(set_cooldown())
     @app_commands.choices(choose = [
         Choice(name="Çift", value="0"),
         Choice(name="Tek", value="1")

@@ -9,6 +9,7 @@ from discord import app_commands, Interaction, Embed, SelectOption, ButtonStyle,
 from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.functions import balance_check
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
 from yaml import Loader, load
@@ -137,6 +138,7 @@ class Market(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name = "market", description = "Open market and buy utilities")
+    @app_commands.checks.dynamic_cooldown(set_cooldown(20))
     async def market(self, interaction: Interaction):
 
         embed = Embed(

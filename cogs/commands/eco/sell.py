@@ -8,6 +8,7 @@
 from discord import app_commands, Interaction, Embed, ButtonStyle, ui
 from discord.ext import commands
 from cogs.utils.constants import Emojis, Game
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_inventory_data, create_wallet
 from yaml import Loader, load
@@ -44,12 +45,6 @@ class ButtonMenu(ui.View):
     @ui.button(label = "Balıkları Sat", style = ButtonStyle.primary, emoji = ':fish:')
     async def sell_fishes_button(self, interacion: Interaction, button):
         user = interacion.user
-
-        if self.f_price == 0:
-            button.label = "Balık Yok!!"  # New Button Label
-            button.style = ButtonStyle.secondary  # New Button Stlye
-            button.disabled = True  # New Button Disabled
-            return await interacion.response.edit_message(view=self)
 
         button.label = "Balıklar Satıldı!"  # New Button Label
         button.style = ButtonStyle.secondary  # New Button Stlye
@@ -144,6 +139,7 @@ class Sell(commands.Cog):
 
 
     @app_commands.command(name="sell", description="Sell your (fishes, hunts etc.)")
+    @app_commands.checks.dynamic_cooldown(set_cooldown(30))
     async def sell(self, interaction: Interaction):
 
         user = interaction.user
@@ -193,6 +189,24 @@ class Sell(commands.Cog):
 
         view = ButtonMenu(user.id, self.bot, fish_price=fish_price, hunt_price=hunt_price, mine_price=mine_price, wood_price=wood_price)
         view.add_item(CloseButton(user.id))
+
+        if fish_price == 0:
+            view.sell_fishes_button.label = "Balık Yok!!"  # New Button Label
+            view.sell_fishes_button.style = ButtonStyle.secondary  # New Button Stlye
+            view.sell_fishes_button.disabled = True  # New Button Disabled
+        if hunt_price == 0:
+            view.sell_hunts_button.label = "Av Yok!!"  # New Button Label
+            view.sell_hunts_button.style = ButtonStyle.secondary  # New Button Stlye
+            view.sell_hunts_button.disabled = True  # New Button Disabled
+        if mine_count == 0:
+            view.sell_mines_button.label = "Maden Yok!!"  # New Button Label
+            view.sell_mines_button.style = ButtonStyle.secondary  # New Button Stlye
+            view.sell_mines_button.disabled = True  # New Button Disabled
+        if wood_price == 0:
+            view.sell_wood_button.label = "Balık Yok!!"  # New Button Label
+            view.sell_wood_button.style = ButtonStyle.secondary  # New Button Stlye
+            view.sell_wood_button.disabled = True  # New Button Disabled
+
         await interaction.response.send_message(embed=embed, view = view)
 
 

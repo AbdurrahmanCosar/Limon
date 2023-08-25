@@ -7,6 +7,7 @@
 
 from discord import app_commands, Interaction, File
 from discord.ext import commands
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.database.fetchdata import create_wallet
 from io import BytesIO
 from PIL import Image, ImageChops, ImageDraw, ImageFont
@@ -59,6 +60,7 @@ class Balance(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name = "balance", description="View your balance")
+    @app_commands.checks.dynamic_cooldown(set_cooldown(15))
     async def balance(self, interaction: Interaction):
         await interaction.response.defer()
 

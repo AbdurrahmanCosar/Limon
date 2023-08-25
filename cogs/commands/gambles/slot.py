@@ -8,6 +8,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
 from cogs.utils.constants import Gamble, Emojis
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.functions import balance_check, add_xp
 from cogs.utils.database.fetchdata import create_wallet
 import random as r
@@ -47,6 +48,7 @@ class Slot(commands.Cog):
 
     @app_commands.command(name="slot", description="Play slot")
     @app_commands.describe(amount="Enter the bet amount")
+    @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def slot(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
 
         user = interaction.user

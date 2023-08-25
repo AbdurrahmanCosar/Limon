@@ -10,6 +10,7 @@ from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.cooldown import set_cooldown
 from yaml import Loader, load
 
 cross = Emojis.cross
@@ -215,6 +216,7 @@ class Inventory(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name = "inventory", description="Open inventory and view your equipments/items")
+    @app_commands.checks.dynamic_cooldown(set_cooldown(10))
     async def inventory(self, interaction: Interaction):
         embed = Embed(
             color=0x2b2d31, 
