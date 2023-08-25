@@ -8,11 +8,12 @@
 from discord import app_commands, Interaction, File
 from discord.ext import commands
 from cogs.utils.cooldown import set_cooldown
+from cogs.utils.constants import Users
 from cogs.utils.database.fetchdata import create_wallet
 from io import BytesIO
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 
-BOT_ID = 994143430504620072 # Limon's ID
+BOT_ID = Users.bot # Limon's ID
 
 class _Assets:
     # Images
@@ -68,46 +69,46 @@ class Balance(commands.Cog):
 
         wallet, _ = await create_wallet(self.bot, user.id)
 
-        first_transaction = wallet["recent_transactions"]["first_transaction"]
-        second_transaction = wallet["recent_transactions"]["second_transaction"]
+        transactions = wallet["recent_transactions"]["transactions"]
 
         #* --------------FIRST TRANSACTION--------------
-        if len(first_transaction) > 0:
-            # Meaning of f in the variables is First
+        # Meaning of f in the variables is First
+        first_transaction = transactions[0]
 
-            f_uid = first_transaction["user"] # User ID
-            f_user = interaction.client.get_user(f_uid) # Get user in client
+        f_uid = first_transaction["user"] # User ID
+        f_user = interaction.client.get_user(f_uid) # Get user in client
+        
+        # User Check
+        if f_user is None:
+            f_avatar, f_name = Functions.user_not_found_err()
+        else:
+            f_name = f_user.name
+            f_avatar = f_user.avatar
+
+            if f_avatar is None:
+                f_avatar = Assets.default_avatar
             
-            # User Check
-            if f_user is None:
-                f_avatar, f_name = Functions.user_not_found_err()
-            else:
-                f_name = f_user.name
-                f_avatar = f_user.avatar
+            f_avatar = f_avatar.replace(size=256)
+            data = BytesIO(await f_avatar.read())
+            f_avatar = Image.open(data).convert("RGBA")
+        
+        if first_transaction["transfer"]["transaction"]["is_incomming"] is True: # So Incomming Money Transer
+            f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
+            f_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
+            f_transfer_color = "#7eb44b" # Green
 
-                if f_avatar is None:
-                    f_avatar = Assets.default_avatar
-                
-                f_avatar = f_avatar.replace(size=256)
-                data = BytesIO(await f_avatar.read())
-                f_avatar = Image.open(data).convert("RGBA")
-            
-            if first_transaction["transfer"] is True: # So Incomming Money Transer
-                f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
-                f_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
-                f_transfer_color = "#7eb44b" # Green
-
-                if f_uid == BOT_ID:
-                    f_transfer_text = "Hediye"
-                    f_avatar = Assets.limon_avatar
-            else:
-                f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
-                f_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
-                f_transfer_color = "#e04339" # Red
+            if first_transaction["transfer"]["transaction"]["type"] == "admin":
+                f_transfer_text = "Hediye"
+                f_avatar = Assets.limon_avatar
+        else:
+            f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
+            f_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
+            f_transfer_color = "#e04339" # Red
         
         #* --------------SECOND TRANSACTION--------------
-        if len(second_transaction) > 0:
+        if len(transactions) > 1:
             # Meaning of s in the variables is Second
+            second_transaction = transactions[1]
 
             s_uid = second_transaction["user"] # User ID
             s_user = interaction.client.get_user(s_uid) # Get user in client
@@ -126,12 +127,12 @@ class Balance(commands.Cog):
                 data = BytesIO(await s_avatar.read())
                 s_avatar = Image.open(data).convert("RGBA")
             
-            if second_transaction["transfer"] is True: # So Incomming Money Transer
+            if second_transaction["transfer"]["transaction"]["is_incomming"] is True: # So Incomming Money Transer
                 s_transfer_amount = f"+{second_transaction['amount']:,}".replace(',', '.')
                 s_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
                 s_transfer_color = "#7eb44b" # Green
 
-                if s_uid == BOT_ID:
+                if second_transaction["transfer"]["transaction"]["type"] == "admin":
                     s_transfer_text = "Hediye"
                     s_avatar = Assets.limon_avatar
             else:
