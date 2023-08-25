@@ -6,6 +6,39 @@
 """
 
 async def create_wallet(bot, _id):
+
+    """
+    * Transfer Types: 
+    *   transfer -> with other user 
+    *   expense -> with shopping  
+    
+    * Transfer Data for User:
+
+    *    "user": id: int,
+    *    "amount": int,
+    *    "transaction": {
+    *        "type": transfer,
+    *        "is_incomming": bool
+
+    * Transfer Data for Shopping:
+
+    *    "user": name: str, -> Store, Market
+    *    "amount": int,
+    *    "transaction": {
+    *        "type": expense,
+    *        "is_incomming": bool
+
+    * Transfer Data by Admin:
+
+    *    "user": bot_id: int,
+    *    "amount": int,
+    *    "transaction": {
+    *        "type": admin,
+    *        "is_incomming": bool
+
+
+    """
+
     db = bot.database["limon"]
     collection = db["wallet"]
 
@@ -16,12 +49,16 @@ async def create_wallet(bot, _id):
             "cash": 10000,
             "accumulated_money": 0,
             "recent_transactions": {
-                "first_transaction": {
-                    "user": 994143430504620072,
-                    "amount": 10000,
-                    "transfer": True
-                },
-                "second_transaction": {}
+                "transactions": [
+                    {
+                        "user": 994143430504620072,
+                        "amount": 10000,
+                        "transaction": {
+                            "type": "admin",
+                            "is_incomming": True
+                        }
+                    }
+                ]
             }
         }
         await collection.insert_one(new_data)
