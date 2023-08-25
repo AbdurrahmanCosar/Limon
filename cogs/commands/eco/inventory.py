@@ -45,11 +45,12 @@ class ButtonMenu(ui.View):
         return True
     
     def disable_buttons(self, button):
-        for x in self.children:
-            if x.custom_id != button:
-                x.disabled = False
+        for child in self.children:
+            if child.custom_id != button:
+                child.disabled = False
             else:
-                x.disabled = True
+                child.style = ButtonStyle.success
+                child.disabled = True
     
 
     @ui.button(label = "Ekipmanlar", style = ButtonStyle.blurple, custom_id = "equipments_button")
@@ -93,7 +94,7 @@ class ButtonMenu(ui.View):
             \n════════════════════════════════\n
             {message}""")
         embed.set_author(name=f"{user.name} adlı kullanıcının ekipmanları", icon_url = user.avatar.url)
-
+        
         await interaction.response.edit_message(view= self)
 
     @ui.button(label  = "Çanta", style = ButtonStyle.blurple, custom_id = "backpack_button")
