@@ -46,14 +46,14 @@ class Mining(commands.Cog):
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
         equipment["durability"] -= 4
 
-        if equipment["fuel"] < basic_item["mining"][equipment["custom_id"]]["liter_per_mine"]:
+        if equipment["fuel"] < basic_item["mining"][equipment["custom_id"]]["liter_per_item"]:
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
 
         if basic_item["mining"][equipment["custom_id"]]["type"] != "vehicle":
-            average_mine = basic_item["mining"][equipment["custom_id"]]["average_mine"]
-            mine_count = randint(average_mine - 1, average_mine + 1)
+            average_item = basic_item["mining"][equipment["custom_id"]]["average_item"]
+            mine_count = randint(average_item - 1, average_item + 1)
 
-            equipment["fuel"] -= (basic_item["mining"][equipment["custom_id"]]["liter_per_mine"] * mine_count)
+            equipment["fuel"] -= (basic_item["mining"][equipment["custom_id"]]["liter_per_item"] * mine_count)
 
             excavated_mine = []
             for _ in range(mine_count):

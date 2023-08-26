@@ -28,8 +28,8 @@ cross = Emojis.cross
 
 
 class FishingEquipmentDropdown(ui.Select):
-    def __init__(self):
-
+    def __init__(self, bot):
+        self.bot = bot
         # Set the options that will be presented inside the dropdown
         options = [
             SelectOption(label=str(fishes[item]["name"]), value=item, description=f"{fishes[item]['price']:,} LC", emoji='🎣')
@@ -84,7 +84,8 @@ class FishingEquipmentDropdown(ui.Select):
         await interaction.response.send_message(content = f"{new}🎣 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.")
 
 class HuntingEquipmentDropdown(ui.Select):
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
 
         # Set the options that will be presented inside the dropdown
         options = [
@@ -139,11 +140,12 @@ class HuntingEquipmentDropdown(ui.Select):
         await interaction.response.send_message(content = f"{new}🏹 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.")
 
 class ForestryEquipmentDropdown(ui.Select):
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
 
         # Set the options that will be presented inside the dropdown
         options = [
-            SelectOption(label=str(wood[item]["name"]), value=item, description=f"Ortalama {wood[item]['average_tree']} Ağaç - {wood[item]['price']:,} LC", emoji='🌲')
+            SelectOption(label=str(wood[item]["name"]), value=item, description=f"Ortalama {wood[item]['average_item']} Ağaç - {wood[item]['price']:,} LC", emoji='🌲')
             for item in wood
         ]
         options.append(SelectOption(label="Ekipmanını Sat!", value="sellitem", description="Mevcut ekipmanını sat.", emoji=sell))
@@ -185,7 +187,7 @@ class ForestryEquipmentDropdown(ui.Select):
         if forestry_item["type"] == "vehicle":
             data = {"forestry": {"custom_id": value, "durability": 100, "fuel": forestry_item["gas_tank_liter"]}}
             message = f"""{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n
-            `🪵Ortalama Ağaç: {forestry_item['average_tree']}`\n🪫`Yakıt Tüketimi/Ağaç: {forestry_item['liter_per_tree']}`\n⛽`Yakıt Deposu: {forestry_item['gas_tank_liter']}L`"""
+            `🪵Ortalama Ağaç: {forestry_item['average_item']}`\n🪫`Yakıt Tüketimi/Ağaç: {forestry_item['liter_per_item']}`\n⛽`Yakıt Deposu: {forestry_item['gas_tank_liter']}L`"""
         else:
             data = {"forestry": {"custom_id": value, "durability": 100}}
             message = f"{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız."
@@ -199,11 +201,12 @@ class ForestryEquipmentDropdown(ui.Select):
         await interaction.response.send_message(content = message)
 
 class MiningEquipmentDropdown(ui.Select):
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
 
         # Set the options that will be presented inside the dropdown
         options = [
-            SelectOption(label=str(mines[item]["name"]), value=item, description=f"Ortalama {mines[item]['average_mine']} Maden - {mines[item]['price']:,} LC", emoji='⛏️')
+            SelectOption(label=str(mines[item]["name"]), value=item, description=f"Ortalama {mines[item]['average_item']} Maden - {mines[item]['price']:,} LC", emoji='⛏️')
             for item in mines
         ]
         options.append(SelectOption(label="Ekipmanını Sat!", value="sellitem", description="Mevcut ekipmanını sat.", emoji=sell))
@@ -245,7 +248,7 @@ class MiningEquipmentDropdown(ui.Select):
         if mining_item["type"] == "vehicle":
             data = {"mining": {"custom_id": value, "durability": 100, "fuel": mining_item["gas_tank_liter"]}}
             message = f"""{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n
-            `💎Ortalama Maden: {mining_item['average_mine']}`\n🪫`Yakıt Tüketimi/Maden: {mining_item['liter_per_mine']}`\n⛽`Yakıt Deposu: {mining_item['gas_tank_liter']}L`"""
+            `💎Ortalama Maden: {mining_item['average_item']}`\n🪫`Yakıt Tüketimi/Maden: {mining_item['liter_per_item']}`\n⛽`Yakıt Deposu: {mining_item['gas_tank_liter']}L`"""
         else:
             data = {"mining": {"custom_id": value, "durability": 100}}
             message = f"{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız."
@@ -260,11 +263,14 @@ class MiningEquipmentDropdown(ui.Select):
 
 
 class SecondaryButtonMenu(ui.View):
+    def __ini__(self, bot):
+        super().__init__()
+        self.bot = bot
     
     @ui.button(label = "Balıkçılık", style=ButtonStyle.blurple, emoji='🎣')
     async def fishing_button(self, interaction: Interaction, button):
         view = ui.View()
-        view.add_item(FishingEquipmentDropdown())
+        view.add_item(FishingEquipmentDropdown(self.bot))
         view.add_item(CloseButton(interaction.user.id))
         embed = Embed(color=0x2b2d31).set_author(name="🎣 | Satın almak istediğiniz balıkçılık ekipmanını menüden seçiniz..")
         await interaction.response.send_message(embed = embed, view = view)
@@ -272,7 +278,7 @@ class SecondaryButtonMenu(ui.View):
     @ui.button(label = "Avcılık", style=ButtonStyle.blurple, emoji='🏹')
     async def hunting_button(self, interaction: Interaction, button):
         view = ui.View()
-        view.add_item(HuntingEquipmentDropdown())
+        view.add_item(HuntingEquipmentDropdown(self.bot))
         view.add_item(CloseButton(interaction.user.id))
         embed = Embed(color=0x2b2d31).set_author(name="🏹 | Satın almak istediğiniz avcılık ekipmanını menüden seçiniz..")
         await interaction.response.send_message(embed = embed, view = view)
@@ -280,7 +286,7 @@ class SecondaryButtonMenu(ui.View):
     @ui.button(label = "Ormancılık", style=ButtonStyle.blurple, emoji='🌲')
     async def forestry_button(self, interaction: Interaction, button):
         view = ui.View()
-        view.add_item(ForestryEquipmentDropdown())
+        view.add_item(ForestryEquipmentDropdown(self.bot))
         view.add_item(CloseButton(interaction.user.id))
         embed = Embed(color=0x2b2d31).set_author(name="🌲 | Satın almak istediğiniz ormancılık ekipmanını menüden seçiniz..")
         await interaction.response.send_message(embed = embed, view = view)
@@ -288,17 +294,20 @@ class SecondaryButtonMenu(ui.View):
     @ui.button(label = "Madencilik", style=ButtonStyle.blurple, emoji='⛏️')
     async def mining_button(self, interaction: Interaction, button):
         view = ui.View()
-        view.add_item(MiningEquipmentDropdown())
+        view.add_item(MiningEquipmentDropdown(self.bot))
         view.add_item(CloseButton(interaction.user.id))
         embed = Embed(color=0x2b2d31).set_author(name="⛏️ | Satın almak istediğiniz madencilik ekipmanını menüden seçiniz..")
         await interaction.response.send_message(embed = embed, view = view)
 
 class PrimaryButtonMenu(ui.View):
+    def __init__(self, bot):
+        super().__init__()
+        self.bot = bot
     
     @ui.button(label = "Ekipmanlar", style= ButtonStyle.blurple)
     async def equipments_button(self, interaction: Interaction, button):
 
-        view = SecondaryButtonMenu()
+        view = SecondaryButtonMenu(self.bot)
         await interaction.response.edit_message(view = view)
 
 
@@ -318,7 +327,7 @@ class Store(commands.Cog):
             """,
             color = 0x2b2d31)
         
-        view = PrimaryButtonMenu()
+        view = PrimaryButtonMenu(self.bot)
         view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
             
