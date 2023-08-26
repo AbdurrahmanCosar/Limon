@@ -18,6 +18,7 @@ BOT_ID = Users.bot # Limon's ID
 class _Assets:
     # Images
     default_avatar = Image.open("cogs/assets/images/DiscordLogo.png").convert("RGBA")
+    expense_avatar = None
     limon_avatar = Image.open("cogs/assets/images/SenderLimon.png").convert("RGBA")
     template = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
     rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
@@ -42,6 +43,12 @@ class Functions:
         avatar = Assets.default_avatar
         name = "User"
         return avatar, name
+    
+    async def open_avatar(u_avatar):
+        avatar = u_avatar.replace(size=256)
+        data = BytesIO(await avatar.read())
+        avatar = Image.open(data).convert("RGBA")
+        return avatar
 
     def circle(pfp, size = (215,215)):
         pfp = pfp.resize(size, Image.LANCZOS).convert("RGBA")
@@ -76,34 +83,47 @@ class Balance(commands.Cog):
         first_transaction = transactions[0]
 
         f_uid = first_transaction["user"] # User ID
-        f_user = interaction.client.get_user(f_uid) # Get user in client
-        
-        # User Check
-        if f_user is None:
-            f_avatar, f_name = Functions.user_not_found_err()
-        else:
-            f_name = f_user.name
-            f_avatar = f_user.avatar
 
-            if f_avatar is None:
-                f_avatar = Assets.default_avatar
+        if isinstance(f_uid, int):
             
-            f_avatar = f_avatar.replace(size=256)
-            data = BytesIO(await f_avatar.read())
-            f_avatar = Image.open(data).convert("RGBA")
-        
-        if first_transaction["transfer"]["transaction"]["is_incomming"] is True: # So Incomming Money Transer
-            f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
-            f_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
-            f_transfer_color = "#7eb44b" # Green
+            f_user = interaction.client.get_user(f_uid) # Get user in client
+            
+            # User Check
+            if f_user is None:
+                f_avatar, f_name = Functions.user_not_found_err()
+            else:
+                f_name = f_user.name
+                f_avatar = f_user.avatar
 
-            if first_transaction["transfer"]["transaction"]["type"] == "admin":
-                f_transfer_text = "Hediye"
-                f_avatar = Assets.limon_avatar
+                if f_avatar is None:
+                    f_avatar = Assets.default_avatar
+                
+                # Open Avatar
+                f_avatar = await Functions.open_avatar(f_avatar)
+            
+            if first_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
+                f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
+                f_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
+                f_transfer_color = "#7eb44b" # Green
+
+                if first_transaction["transaction"]["type"] == "admin":
+                    f_transfer_text = "Hediye"
+                    f_avatar = Assets.limon_avatar
+            else:
+                f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
+                f_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
+                f_transfer_color = "#e04339" # Red
         else:
+            
             f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
-            f_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
+            f_name = first_transaction["user"]
+            f_transfer_text = "Harcama" # Expense
             f_transfer_color = "#e04339" # Red
+            f_avatar = Assets.expense_avatar
+
+            # Open Avatar
+            #f_avatar = await Functions.open_avatar(f_avatar)
+
         
         #* --------------SECOND TRANSACTION--------------
         if len(transactions) > 1:
@@ -111,34 +131,40 @@ class Balance(commands.Cog):
             second_transaction = transactions[1]
 
             s_uid = second_transaction["user"] # User ID
-            s_user = interaction.client.get_user(s_uid) # Get user in client
-            
-            # User Check
-            if s_user is None:
-                s_avatar, s_name = Functions.user_not_found_err()
-            else:
-                s_name = s_user.name
-                s_avatar = s_user.avatar
-
-                if s_avatar is None:
-                    s_avatar = Assets.default_avatar
+            if isinstance(s_uid, int):
+                s_user = interaction.client.get_user(s_uid) # Get user in client
                 
-                s_avatar = s_avatar.replace(size=256)
-                data = BytesIO(await s_avatar.read())
-                s_avatar = Image.open(data).convert("RGBA")
-            
-            if second_transaction["transfer"]["transaction"]["is_incomming"] is True: # So Incomming Money Transer
-                s_transfer_amount = f"+{second_transaction['amount']:,}".replace(',', '.')
-                s_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
-                s_transfer_color = "#7eb44b" # Green
+                # User Check
+                if s_user is None:
+                    s_avatar, s_name = Functions.user_not_found_err()
+                else:
+                    s_name = s_user.name
+                    s_avatar = s_user.avatar
 
-                if second_transaction["transfer"]["transaction"]["type"] == "admin":
-                    s_transfer_text = "Hediye"
-                    s_avatar = Assets.limon_avatar
+                    if s_avatar is None:
+                        s_avatar = Assets.default_avatar
+                    
+                    # Open Avatar
+                    s_avatar = await Functions.open_avatar(s_avatar)
+                
+                if second_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
+                    s_transfer_amount = f"+{second_transaction['amount']:,}".replace(',', '.')
+                    s_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
+                    s_transfer_color = "#7eb44b" # Green
+
+                    if second_transaction["transaction"]["type"] == "admin":
+                        s_transfer_text = "Hediye"
+                        s_avatar = Assets.limon_avatar
+                else:
+                    s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
+                    s_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
+                    s_transfer_color = "#e04339" # Red
             else:
                 s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
-                s_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
+                s_name = second_transaction["user"]
+                s_transfer_text = "Harcama" # Expense
                 s_transfer_color = "#e04339" # Red
+                s_avatar = Assets.expense_avatar
 
         #* --------------BASE IMAGE AND RECTANGLE--------------
         img = Assets.template
