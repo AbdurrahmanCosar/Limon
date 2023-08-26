@@ -5,11 +5,12 @@
  * For more information, see README.md and LICENSE
 """
 
-from discord import app_commands, Interaction, Embed, ButtonStyle, ui
+from discord import app_commands, Interaction, Embed, ButtonStyle, ui, SelectOption
 from discord.ext import commands
-from cogs.utils.constants import Emojis
+from cogs.utils.constants import Emojis, Game
 from cogs.utils.buttons import CloseButton
-from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.functions import balance_check
+from cogs.utils.database.fetchdata import create_inventory_data, create_wallet
 from cogs.utils.cooldown import set_cooldown
 from yaml import Loader, load
 
@@ -31,6 +32,102 @@ item_yaml = open("cogs/assets/yaml_files/market_yamls/basic_items.yml", "rb")
 items = load(item_yaml, Loader = Loader) 
 
 # WILL BE ADD GAS STATION
+
+class Dropdown(ui.Select):
+    def __init__(self, client, vehicles, uid):
+        self.client = client
+        self.vehicles = vehicles
+        self.uid = uid
+        
+        options = list({
+            SelectOption(label=f"%{v['fuel']} / {items[k][v['custom_id']]['gas_tank_liter']} -- {Game.FuelPerLiter * (items[k][v['custom_id']]['gas_tank_liter'] - v['fuel'])} LC", value=k, description=items[k][v["custom_id"]]["name"], emoji="🛠️")
+            for k, v in self.vehicles.items()
+        })
+
+        super().__init__(placeholder='Benzin Doldurulacak Aracını Seç...', min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: Interaction):
+        user = interaction.user
+
+        if self.uid != user.id:
+            return await interaction.response.send_message(content = "Hey, dur bakalım! <@{self.uid}> için buradayım. Bu menü ile etkileşimde bulunamazsın.", ephemeral = True)
+
+        inventory, i_collection = await create_inventory_data(self.client, user.id)
+        wallet, w_collection = await create_wallet(self.client, user.id)
+
+        value = self.values[0]
+
+        inventory_vehicle = inventory["items"][value]
+        price = Game.FuelPerLiter * (items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"] - self.vehicles[value]["fuel"])
+        name = items[inventory_vehicle]["name"]
+
+
+        if await balance_check(interaction, wallet['cash'], price) is False:
+            return
+        
+        gas_tank_liter = items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"]
+        inventory["items"][value]["fuel"] = gas_tank_liter
+        wallet['cash'] -= price
+        
+        await i_collection.replace_one({"_id": user.id}, inventory)
+        await w_collection.replace_one({"_id": user.id}, wallet)
+
+        try:
+            value = self.values[0]
+            option = [e for e in self.options if e.value == value][0]
+            self.options.remove(option)
+            await interaction.response.edit_message(view = self.view)
+        except:
+            await interaction.response.edit_message(view = None)
+
+        await interaction.followup.send(content = f"⛽ **|** {user.mention} İşte oldu! Senin için **{name}** ekipmanının deposunu doldurdum *({gas_tank_liter}L)*. Bunun için **{price:,} LC** ödedin.")
+
+
+
+
+class GasStationButton(ui.View):
+    def __init__(self, client, uid):
+        self.client = client
+        self.uid = uid
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.id:
+            await interaction.response.send_message(content = f"{cross} Bu sizin garajınız değil. Buradaki butonları kullanamazsınız!", ephemeral = True)
+            return False
+        return True
+
+    @ui.button(label="Benzin Doldur!", style=ButtonStyle.success, emoji = "⛽")
+    async def fuel_button(self, interaction: Interaction, button):
+        user = interaction.user
+        inventory, _ = await create_inventory_data(self.client, user.id)
+
+        vehicles = {
+            k:v 
+            for k, v in inventory["items"].items()
+            if k in ("forestry", "mining") and items[k]["type"] == "vehicle" and v["fuel"] < 100}
+
+        vehicle_count = len(vehicles)
+        if vehicle_count == 0:
+            return await interaction.response.send_message(content = "⛽ Araçlarının depoları zaten full! Önce onları kullanman gerekiyor.", ephemeral=True)
+
+        view = ui.View()
+        view.add_item(Dropdown(self.client, vehicles, user.id))
+        view.add_item(CloseButton(user.id)) 
+
+        embed = Embed(
+            title="⛽ Benzin İstasyonuna Hoş Geldiniz!",
+            description = f"""
+            Merhaba. Araçlarının depolarını fulleyelim!
+            - *Bakalım hangilerini deposu boşmuş?*
+                - *Doldurulması gereken `{vehicle_count}` aracınız var.*
+                - *Menüden bir tanesini seç ve deposunu doldur.*
+
+            (Ücretler menüde yazıyor) 
+            """,
+            color = 0x2b2d31)
+
+        await interaction.response.edit_message(embed = embed, view = view)
+
 
 class ButtonMenu(ui.View):
     def __init__(self, uid, client):
@@ -184,7 +281,7 @@ class ButtonMenu(ui.View):
             i_vehicle = items["forestry"][u_vehicle["custom_id"]] # in basic_items.yml file
             forestry_vehice_message = f"""
             ***{i_vehicle['name']}***\n
-            🪵`Ortalama Ağaç: {i_vehicle['average_tree']}`
+            🪵`Ortalama Ağaç: {i_vehicle['average_item']}`
             🛠️`Hasar Durumu: %{u_vehicle['durability']}`
             ⛽`Yakıt Deposu: {u_vehicle['fuel']}/**{i_vehicle['gas_tank_liter']}L**`
             """
@@ -195,7 +292,7 @@ class ButtonMenu(ui.View):
             i_vehicle = items["minig"][u_vehicle["custom_id"]] # in basic_items.yml file
             mining_vehice_message = f"""
             ***{i_vehicle['name']}***\n
-            💎`Ortalama Maden: {i_vehicle['average_tree']}`
+            💎`Ortalama Maden: {i_vehicle['average_item']}`
             🛠️`Hasar Durumu: %{u_vehicle['durability']}`
             ⛽`Yakıt Deposu: {u_vehicle['fuel']}/**{i_vehicle['gas_tank_liter']}L**`
             """
@@ -207,7 +304,8 @@ class ButtonMenu(ui.View):
             {forestry_vehice_message}\n════════════════════════════════
             {mining_vehice_message}\n════════════════════════════════""")
         embed.set_author(name=f"{user.name} adlı kullanıcının garajı", icon_url = user.avatar.url)
-        
+
+        self.add_item(GasStationButton(self.client, user.id))
         
         await interaction.response.edit_message(embed = embed, view = self)
         
