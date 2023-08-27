@@ -5,63 +5,71 @@
  * For more information, see README.md and LICENSE
 """
 
-from discord import app_commands, Interaction, File
+from typing import Any, Coroutine
+from discord import app_commands, Interaction, File, ui, ButtonStyle
 from discord.ext import commands
+from discord.interactions import Interaction
 from cogs.utils.cooldown import set_cooldown
-from cogs.utils.constants import Users
+from cogs.utils.DrawImage.balance import draw_balance_main, draw_balance_transactions
 from cogs.utils.database.fetchdata import create_wallet
 from io import BytesIO
-from PIL import Image, ImageChops, ImageDraw, ImageFont
 
-BOT_ID = Users.bot # Limon's ID
 
-class _Assets:
-    # Images
-    default_avatar = Image.open("cogs/assets/images/DiscordLogo.png").convert("RGBA")
-    expense_avatar = None
-    limon_avatar = Image.open("cogs/assets/images/SenderLimon.png").convert("RGBA")
-    template = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
-    rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
-    
-    # Fonts
-    main_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 158)
-    account_number_font = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
-    fail_font = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
+class Button(ui.View):
+    def __init__(self, client, uid: int):
+        super().__init__(timeout=None)
+        self.client = client 
+        self.uid = uid
+        self.cd_mapping = commands.CooldownMapping.from_cooldown(1, 10, commands.BucketType.member)
 
-    box_big_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 190)
-    box_medium_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 120)
-    box_small_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 66)
+    def disable_buttons(self, button):
+        for child in self.children:
+            if child.custom_id != button:
+                child.disabled = False
+                child.style = ButtonStyle.blurple
+            else:
+                child.style = ButtonStyle.success
+                child.disabled = True
 
-    transfer_text_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    transfer_user_font = ImageFont.truetype("cogs/assets/fonts/coolveticaCondensedRG.otf", 70)
+    async def interaction_check(self, interaction: Interaction):
 
-Assets = _Assets()
+        if self.uid != interaction.user.id:
+            await interaction.response.send_message(content = f"Bu banka hesabı size ait değil. İşlem yapamazsınız!", ephemeral=True)
+            return False
+        
+        interaction.message.author = interaction.user
 
-class Functions:
-    def user_not_found_err():
-        avatar = Assets.default_avatar
-        name = "User"
-        return avatar, name
-    
-    async def open_avatar(u_avatar):
-        avatar = u_avatar.replace(size=256)
-        data = BytesIO(await avatar.read())
-        avatar = Image.open(data).convert("RGBA")
-        return avatar
+        bucket = self.cd_mapping.get_bucket(interaction.message)
+        retry_after = bucket.update_rate_limit()
+        if retry_after:
+            await interaction.response.send_message(content = f"Buton bekleme süresinde lütfen **`{round(retry_after,1)}s`** bekleyini! ", ephemeral = True)
+            return False
+        return True
 
-    def circle(pfp, size = (215,215)):
-        pfp = pfp.resize(size, Image.LANCZOS).convert("RGBA")
 
-        bigsize = (pfp.size[0] * 3, pfp.size[1] * 3)
-        mask = Image.new("L", bigsize, 0)
-        draw = ImageDraw.Draw(mask)
-        draw.ellipse((0, 0) + bigsize, fill = 255)
-        mask = mask.resize(pfp.size, Image.LANCZOS)
-        mask = ImageChops.darker(mask, pfp.split()[-1])
-        pfp.putalpha(mask)
+    @ui.button(label=None, style = ButtonStyle.success, disabled = True, emoji='🏡', custom_id="balance_btn")
+    async def balance_button(self, interaction: Interaction, button):
+        await interaction.response.defer()
+        self.disable_buttons("balance_btn")
 
-        return pfp
+        img = await draw_balance_main(self.client, interaction)
+
+        with BytesIO() as x:
+            img.save(x, "PNG")
+            x.seek(0)
+            await interaction.edit_original_response(attachments = [File(x, "LimonWallet.png")], view=self)
+
+    @ui.button(label=None, style = ButtonStyle.blurple, emoji='📝', custom_id="transaction_btn")
+    async def transaction_button(self, interaction: Interaction, button):
+        await interaction.response.defer()
+        self.disable_buttons("transaction_btn")
+        
+        img = await draw_balance_transactions(self.client, interaction)
+
+        with BytesIO() as x:
+            img.save(x, "PNG")
+            x.seek(0)
+            await interaction.edit_original_response(attachments = [File(x, "LimonTransaction.png")], view=self)
 
 class Balance(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -71,192 +79,13 @@ class Balance(commands.Cog):
     @app_commands.checks.dynamic_cooldown(set_cooldown(15))
     async def balance(self, interaction: Interaction):
         await interaction.response.defer()
-
-        user = interaction.user
-
-        wallet, _ = await create_wallet(self.bot, user.id)
-
-        transactions = wallet["recent_transactions"]["transactions"]
-
-        #* --------------FIRST TRANSACTION--------------
-        # Meaning of f in the variables is First
-        first_transaction = transactions[0]
-
-        f_uid = first_transaction["user"] # User ID
-
-        if isinstance(f_uid, int):
-            
-            f_user = interaction.client.get_user(f_uid) # Get user in client
-            
-            # User Check
-            if f_user is None:
-                f_avatar, f_name = Functions.user_not_found_err()
-            else:
-                f_name = f_user.name
-                f_avatar = f_user.avatar
-
-                if f_avatar is None:
-                    f_avatar = Assets.default_avatar
-                
-                # Open Avatar
-                f_avatar = await Functions.open_avatar(f_avatar)
-            
-            if first_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
-                f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
-                f_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
-                f_transfer_color = "#7eb44b" # Green
-
-                if first_transaction["transaction"]["type"] == "admin":
-                    f_transfer_text = "Hediye"
-                    f_avatar = Assets.limon_avatar
-            else:
-                f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
-                f_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
-                f_transfer_color = "#e04339" # Red
-        else:
-            
-            f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
-            f_name = first_transaction["user"]
-            f_transfer_text = "Harcama" # Expense
-            f_transfer_color = "#e04339" # Red
-            f_avatar = Assets.expense_avatar
-
-            # Open Avatar
-            #f_avatar = await Functions.open_avatar(f_avatar)
-
         
-        #* --------------SECOND TRANSACTION--------------
-        if len(transactions) > 1:
-            # Meaning of s in the variables is Second
-            second_transaction = transactions[1]
+        img = await draw_balance_main(self.bot, interaction)
 
-            s_uid = second_transaction["user"] # User ID
-            if isinstance(s_uid, int):
-                s_user = interaction.client.get_user(s_uid) # Get user in client
-                
-                # User Check
-                if s_user is None:
-                    s_avatar, s_name = Functions.user_not_found_err()
-                else:
-                    s_name = s_user.name
-                    s_avatar = s_user.avatar
-
-                    if s_avatar is None:
-                        s_avatar = Assets.default_avatar
-                    
-                    # Open Avatar
-                    s_avatar = await Functions.open_avatar(s_avatar)
-                
-                if second_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
-                    s_transfer_amount = f"+{second_transaction['amount']:,}".replace(',', '.')
-                    s_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
-                    s_transfer_color = "#7eb44b" # Green
-
-                    if second_transaction["transaction"]["type"] == "admin":
-                        s_transfer_text = "Hediye"
-                        s_avatar = Assets.limon_avatar
-                else:
-                    s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
-                    s_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
-                    s_transfer_color = "#e04339" # Red
-            else:
-                s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
-                s_name = second_transaction["user"]
-                s_transfer_text = "Harcama" # Expense
-                s_transfer_color = "#e04339" # Red
-                s_avatar = Assets.expense_avatar
-
-        #* --------------BASE IMAGE AND RECTANGLE--------------
-        img = Assets.template
-        rectangle = Assets.rectangle
-        w, h = img.size
-
-        #* --------------COMMAND USER AVATAR--------------
-        user_avatar = user.avatar # Command user
-
-        if user_avatar is None:
-            user_avatar = Assets.default_avatar
-
-        user_avatar = user_avatar.replace(size=256)
-        data = BytesIO(await user_avatar.read())
-        user_avatar = Image.open(data).convert("RGBA")
-
-        # Masking on circle
-        user_avatar = Functions.circle(user_avatar,size = (213, 213))
-        user_avatar = user_avatar.resize((213, 213), Image.LANCZOS)
-        img.paste(user_avatar, (949, 79), user_avatar)
-
-        #* --------------DRAWING--------------
-        # Draw
-        draw = ImageDraw.Draw(img)
-
-        # Offsets
-        offset_x = 60
-        offset_y = 890
-        transfer_money_offset_y = 983
-
-        money = f"{wallet['cash']:,}".replace(',', '.') # User's money -> 1.000.000
-
-        # Balance 
-        draw.text(((w/2),461), text = money, font = Assets.main_money_font, fill = "#ffffff", anchor = "ma")
-
-        # Account No
-        draw.text((333, 655), text = "Hesap No:", font = Assets.account_number_font, fill = "#bcbcbc")
-        draw.text((530, 655), text = str(user.id), font = Assets.account_number_font, fill = "#ffffff")
-
-        #* --------------RECTANGLE TRANSFER BOX--------------
-        if len(first_transaction) == 0:
-            text = "Geçmiş İşlem Bulunamadı"
-            draw.text(((w/2), h/2), text = text, font = Assets.fail_font, fill = "#bcbcbc", anchor = "ma")
-        else:
-            img.paste(rectangle, (offset_x, offset_y), rectangle)
-
-            # Transfer Text -> "Gelen Transfer" or "Giden Transfer"
-            draw.text((332, offset_y + 70), text = f_transfer_text, font = Assets.transfer_text_font, fill = "#ffffff")
-
-            # Avatar 
-            f_avatar = Functions.circle(f_avatar, size = (180, 180))
-            f_avatar = f_avatar.resize((180, 180), Image.LANCZOS)
-
-            img.paste(f_avatar, (112, offset_y + 40), f_avatar)
-
-            # Transfer User
-            draw.text((332, offset_y + 131), text = f_name, font = Assets.transfer_user_font, fill = "#bcbcbc")
-
-            # Transfer Amount
-            draw.text((1170, transfer_money_offset_y), text = f_transfer_amount, font = Assets.transfer_money_font, fill = f_transfer_color, anchor = "ra")
-
-            # Second Transaction Rectange Box
-            if len(second_transaction) > 0:
-                
-                offset_y += 350
-                img.paste(rectangle, (offset_x, offset_y), rectangle)
-
-                # Transfer Text -> "Gelen Transfer" or "Giden Transfer"
-                draw.text((332, offset_y + 70), text = s_transfer_text, font = Assets.transfer_text_font, fill = "#ffffff")
-
-                # Avatar 
-                s_avatar = Functions.circle(s_avatar, size = (180, 180))
-                s_avatar = s_avatar.resize((180, 180), Image.LANCZOS)
-
-                img.paste(s_avatar, (112, offset_y + 40), s_avatar)
-
-                # Transfer User
-                draw.text((332, offset_y + 131), text = s_name, font = Assets.transfer_user_font, fill = "#bcbcbc")
-
-                # Transfer Amount
-                transfer_money_offset_y += 350
-                draw.text((1170, transfer_money_offset_y), text = s_transfer_amount, font = Assets.transfer_money_font, fill = s_transfer_color, anchor = "ra")
-
-        #* --------------BOTTOM OPPORTUNITY BOX--------------
-        draw.text((335,1901), text = "Fırsat Yok", font = Assets.fail_font, fill = "#bcbcbc", anchor = "ma")
-        draw.text((915,1901), text = "Fırsat Yok", font = Assets.fail_font, fill = "#bcbcbc", anchor = "ma")
-
-        #* --------------SAVE & SEND IMAGE--------------
         with BytesIO() as a:
             img.save(a, "PNG")
             a.seek(0)
-            await interaction.followup.send(content = None, file = File(a, "LimonWallet.png"))
+            await interaction.followup.send(content = None, file = File(a, "LimonWallet.png"), view=Button(self.bot, interaction.user.id))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Balance(bot))        
