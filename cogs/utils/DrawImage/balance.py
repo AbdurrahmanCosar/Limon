@@ -28,9 +28,9 @@ async def draw_balance_main(client, interaction):
 
             if f_avatar is None:
                 f_avatar = Assets.default_avatar
-            
-            # Open Avatar
-            f_avatar = await Functions.open_avatar(f_avatar)
+            else:
+                # Open Avatar
+                f_avatar = await Functions.open_avatar(f_avatar)
         
         if first_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
             f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
@@ -188,63 +188,93 @@ async def draw_balance_transactions(client, interaction):
     user = interaction.user
 
     wallet, _ = await create_wallet(client, user.id)
-
     transactions = wallet["recent_transactions"]["transactions"]
     
     img = Assets.transaction_template
     rectangle = Assets.transaction_rectangle
+    w, h = img.size
+
     draw = ImageDraw.Draw(img)
     
-    offset_x = 63
-    offset_y = 512
+    offset_y = 539
 
     user_avatar = user.avatar
     if user_avatar is None:
         user_avatar = Assets.default_avatar
 
+    #* --------------FONTS--------------
+    big_bold = Assets.transaction_transfer_text_font_b
+    small_bold = Assets.transaction_transfer_user_font
+    small_semibold = Assets.transaction_transfer_font_s
+
+    #* --------------COLOURS--------------
+    white = "#efefef"
+    gray = "#bcbcbc"
+    black = "#151515"
+    green = "#7eb44b"
+    red = "#e04339"
+
+    #* --------------PROFILE--------------
     user_avatar = await Functions.open_avatar(user_avatar)
+    user_avatar = Functions.circle(user_avatar,size = (180, 180))
+    user_avatar = user_avatar.resize((180, 180), Image.LANCZOS)
 
-    # Masking on circle
-    user_avatar = Functions.circle(user_avatar,size = (233, 233))
-    user_avatar = user_avatar.resize((233, 233), Image.LANCZOS)
-    img.paste(user_avatar, (941, 76), user_avatar)
+    img.paste(user_avatar, (76, 76), user_avatar)
 
-    for transaction in transactions[:7]:
+    draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
+    draw.text((296, 128 + 30), text = user.name, font = big_bold, fill = white)
 
-        img.alpha_composite(rectangle, (offset_x, offset_y))
-
-        if transaction["transaction"]["type"] == "expense":
-            avatar = Assets.expense_avatar
-            transfer_name = transaction["user"]
-            transfer_amount = f"-{transaction['amount']:,}".replace(',', '.')
-            transfer_text = "Harcama"
-            transfer_color = "#e04339" # Red
-        elif transaction["transaction"]["type"] in ("transfer", "admin"):
-            transfer_user = interaction.client.get_user(user.id)
-            transfer_name = transfer_user.name
-
-            if transfer_user.avatar is None:
-                avatar = Assets.default_avatar
-            else:
-                avatar = await Functions.open_avatar(transfer_user.avatar)
-
-            if transaction["transaction"]["is_incomming"] is True:
-                transfer_amount = f"+{transaction['amount']:,}".replace(',', '.')
-                transfer_text = "Gelen Transfer"
-                transfer_color = "#7eb44b" # Green
-            else:
-                transfer_amount = f"-{transaction['amount']:,}".replace(',', '.')
-                transfer_text = "Giden Transfer"
-                transfer_color = "#e04339" # Red
+    for index, data in enumerate(transactions[:6]):
+        if index % 2 == 0:
+            img.paste(rectangle, (0, offset_y), rectangle)
         
-        draw.text((278, offset_y + 45), text = transfer_text, font = Assets.transaction_transfer_text_font, fill="#ffffff")
-        draw.text((278, offset_y + 96), text = transfer_name, font = Assets.transaction_transfer_user_font, fill="#bcbcbc")
-        draw.text((1135, offset_y + 72), text = transfer_amount, font = Assets.transaction_transfer_money_font, fill = transfer_color, anchor = "ra")
+        uid = data["user"]
 
-        avatar = Functions.circle(avatar,size = (144, 144))
-        avatar = avatar.resize((144, 144), Image.LANCZOS)
-        img.paste(avatar, (110, offset_y + 26), avatar)
+        if isinstance(uid, int):
+            transfer_user = interaction.client.get_user(uid)
 
-        offset_y += 216
+            if transfer_user is None:
+                name, avatar = Functions.user_not_found_err()
+            else:
+                name = transfer_user.name
+                avatar = transfer_user.avatar
+
+                if avatar is None:
+                    avatar = Assets.default_avatar
+                else:
+                    avatar = await Functions.open_avatar(avatar)
+
+            
+                
+            if data["transaction"]["is_incomming"] is True:
+                text = "Gelen Transfer"
+                amount = f"+{data['amount']:,}".replace(',', '.')
+                color = green
+                transaction_side = "Kimden: "
+            else:
+                text = "Giden Transfer"
+                amount = f"-{data['amount']:,}".replace(',', '.')
+                color = red
+                transaction_side = "Kime: "
+            
+        else:
+            name, avatar = data["user"], Assets.expense_avatar
+            text = "Harcama"
+            amount = f"-{data['amount']:,}".replace(',', '.')
+            color = red
+            transaction_side = ""
+
+
+        avatar = Functions.circle(avatar, size = (191, 191))
+        avatar = avatar.resize((191, 191), Image.LANCZOS)
+        img.paste(avatar, (75, offset_y + 15), avatar)
+
+        draw.text((291, offset_y + 50), text = text, font = big_bold, fill = black)
+        draw.text((291, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
+        draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
+        draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
+
+        offset_y += 225
+
 
     return img
