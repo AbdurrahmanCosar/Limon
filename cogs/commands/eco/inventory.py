@@ -145,6 +145,7 @@ class ButtonMenu(ui.View):
         for child in self.children:
             if child.custom_id != button:
                 child.disabled = False
+                child.style = ButtonStyle.blurple
             else:
                 child.style = ButtonStyle.success
                 child.disabled = True
