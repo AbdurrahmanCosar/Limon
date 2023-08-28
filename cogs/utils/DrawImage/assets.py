@@ -10,12 +10,8 @@ from PIL import Image, ImageFont
 class _Assets:
     # Images
     default_avatar = Image.open("cogs/assets/images/DiscordLogo.png").convert("RGBA")
-    expense_avatar = Image.open("cogs/assets/images/expense_icons/market_icon.png").convert("RGBA")
     limon_avatar = Image.open("cogs/assets/images/SenderLimon.png").convert("RGBA")
-    template = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
-    rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
-    transaction_template = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
-    transaction_rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
+    verify = Image.open(r"cogs/assets/images/badges/verify.png").convert("RGBA")
 
     
     # Fonts
@@ -23,9 +19,10 @@ class _Assets:
     account_number_font = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
     fail_font = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
 
-    box_big_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 190)
-    box_medium_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 120)
-    box_small_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 66)
+    user_info_black = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 50, encoding="unic")
+    user_info_bold = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBold.otf", 50, encoding="unic")
+    user_info_semibold = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 47, encoding="unic")
+    user_info_numbers = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 49, encoding="unic")
 
     transfer_text_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
     transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
