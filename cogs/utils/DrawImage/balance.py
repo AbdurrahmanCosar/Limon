@@ -8,19 +8,13 @@
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 from ..database.fetchdata import create_wallet
 from .functions import Functions
-from .assets import Assets, Icons
-from data import transactions as tr
-
-transactions = tr["transactions"]
-wallet = {
-    "cash": 15000
-}
+from .assets import Assets
 
 async def draw_balance_main(client, interaction):
     user = interaction.user
 
-    #wallet, _ = await create_wallet(client, user.id)
-    #transactions = wallet["recent_transactions"]["transactions"]
+    wallet, _ = await create_wallet(client, user.id)
+    transactions = wallet["recent_transactions"]["transactions"]
 
     #* --------------FIRST TRANSACTION--------------
     # Meaning of f in the variables is First
@@ -200,8 +194,8 @@ async def draw_balance_main(client, interaction):
 async def draw_balance_transactions(client, interaction):
     user = interaction.user
 
-    #wallet, _ = await create_wallet(client, user.id)
-    #transactions = wallet["recent_transactions"]["transactions"]
+    wallet, _ = await create_wallet(client, user.id)
+    transactions = wallet["recent_transactions"]["transactions"]
     
     img = Assets.transaction_template
     rectangle = Assets.transaction_rectangle
