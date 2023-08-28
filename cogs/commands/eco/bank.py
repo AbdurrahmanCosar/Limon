@@ -10,15 +10,15 @@ from discord import app_commands, Interaction, File, ui, ButtonStyle
 from discord.ext import commands
 from discord.interactions import Interaction
 from cogs.utils.cooldown import set_cooldown
-from cogs.utils.DrawImage.balance import draw_balance_main, draw_balance_transactions
+from cogs.utils.DrawImage.Draw.bank import DrawBankImages
 from cogs.utils.database.fetchdata import create_wallet
 from io import BytesIO
 
 
-class Button(ui.View):
-    def __init__(self, client, uid: int):
-        super().__init__(timeout=None)
-        self.client = client 
+class Button(ui.View, DrawBankImages):
+    def __init__(self, client, uid: int, draw_class):
+        super().__init__()
+        self.draw = draw_class
         self.uid = uid
         self.cd_mapping = commands.CooldownMapping.from_cooldown(1, 10, commands.BucketType.member)
 
@@ -52,7 +52,7 @@ class Button(ui.View):
         await interaction.response.defer()
         self.disable_buttons("balance_btn")
 
-        img = await draw_balance_main(self.client, interaction)
+        img = await self.draw.draw_bank_balance(self.client, interaction)
 
         with BytesIO() as x:
             img.save(x, "PNG")
@@ -64,29 +64,31 @@ class Button(ui.View):
         await interaction.response.defer()
         self.disable_buttons("transaction_btn")
         
-        img = await draw_balance_transactions(self.client, interaction)
+        img = await self.draw.draw_bank_transactions(self.client, interaction)
 
         with BytesIO() as x:
             img.save(x, "PNG")
             x.seek(0)
             await interaction.edit_original_response(attachments = [File(x, "LimonTransaction.png")], view=self)
 
-class Balance(commands.Cog):
+class Bank(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "balance", description="View your balance")
+    @app_commands.command(name = "bank", description="View your bank account")
     @app_commands.checks.dynamic_cooldown(set_cooldown(15))
     async def balance(self, interaction: Interaction):
         await interaction.response.defer()
+
+        draw = DrawBankImages(self.bot, interaction)
         
-        img = await draw_balance_main(self.bot, interaction)
+        img = await draw.draw_bank_balance(self.bot, interaction)
 
         with BytesIO() as a:
             img.save(a, "PNG")
             a.seek(0)
-            await interaction.followup.send(content = None, file = File(a, "LimonWallet.png"), view=Button(self.bot, interaction.user.id))
+            await interaction.followup.send(content = None, file = File(a, "LimonWallet.png"), view=Button(self.bot, interaction.user.id, draw))
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Balance(bot))        
+    await bot.add_cog(Bank(bot))        
         
