@@ -1,13 +1,26 @@
+"""
+ * Limon Bot for Discord
+ * Copyright (C) 2022 AbdurrahmanCosar
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+"""
+
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 from ..database.fetchdata import create_wallet
 from .functions import Functions
-from ..constants import Assets
+from .assets import Assets, Icons
+from data import transactions as tr
+
+transactions = tr["transactions"]
+wallet = {
+    "cash": 15000
+}
 
 async def draw_balance_main(client, interaction):
     user = interaction.user
 
-    wallet, _ = await create_wallet(client, user.id)
-    transactions = wallet["recent_transactions"]["transactions"]
+    #wallet, _ = await create_wallet(client, user.id)
+    #transactions = wallet["recent_transactions"]["transactions"]
 
     #* --------------FIRST TRANSACTION--------------
     # Meaning of f in the variables is First
@@ -187,8 +200,8 @@ async def draw_balance_main(client, interaction):
 async def draw_balance_transactions(client, interaction):
     user = interaction.user
 
-    wallet, _ = await create_wallet(client, user.id)
-    transactions = wallet["recent_transactions"]["transactions"]
+    #wallet, _ = await create_wallet(client, user.id)
+    #transactions = wallet["recent_transactions"]["transactions"]
     
     img = Assets.transaction_template
     rectangle = Assets.transaction_rectangle
@@ -258,19 +271,28 @@ async def draw_balance_transactions(client, interaction):
                 transaction_side = "Kime: "
             
         else:
-            name, avatar = data["user"], Assets.expense_avatar
-            text = "Harcama"
-            amount = f"-{data['amount']:,}".replace(',', '.')
-            color = red
-            transaction_side = ""
+            try:
+                name, avatar = Functions.expense_icon(uid)
+                transaction_side = ""
+            except Exception as e:
+                print(e)
+
+            if data["transaction"]["is_incomming"] is False:
+                text = "Harcama"
+                amount = f"-{data['amount']:,}".replace(',', '.')
+                color = red
+            else:
+                text = "Gelir"
+                amount = f"+{data['amount']:,}".replace(',', '.')
+                color = green
 
 
-        avatar = Functions.circle(avatar, size = (191, 191))
-        avatar = avatar.resize((191, 191), Image.LANCZOS)
-        img.paste(avatar, (75, offset_y + 15), avatar)
+        avatar = Functions.circle(avatar, size = (170, 170))
+        avatar = avatar.resize((170, 170), Image.LANCZOS)
+        img.paste(avatar, (75, offset_y + 25), avatar)
 
-        draw.text((291, offset_y + 50), text = text, font = big_bold, fill = black)
-        draw.text((291, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
+        draw.text((271, offset_y + 50), text = text, font = big_bold, fill = black)
+        draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
         draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
         draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
 

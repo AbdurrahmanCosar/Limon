@@ -1,6 +1,13 @@
+"""
+ * Limon Bot for Discord
+ * Copyright (C) 2022 AbdurrahmanCosar
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+"""
+
 from PIL import Image, ImageDraw, ImageChops
-from ..constants import Assets
 from io import BytesIO
+from .assets import Assets, Icons
 
 class Functions:
     def user_not_found_err():
@@ -26,3 +33,13 @@ class Functions:
         pfp.putalpha(mask)
 
         return pfp
+
+    def expense_icon(expense_type: str): #, expense_icons: dict
+        types = {k:v for k, v  in Icons.expense_icons.items()}
+        expense_type = expense_type.lower()
+
+        if expense_type in types:
+            items = types[expense_type]
+            print(5)
+            return items["name"], items["image"]
+
