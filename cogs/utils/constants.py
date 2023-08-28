@@ -75,33 +75,3 @@ class _Users:
 Users = _Users()
 
 Channels = _Channels()
-
-class _Assets:
-    # Images
-    default_avatar = Image.open("cogs/assets/images/DiscordLogo.png").convert("RGBA")
-    expense_avatar = default_avatar
-    limon_avatar = Image.open("cogs/assets/images/SenderLimon.png").convert("RGBA")
-    template = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
-    rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
-    transaction_template = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
-    transaction_rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
-
-    
-    # Fonts
-    main_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 158)
-    account_number_font = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
-    fail_font = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
-
-    box_big_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 190)
-    box_medium_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 120)
-    box_small_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 66)
-
-    transfer_text_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    transfer_user_font = ImageFont.truetype("cogs/assets/fonts/coolveticaCondensedRG.otf", 70)
-
-    transaction_transfer_text_font_b = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 61)
-    transaction_transfer_font_s = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-SemiBold.ttf", 46)
-    transaction_transfer_user_font = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 46)
-
-Assets = _Assets()
