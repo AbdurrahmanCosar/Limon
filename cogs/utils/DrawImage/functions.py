@@ -66,7 +66,6 @@ class Functions:
 
         if expense_type in types:
             items = types[expense_type]
-            print(5)
             return items["name"], items["image"]
 
     
