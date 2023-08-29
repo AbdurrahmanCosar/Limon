@@ -9,6 +9,7 @@ from discord import app_commands, Interaction, Embed, SelectOption, ButtonStyle,
 from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.functions import balance_check
+from cogs.utils.transactions import DataGenerator
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
@@ -47,6 +48,7 @@ class FishingEquipmentDropdown(ui.Select):
 
         user_wallet, w_collection = await create_wallet(self.bot, user.id)
         user_inventory, i_collection = await create_inventory_data(self.bot, user.id)
+        
 
         if value == "sellitem":
             if "fishing" not in user_inventory["items"]:
@@ -70,6 +72,9 @@ class FishingEquipmentDropdown(ui.Select):
         price = fishing_item["price"]
         durability = 100
 
+        transaction_list = user_wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, price, False)
+
         if await balance_check(interaction, user_wallet["cash"], price) is False:
             return
 
@@ -77,6 +82,7 @@ class FishingEquipmentDropdown(ui.Select):
 
         user_inventory["items"].update(data)
         user_wallet["cash"] -= price
+        transaction_list = transactions.save_expense_data("store")
 
         await i_collection.replace_one({"_id": user.id}, user_inventory)
         await w_collection.replace_one({"_id": user.id}, user_wallet)

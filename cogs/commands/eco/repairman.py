@@ -9,6 +9,7 @@ from discord import app_commands, Interaction, ui, SelectOption, Embed
 from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.functions import balance_check
+from cogs.utils.transactions import DataGenerator
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
@@ -39,17 +40,20 @@ class Dropdown(ui.Select):
 
         inventory, i_collection = await create_inventory_data(self.client, user.id)
         wallet, w_collection = await create_wallet(self.client, user.id)
-
+        
         value = self.values[0]
         price = 12 * (100 - self.items[value]["durability"])
         name = basic_items[inventory["items"][value]]["name"]
 
+        transaction_list = wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, price, False)
 
         if await balance_check(interaction, wallet['cash'], price) is False:
             return
         
         inventory["items"][value]["durability"] = 100
         wallet['cash'] -= price
+        transaction_list = transactions.save_expense_data("repair")
         
         await i_collection.replace_one({"_id": user.id}, inventory)
         await w_collection.replace_one({"_id": user.id}, wallet)

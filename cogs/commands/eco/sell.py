@@ -5,10 +5,11 @@
  * For more information, see README.md and LICENSE
 """
 
-from discord import app_commands, Interaction, Embed, ButtonStyle, ui
+from discord import app_commands, Interaction, Embed, ButtonStyle, ui, Member
 from discord.ext import commands
 from cogs.utils.constants import Emojis, Game
 from cogs.utils.cooldown import set_cooldown
+from cogs.utils.transactions import DataGenerator
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_inventory_data, create_wallet
 from yaml import Loader, load
@@ -27,14 +28,13 @@ hunts_list = load(hunt_file, Loader = Loader)
 
 
 class ButtonMenu(ui.View):
-    def __init__(self, uid, client, fish_price, hunt_price, mine_price, wood_price):
+    def __init__(self, uid: Member.id, client: commands.Bot, prices: list, embed: Embed):
         super().__init__()
         self.id = uid
         self.client = client
-        self.f_price = fish_price
-        self.h_price = hunt_price
-        self.m_price = mine_price
-        self.w_price = wood_price
+        self.embed = embed
+        self.prices = prices
+        self.total_money = 0
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user.id != self.id:
@@ -42,95 +42,108 @@ class ButtonMenu(ui.View):
             return False
         return True
 
-    @ui.button(label = "Balıkları Sat", style = ButtonStyle.primary, emoji = ':fish:')
-    async def sell_fishes_button(self, interacion: Interaction, button):
-        user = interacion.user
+    def enable_button(self):
+        for child in self.children:
+            if child.custom_id == "withdraw":
+                if child.disabled is False:
+                    child.disabled = True
+
+    @ui.button(label = "Balıkları Sat", style = ButtonStyle.primary, emoji = ':fish:', custom_id = "sellfishes")
+    async def sell_fishes_button(self, interaction: Interaction, button):
+        user = interaction.user
 
         button.label = "Balıklar Satıldı!"  # New Button Label
         button.style = ButtonStyle.secondary  # New Button Stlye
         button.disabled = True  # New Button Disabled
 
-        inventory, i_collection = await create_inventory_data(self.client, user.id)
-        wallet, w_collection = await create_wallet(self.client, user.id)
+        self.total_money += self.prices[0]
+        self.enable_button()
 
+        inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["fishes"].clear()
-        wallet['cash'] += self.f_price
 
-        await i_collection.replace_one({"_id": user.id}, inventory)
-        await w_collection.replace_one({"_id": user.id}, wallet)
-        await interacion.response.edit_message(view = self)
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
+
+        await collection.replace_one({"_id": user.id}, inventory)
+        await interaction.response.edit_message(embed = self.embed, view = self)
   
-    @ui.button(label = "Avları Sat", style = ButtonStyle.primary, emoji = ':deer:')
-    async def sell_hunts_button(self, interacion: Interaction, button):
-        user = interacion.user
-
-        if self.h_price == 0:
-            button.label = "Av Yok!!"  # New Button Label
-            button.style = ButtonStyle.secondary  # New Button Stlye
-            button.disabled = True  # New Button Disabled
-            return await interacion.response.edit_message(view=self)
+    @ui.button(label = "Avları Sat", style = ButtonStyle.primary, emoji = ':deer:', custom_id = "sellhunts")
+    async def sell_hunts_button(self, interaction: Interaction, button):
+        user = interaction.user
 
         button.label = "Avlar Satıldı!"  # New Button Label
         button.style = ButtonStyle.secondary  # New Button Stlye
         button.disabled = True  # New Button Disabled
 
-        inventory, i_collection = await create_inventory_data(self.client, user.id)
-        wallet, w_collection = await create_wallet(self.client, user.id)
+        self.total_money += self.prices[1]
+        self.enable_button()
 
+        inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["hunts"].clear()
-        wallet['cash'] += self.h_price
 
-        await i_collection.replace_one({"_id": user.id}, inventory)
-        await w_collection.replace_one({"_id": user.id}, wallet)
-        await interacion.response.edit_message(view = self)
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
 
-    @ui.button(label = "Madenleri Sat", style = ButtonStyle.primary, emoji = ':gem:')
-    async def sell_mines_button(self, interacion: Interaction, button):
-        user = interacion.user
+        await collection.replace_one({"_id": user.id}, inventory)
+        await interaction.response.edit_message(embed = self.embed, view = self)
 
-        if self.m_price == 0:
-            button.label = "Maden Yok!!"  # New Button Label
-            button.style = ButtonStyle.secondary  # New Button Stlye
-            button.disabled = True  # New Button Disabled
-            return await interacion.response.edit_message(view=self)
+    @ui.button(label = "Madenleri Sat", style = ButtonStyle.primary, emoji = ':gem:', custom_id = "sellmines")
+    async def sell_mines_button(self, interaction: Interaction, button):
+        user = interaction.user
 
         button.label = "Madenler Satıldı!"  # New Button Label
         button.style = ButtonStyle.secondary  # New Button Stlye
         button.disabled = True  # New Button Disabled
 
-        inventory, i_collection = await create_inventory_data(self.client, user.id)
-        wallet, w_collection = await create_wallet(self.client, user.id)
+        self.total_money += self.prices[2]
+        self.enable_button()
 
+        inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["mines"].clear()
-        wallet['cash'] += self.m_price
 
-        await i_collection.replace_one({"_id": user.id}, inventory)
-        await w_collection.replace_one({"_id": user.id}, wallet)
-        await interacion.response.edit_message(view = self)
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
 
-    @ui.button(label = "Oduları Sat", style = ButtonStyle.primary, emoji = ':wood:')
-    async def sell_wood_button(self, interacion: Interaction, button):
-        user = interacion.user
+        await collection.replace_one({"_id": user.id}, inventory)
+        await interaction.response.edit_message(embed = self.embed, view = self)
 
-        if self.w_price == 0:
-            button.label = "Odun Yok!!"  # New Button Label
-            button.style = ButtonStyle.secondary  # New Button Stlye
-            button.disabled = True  # New Button Disabled
-            return await interacion.response.edit_message(view=self)
+    @ui.button(label = "Oduları Sat", style = ButtonStyle.primary, emoji = ':wood:', custom_id = "sellwood")
+    async def sell_wood_button(self, interaction: Interaction, button):
+        user = interaction.user
 
         button.label = "Odunlar Satıldı!"  # New Button Label
         button.style = ButtonStyle.secondary  # New Button Stlye
         button.disabled = True  # New Button Disabled
 
-        inventory, i_collection = await create_inventory_data(self.client, user.id)
-        wallet, w_collection = await create_wallet(self.client, user.id)
+        self.total_money += self.prices[3]
+        self.enable_button()
 
+        inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["wood"].clear()
-        wallet['cash'] += self.w_price
 
-        await i_collection.replace_one({"_id": user.id}, inventory)
-        await w_collection.replace_one({"_id": user.id}, wallet)
-        await interacion.response.edit_message(view = self)
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
+
+        await collection.replace_one({"_id": user.id}, inventory)
+        await interaction.response.edit_message(embed = self.embed, view = self)
+
+    @ui.button(label = "Paranı Al", style = ButtonStyle.success, disabled = True, custom_id = "withdraw")
+    async def withdraw_money(self, interaction: Interaction, button):
+        user = interaction.user
+
+        wallet, collection = await create_wallet(self.client, user.id)
+        transaction_list = wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, self.total_money, True)
+
+
+        wallet["cash"] += self.total_money
+        transaction_list = transactions.save_expense_data("sell")
+        self.total_money = 0
+
+        button.label = "Paran Çekildi!"
+        button.disabled = True
+
+        self.embed.set_footer(text = f"Hesabınıa aktarılan LiCash: **{self.total_money}**")
+
+        await collection.replace_one({"_id": user.id}, wallet)
+        await interaction.response.edit_message(embed = self.embed, view = self)
 
 
 class Sell(commands.Cog):
@@ -179,7 +192,8 @@ class Sell(commands.Cog):
 
         embed = Embed(
             color = 0x2b2d31,
-            description="Merhaba, satıcıya hoş geldin! Burada balıklarını, madenlerini, odunlarını ve avlarını satabilirsin. İşte senin envanterin:"
+            description="Merhaba, satıcıya hoş geldin! Burada balıklarını, madenlerini, odunlarını ve avlarını satabilirsin.\n" + 
+            "Elindekileri sattıktan sonra paranı çekmeyi unutma! İşte senin envanterin:"
         )
         embed.set_author(name=user.name, icon_url=user.avatar.url)
         embed.add_field(name = ":fish: Balıklar", value = f"{fish_count} adet balığınız var\nToplam **{fish_price}LC**", inline = True)
@@ -187,7 +201,9 @@ class Sell(commands.Cog):
         embed.add_field(name = ":gem: Madenler", value = f"{mine_count} adet madeniniz var\nToplam **{mine_price}LC**", inline = False)
         embed.add_field(name = ":wood: Odunlar", value = f"{wood_count} adet odununuz var\nToplam **{wood_price}LC**", inline = True)
 
-        view = ButtonMenu(user.id, self.bot, fish_price=fish_price, hunt_price=hunt_price, mine_price=mine_price, wood_price=wood_price)
+        prices = [fish_price, hunt_price, mine_price, wood_price]
+
+        view = ButtonMenu(user.id, self.bot, prices,  embed=embed)
         view.add_item(CloseButton(user.id))
 
         if fish_price == 0:

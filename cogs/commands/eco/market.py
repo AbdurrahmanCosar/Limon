@@ -9,6 +9,7 @@ from discord import app_commands, Interaction, Embed, SelectOption, ButtonStyle,
 from discord.ext import commands
 from cogs.utils.constants import Emojis
 from cogs.utils.functions import balance_check
+from cogs.utils.transactions import DataGenerator
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.buttons import CloseButton
 from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
@@ -37,6 +38,7 @@ class FishingFoodDropdown(ui.Select):
 
         user = interaction.user
         value = self.values[0] # Selected option
+        
 
         food_name = market["fishfoods"][value]["name"]
         food_unit = market["fishfoods"][value]["unit"]
@@ -44,6 +46,8 @@ class FishingFoodDropdown(ui.Select):
 
         user_wallet, w_collection = await create_wallet(self.bot, user.id)
         user_inv, i_collection = await create_inventory_data(self.bot, user.id)
+        transaction_list = user_wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, food_price, False)
 
         
         if await balance_check(interaction, user_wallet["cash"], food_price) is False:
@@ -62,6 +66,7 @@ class FishingFoodDropdown(ui.Select):
             await i_collection.replace_one({"_id": user.id}, user_inv)
 
         user_wallet["cash"] -= food_price
+        transaction_list = transactions.save_expense_data("market")
         await w_collection.replace_one({"_id": user.id}, user_wallet)
 
         await interaction.response.send_message(content = f"{new_emoji} :worm: **|** {interaction.user.mention} **{food_price:,} LC** ödeyerek {food_unit} adet **{food_name}** satın aldınız.")
@@ -88,6 +93,8 @@ class AmmoDropdown(ui.Select):
 
         user_wallet, w_collection = await create_wallet(self.bot, user.id)
         user_inv, i_collection = await create_inventory_data(self.bot, user.id)
+        transaction_list = user_wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, ammo_price, False)
 
         
         if await balance_check(interaction, user_wallet["cash"], ammo_price) is False:
@@ -106,6 +113,7 @@ class AmmoDropdown(ui.Select):
             await i_collection.replace_one({"_id": user.id}, user_inv)
 
         user_wallet["cash"] -= ammo_price
+        transaction_list = transactions.save_expense_data("market")
         await w_collection.replace_one({"_id": user.id}, user_wallet)
 
         await interaction.response.send_message(content = f"{new_emoji} **|** {interaction.user.mention} **{ammo_price:,} LC** ödeyerek {ammo_unit} adet **{ammo_name}** satın aldınız.")

@@ -10,6 +10,7 @@ from discord.ext import commands
 from cogs.utils.constants import Emojis, Game
 from cogs.utils.buttons import CloseButton
 from cogs.utils.functions import balance_check
+from cogs.utils.transactions import DataGenerator
 from cogs.utils.database.fetchdata import create_inventory_data, create_wallet
 from cogs.utils.cooldown import set_cooldown
 from yaml import Loader, load
@@ -61,13 +62,18 @@ class Dropdown(ui.Select):
         price = Game.FuelPerLiter * (items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"] - self.vehicles[value]["fuel"])
         name = items[inventory_vehicle]["name"]
 
+        transaction_list = wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, price, False)
+
 
         if await balance_check(interaction, wallet['cash'], price) is False:
             return
         
         gas_tank_liter = items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"]
+
         inventory["items"][value]["fuel"] = gas_tank_liter
         wallet['cash'] -= price
+        transaction_list = transactions.save_expense_data("fuel")
         
         await i_collection.replace_one({"_id": user.id}, inventory)
         await w_collection.replace_one({"_id": user.id}, wallet)
@@ -81,9 +87,6 @@ class Dropdown(ui.Select):
             await interaction.response.edit_message(view = None)
 
         await interaction.followup.send(content = f"⛽ **|** {user.mention} İşte oldu! Senin için **{name}** ekipmanının deposunu doldurdum *({gas_tank_liter}L)*. Bunun için **{price:,} LC** ödedin.")
-
-
-
 
 class GasStationButton(ui.View):
     def __init__(self, client, uid):
