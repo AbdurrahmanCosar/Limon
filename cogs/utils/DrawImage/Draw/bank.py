@@ -270,11 +270,8 @@ class DrawBankImages:
                     transaction_side = "Kime: "
                 
             else:
-                try:
-                    name, avatar = Functions.expense_icon(uid)
-                    transaction_side = ""
-                except Exception as e:
-                    print(e)
+                name, avatar = Functions.expense_icon(uid)
+                transaction_side = ""
 
                 if data["transaction"]["is_incomming"] is False:
                     text = "Harcama"
@@ -296,6 +293,5 @@ class DrawBankImages:
             draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
 
             offset_y += 225
-
 
         return img
