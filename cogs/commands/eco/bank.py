@@ -9,8 +9,9 @@ from typing import Any, Coroutine
 from discord import app_commands, Interaction, File, ui, ButtonStyle
 from discord.ext import commands
 from discord.interactions import Interaction
+from cogs.utils.constants import Emojis
 from cogs.utils.cooldown import set_cooldown
-from cogs.utils.DrawImage.Draw.bank import DrawBankImages
+from cogs.utils.DrawImage.Draw.bank_ui import DrawBankImages
 from cogs.utils.database.fetchdata import create_wallet
 from io import BytesIO
 
@@ -42,7 +43,7 @@ class Button(ui.View, DrawBankImages):
         bucket = self.cd_mapping.get_bucket(interaction.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
-            await interaction.response.send_message(content = f"Buton bekleme süresinde lütfen **`{round(retry_after,1)}s`** bekleyini! ", ephemeral = True)
+            await interaction.response.send_message(content = f"{Emojis.clock} Buton bekleme süresinde lütfen **`{round(retry_after,1)}s`** bekleyini! ", ephemeral = True)
             return False
         return True
 
@@ -80,7 +81,10 @@ class Bank(commands.Cog):
     async def balance(self, interaction: Interaction):
         await interaction.response.defer()
 
-        draw = DrawBankImages(self.bot, interaction)
+        wallet, _ = await create_wallet(self.bot, interaction.user.id)
+        transaction_list = wallet["recent_transactions"]["transactions"]
+
+        draw = DrawBankImages(self.bot, interaction, transaction_list, wallet["cash"])
         
         img = await draw.draw_bank_balance(self.bot, interaction)
 

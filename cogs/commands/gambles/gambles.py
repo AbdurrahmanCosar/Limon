@@ -12,12 +12,12 @@ from discord.ext import commands
 from cogs.utils.functions import add_xp
 from cogs.utils.database.fetchdata import create_wallet
 from cogs.utils.cooldown import set_cooldown
-from cogs.utils.constants import Gamble, Emojis
+from cogs.utils.constants import Game, Emojis
 from cogs.utils.functions import balance_check
 from random import randint
 
 
-MAX_BET_VALUE = Gamble.max_bet_value
+MAX_BET_VALUE = Game.max_bet_value
 morelicash = Emojis.morelicash
 cross = Emojis.cross
 coinfront = Emojis.coinfront

@@ -7,14 +7,14 @@
 from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
-from cogs.utils.constants import Gamble, Emojis
+from cogs.utils.constants import Game, Emojis
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.functions import balance_check, add_xp
 from cogs.utils.database.fetchdata import create_wallet
 import random as r
 
 
-MAX_BET_VALUE = Gamble.max_bet_value
+MAX_BET_VALUE = Game.max_bet_value
 slot_left = Emojis.slotleft
 slot_mid = Emojis.slotmid
 slot_right = Emojis.slotright
