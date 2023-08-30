@@ -11,12 +11,8 @@ class _Link:
 
 Link = _Link
 
-class _Gamble:
-    max_bet_value = 100000
-
-Gamble = _Gamble()
-
 class _Game:
+    max_bet_value = 100000
     FuelPerLiter: 4
     FishPricePerSize: 3
     MinePricePerKG: 2
