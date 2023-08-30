@@ -15,22 +15,25 @@ class _Assets:
 
     
     # Fonts
-    main_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 158)
-    account_number_font = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
-    fail_font = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
+    acumin_black_158 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 158)
+    acumin_black_90 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
+    acumin_black_50 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 50, encoding="unic")
+    acumin_bold_50 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBold.otf", 50, encoding="unic")
+    
+    acumin_semibold_66 = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
+    acumin_semibold_49 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 49, encoding="unic")
+    acumin_semibold_47 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 47, encoding="unic")
 
-    user_info_black = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 50, encoding="unic")
-    user_info_bold = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBold.otf", 50, encoding="unic")
-    user_info_semibold = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 47, encoding="unic")
-    user_info_numbers = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 49, encoding="unic")
+    bevietnam_bold_98 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 98)
+    bevietnam_bold_61 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 61)
+    bevietnam_bold_49 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 49)
+    bevietnam_bold_46 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 46)
+    bevietnam_bold_32 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 32)
+    bevietnam_semibold_46 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-SemiBold.ttf", 46)
 
-    transfer_text_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    transfer_user_font = ImageFont.truetype("cogs/assets/fonts/coolveticaCondensedRG.otf", 70)
-
-    transaction_transfer_text_font_b = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 61)
-    transaction_transfer_font_s = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-SemiBold.ttf", 46)
-    transaction_transfer_user_font = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 46)
+    coolvetica_50 = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
+    coolvetica_condensed_70 = ImageFont.truetype("cogs/assets/fonts/coolveticaCondensedRG.otf", 70)
+    
 
 Assets = _Assets()
 
