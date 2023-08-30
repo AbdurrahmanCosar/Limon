@@ -8,8 +8,7 @@
 from discord import app_commands, Interaction, Member, File
 from discord.ext import commands
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
-from cogs.utils.DrawImage.Draw.user_info import UserInfo
+from cogs.utils.DrawImage.Draw.user_info_ui import UserInfo
 from typing import Optional
 # user veya interaction user objesi gönderilecek
 
