@@ -38,7 +38,7 @@ async def main():
             intents=discord.Intents.all(),
             activity = discord.Streaming(name="Economy & Fun {/}", url="https://www.twitch.tv/iamabduley"),
             testing_guild_id=1142517569950077068,
-            database_connecion=DB_CONNECTION 
+            database_connection=DB_CONNECTION 
     ) as bot:
         await bot.start(TOKEN)
 
