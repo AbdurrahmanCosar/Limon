@@ -15,7 +15,6 @@ from random import randint
 
 MAX_BET_VALUE = Game.max_bet_value
 
-
 class UpAndDownButtons(ui.View):
     def __init__(self, client: commands.Bot, uid: int, embed: Embed, nums: list, amount: int):
         super().__init__()
@@ -40,7 +39,6 @@ class UpAndDownButtons(ui.View):
     @ui.button(style=ButtonStyle.blurple, emoji="⬆️", custom_id="upbutton")
     async def up_button(self, interaction: Interaction, button):
         user = interaction.user
-        
         wallet, collection = await create_wallet(self.client, user.id)
 
         for child in self.children:
@@ -65,9 +63,9 @@ class UpAndDownButtons(ui.View):
                 name, icon_url = f"{user.name} | Tebrikler! Hepsini doğru tahmin ederek {self.amount:,} LC kazandınız.", user.avatar.url
                 self.embed.set_author(name=name, icon_url=icon_url)
                 self.disabled_all_buttons()
-                
+
                 wallet["cash"] += self.amount
-                
+
                 await collection.replace_one({"_id": user.id}, wallet)
                 await interaction.response.edit_message(embed=self.embed, view=self)
                 return
@@ -79,6 +77,7 @@ class UpAndDownButtons(ui.View):
 
             await interaction.response.edit_message(embed=self.embed, view=self)
             self.index += 1
+
         else:
             self.embed.set_author(
                 name=f"{user.name} | Maalesef kaybettiniz;c",
@@ -86,9 +85,9 @@ class UpAndDownButtons(ui.View):
             num_list = ' - '.join([str(num) for num in num_list])
             self.embed.set_footer(text=f"Doğru diziliş : ({num_list})")
             self.disabled_all_buttons()
-            
+
             wallet["cash"] -= self.amount
-                
+
             await collection.replace_one({"_id": user.id}, wallet)
             await interaction.response.edit_message(embed=self.embed, view=self)
             return
@@ -96,7 +95,6 @@ class UpAndDownButtons(ui.View):
     @ui.button(style=ButtonStyle.danger, emoji="⬇️", custom_id="downbutton")
     async def down_button(self, interaction: Interaction, button):
         user = interaction.user
-        
         wallet, collection = await create_wallet(self.client, user.id)
 
         for child in self.children:
@@ -120,9 +118,9 @@ class UpAndDownButtons(ui.View):
                 name, icon_url = f"{user.name} | Tebrikler! Hepsini doğru tahmin ederek 10 LC kazandınız.", user.avatar.url
                 self.embed.set_author(name=name, icon_url=icon_url)
                 self.disabled_all_buttons()
-                
+
                 wallet["cash"] += self.amount
-                
+
                 await collection.replace_one({"_id": user.id}, wallet)
                 await interaction.response.edit_message(embed=self.embed, view=self)
                 return
@@ -134,6 +132,7 @@ class UpAndDownButtons(ui.View):
 
             await interaction.response.edit_message(embed=self.embed, view=self)
             self.index += 1
+
         else:
             self.embed.set_author(
                 name=f"{user.name} | Maalesef kaybettiniz;c",
@@ -143,7 +142,7 @@ class UpAndDownButtons(ui.View):
 
             self.disabled_all_buttons()
             wallet["cash"] -= self.amount
-                
+
             await collection.replace_one({"_id": user.id}, wallet)
             await interaction.response.edit_message(embed=self.embed, view=self)
             return
@@ -173,14 +172,14 @@ class UpOrDownGame(commands.Cog):
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def up_or_down_game(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
         user = interaction.user
-        
+
         wallet, _ = await create_wallet(self.bot, user.id)
         check = await balance_check(interaction, wallet['cash'], amount)
         if check is False:
             return
-        
+
         await add_xp(self.bot, user.id, "gamble_xp")
-        
+
         nums = self.random_numlist_generator()
         unopened_list = " ".join([str(nums[0]), " - ?", "- ?", "- ?", "- ?"])
 
@@ -198,7 +197,6 @@ class UpOrDownGame(commands.Cog):
             button.up_button.disabled = True
 
         await interaction.response.send_message(embed=embed, view=button)
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(UpOrDownGame(bot))

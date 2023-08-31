@@ -39,7 +39,7 @@ class Dropdown(ui.Select):
         self.client = client
         self.vehicles = vehicles
         self.uid = uid
-        
+
         options = list({
             SelectOption(label=f"%{v['fuel']} / {items[k][v['custom_id']]['gas_tank_liter']} -- {Game.FuelPerLiter * (items[k][v['custom_id']]['gas_tank_liter'] - v['fuel'])} LC", value=k, description=items[k][v["custom_id"]]["name"], emoji="🛠️")
             for k, v in self.vehicles.items()
@@ -68,13 +68,13 @@ class Dropdown(ui.Select):
 
         if await balance_check(interaction, wallet['cash'], price) is False:
             return
-        
+
         gas_tank_liter = items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"]
 
         inventory["items"][value]["fuel"] = gas_tank_liter
         wallet['cash'] -= price
         transaction_list = transactions.save_expense_data("fuel")
-        
+
         await i_collection.replace_one({"_id": user.id}, inventory)
         await w_collection.replace_one({"_id": user.id}, wallet)
 
@@ -143,7 +143,7 @@ class ButtonMenu(ui.View):
             await interaction.response.send_message(content = f"{cross} Bu sizin envanteriniz değil. Buradaki butonları kullanamazsınız!", ephemeral = True)
             return False
         return True
-    
+
     def disable_buttons(self, button):
         for child in self.children:
             if child.custom_id != button:
@@ -152,7 +152,6 @@ class ButtonMenu(ui.View):
             else:
                 child.style = ButtonStyle.success
                 child.disabled = True
-    
 
     @ui.button(label = "Ekipmanlar", style = ButtonStyle.blurple, custom_id = "equipments_button")
     async def equipments_button(self, interaction: Interaction, button):
@@ -162,7 +161,6 @@ class ButtonMenu(ui.View):
         inventory, collection = await create_inventory_data(self.client, user.id)
 
         user_items = inventory["items"]
-
         message = ""
 
         if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]] == "manual"):
@@ -195,7 +193,7 @@ class ButtonMenu(ui.View):
             \n════════════════════════════════\n
             {message}""")
         embed.set_author(name=f"{user.name} adlı kullanıcının ekipmanları", icon_url = user.avatar.url)
-        
+
         await interaction.response.edit_message(view= self)
 
     @ui.button(label  = "Çanta", style = ButtonStyle.blurple, custom_id = "backpack_button")
@@ -246,13 +244,13 @@ class ButtonMenu(ui.View):
         }
         wood_ = [f":wood: **{wood_dict[w]['count']}**x {wood_list[w]['name']} - **{wood_dict['value']}**m" for w in wood_dict]
         wood_ = "\n".join(wood_) if len(wood_)>0 else "*Çantanızda hiç odun yok*"
-        
+
         """-------------------Hunts-------------------"""
         hunts_dict = {}
         [hunts_.update({hunt: hunts_.get(hunt, 0) + 1}) for hunt in hunts]
         hunts_ = [f":deer: **{hunts_dict[hunt]['count']}**x {hunts_list[hunt]['name']}" for hunt in hunts_dict]
         wood_ = "\n".join(wood_) if len(wood_)>0 else "*Çantanızda hiç av yok*"
-        
+
         embed = Embed(
             color=0x2b2d31, 
             description= f"""
@@ -270,7 +268,7 @@ class ButtonMenu(ui.View):
     @ui.button(label = "Garaj", style = ButtonStyle.blurple, custom_id = "garage_button")
     async def garage_button(self, interaction: Interaction, button):
         self.disable_buttons("garage_button")
-        
+
         user = interaction.user
         inventory, collection = await create_inventory_data(self.client, user.id)
 
@@ -280,7 +278,7 @@ class ButtonMenu(ui.View):
         mining_vehice_message = "*Bir maden aracınız yok!*"
 
         if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]] =="vehicle"):
-            
+
             u_vehicle = user_items["forestry"] # in user iventory
             i_vehicle = items["forestry"][u_vehicle["custom_id"]] # in basic_items.yml file
             forestry_vehice_message = f"""
@@ -310,10 +308,8 @@ class ButtonMenu(ui.View):
         embed.set_author(name=f"{user.name} adlı kullanıcının garajı", icon_url = user.avatar.url)
 
         self.add_item(GasStationButton(self.client, user.id))
-        
         await interaction.response.edit_message(embed = embed, view = self)
-        
-        
+
 class Inventory(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -334,4 +330,3 @@ class Inventory(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Inventory(bot))
-

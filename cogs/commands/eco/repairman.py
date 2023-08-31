@@ -24,7 +24,7 @@ class Dropdown(ui.Select):
         self.client = client
         self.items = items
         self.uid = uid
-        
+
         options = list({
             SelectOption(label=f"%{v['durability']} -- {12 * (100 - v['durability'])} LC", value=k, description=basic_items[k][v["custom_id"]]["name"], emoji="🛠️")
             for k, v in self.items.items()
@@ -40,7 +40,7 @@ class Dropdown(ui.Select):
 
         inventory, i_collection = await create_inventory_data(self.client, user.id)
         wallet, w_collection = await create_wallet(self.client, user.id)
-        
+
         value = self.values[0]
         price = 12 * (100 - self.items[value]["durability"])
         name = basic_items[inventory["items"][value]]["name"]
@@ -50,11 +50,11 @@ class Dropdown(ui.Select):
 
         if await balance_check(interaction, wallet['cash'], price) is False:
             return
-        
+
         inventory["items"][value]["durability"] = 100
         wallet['cash'] -= price
         transaction_list = transactions.save_expense_data("repair")
-        
+
         await i_collection.replace_one({"_id": user.id}, inventory)
         await w_collection.replace_one({"_id": user.id}, wallet)
 
@@ -68,12 +68,6 @@ class Dropdown(ui.Select):
 
         await interaction.followup.send(content = f"🛠️ {user.mention}**| 👨‍🔧 Jack:** İşte oldu! Senin için **{name}** ekipmanını tamir ettim *(%100)*. Bunun için **{price:,} LC** ödedin.")
 
-        
-        
-        
-        
-
-
 class Repairman(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -85,9 +79,7 @@ class Repairman(commands.Cog):
         user = interaction.user
         inventory, _ = await create_inventory_data(self.bot, user.id)
 
-
         items = {k:v for k, v in inventory["items"].items() if v["durability"] < 100}
-
         item_count = len(items)
 
         if item_count == 0:

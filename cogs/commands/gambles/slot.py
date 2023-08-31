@@ -13,7 +13,6 @@ from cogs.utils.functions import balance_check, add_xp
 from cogs.utils.database.fetchdata import create_wallet
 import random as r
 
-
 MAX_BET_VALUE = Game.max_bet_value
 slot_left = Emojis.slotleft
 slot_mid = Emojis.slotmid
@@ -29,28 +28,25 @@ class Slot(commands.Cog):
         self.bot = bot
 
     async def interaction_check(self, interaction: Interaction) -> bool:
-        
         user = interaction.user
         data = interaction.data
-        
+
         for i in data["options"]:
             if i["name"] == "amount":
                 value = i["value"]
                 user_data, collection = await create_wallet(self.bot, user.id)
-                check = balance_check(interaction, user_data["cash"], value)
-                
+                check = await balance_check(interaction, user_data["cash"], value)
+
                 if check:
                     await add_xp(self.bot, user.id, "gamble_xp")
                     return True
                 return False
             return False
-        
 
     @app_commands.command(name="slot", description="Play slot")
     @app_commands.describe(amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def slot(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
-
         user = interaction.user
         user_data, collection = await create_wallet(self.bot, user.id)
 
@@ -83,7 +79,7 @@ class Slot(commands.Cog):
 
         elif rand <= 40:
             win *= heart_reward
-            
+
             result1 = slots[1]
             result2 = slots[1]
             result3 = slots[1]
@@ -94,7 +90,7 @@ class Slot(commands.Cog):
             result1 = slots[2]
             result2 = slots[2]
             result3 = slots[2]
-        
+
         elif float(rand) <= 50:
             win *= cupcake_reward
 
@@ -108,7 +104,7 @@ class Slot(commands.Cog):
             result3 = r.choice(slots)
 
             while (result1 == result2 and result1 == result3):
-                
+
                 result1 = r.choice(slots)
                 result2 = r.choice(slots)
                 result3 = r.choice(slots)
@@ -117,7 +113,7 @@ class Slot(commands.Cog):
                 await collection.replace_one({"_id" : user.id}, user_data)
                 await interaction.edit_original_response(content = f"`LİM SLOT`\n{result1}{result2}{result3}\n`------->` {licash}{amount:,}\n`------->` Kaybettin ;c")
                 return
-            
+
         user_data['cash'] += win
         await collection.replace_one({"_id" : user.id}, user_data)
         await interaction.edit_original_response(content = f"`LİM SLOT`\n{result1}{result2}{result3}\n`------->` {licash}{amount:,}\n`------->` {licash}{win:,}")

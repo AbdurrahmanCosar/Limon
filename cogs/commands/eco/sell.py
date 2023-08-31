@@ -26,7 +26,6 @@ wood_list = load(wood_file, Loader = Loader)
 hunt_file = open("cogs/assets/yaml_files/job_yamls/hunts.yml", "rb")
 hunts_list = load(hunt_file, Loader = Loader) 
 
-
 class ButtonMenu(ui.View):
     def __init__(self, uid: Member.id, client: commands.Bot, prices: list, embed: Embed):
         super().__init__()
@@ -132,7 +131,6 @@ class ButtonMenu(ui.View):
         transaction_list = wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, self.total_money, True)
 
-
         wallet["cash"] += self.total_money
         transaction_list = transactions.save_expense_data("sell")
         self.total_money = 0
@@ -145,23 +143,18 @@ class ButtonMenu(ui.View):
         await collection.replace_one({"_id": user.id}, wallet)
         await interaction.response.edit_message(embed = self.embed, view = self)
 
-
 class Sell(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-
     @app_commands.command(name="sell", description="Sell your (fishes, hunts etc.)")
     @app_commands.checks.dynamic_cooldown(set_cooldown(30))
     async def sell(self, interaction: Interaction):
-
         user = interaction.user
 
-        wallet, w_collection = await create_wallet(self.bot, user.id)
-        inventory, i_collection = await create_inventory_data(self.bot, user.id)
-
+        inventory, _ = await create_inventory_data(self.bot, user.id)
         inv = inventory["jobs_results"]
-        
+
         # Fishes
         fish_price = 0
         fishes = [i.split('_') for i in inv["fishes"]]
@@ -224,7 +217,6 @@ class Sell(commands.Cog):
             view.sell_wood_button.disabled = True  # New Button Disabled
 
         await interaction.response.send_message(embed=embed, view = view)
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Sell(bot))

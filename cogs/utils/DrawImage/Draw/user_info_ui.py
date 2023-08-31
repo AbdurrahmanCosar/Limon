@@ -5,12 +5,12 @@
  * For more information, see README.md and LICENSE
 """
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from ...database.fetchdata import create_career_data, create_wallet
 from ..functions import Functions
 from ..assets import Assets
-from typing import Optional
-from discord import Member
+from discord import Interaction, Member
+from discord.ext.commands import Bot
 
 levels = {
     "fisher": {"gold": 200, "silver": 150, "bronze": 50},
@@ -20,9 +20,8 @@ levels = {
     "gable": {"gold": 200, "silver": 150, "bronze": 50}
 }
 
-
 class UserInfo:
-    def __init__(self, client, interaction, user):
+    def __init__(self, client: Bot, interaction: Interaction, user: Member):
         self.client = client
         self.interaction = interaction
         self.user = user
@@ -40,18 +39,16 @@ class UserInfo:
                         if user_value >= level_value:
                             badges.append(f"{level_key}_{user_key[:-3]}.png")
                             break
-
         return badges
 
     async def draw_user_info(self):
-        
         TINT_COLOR = (0, 0, 0) # Black
         TRANSPARENCY = .25 # Degree of transparency, 0-100%
         OPACITY = int(255 * TRANSPARENCY)
 
         img = Image.open(r"cogs/assets/images/user_info_template.png").convert("RGBA")
         guild_icon = Assets.default_avatar
-        #verify_icon = Image.open("fasdfa.png").convert("RGBA")
+
         avatar = Assets.default_avatar
 
         layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
@@ -67,7 +64,7 @@ class UserInfo:
 
         badges = []
         user_badges = await self.user_badges()
-        
+
         name_offset_y = 119
         display_name_offset_y = 65
 
@@ -88,7 +85,6 @@ class UserInfo:
 
             layer_draw.rounded_rectangle([(x_1, y_1), (x_2, y_2)], fill = (14, 14, 14, 25), radius = 5)
 
-
             for i in badges:
                 i = i.resize((40, 40), Image.LANCZOS)
                 layer.paste(i, (offset_x, offset_y), i)
@@ -96,13 +92,11 @@ class UserInfo:
 
             name_offset_y = 104
             display_name_offset_y = 45
-
         img.paste(layer, (0,0), layer)
 
         user_data, _ = await create_wallet(self.client, member.id)
-
         money = f"{user_data['cash']:,}"
-        
+
         if self.interaction.guild.icon is not None:
             guild_icon = await Functions.open_avatar(self.interaction.guild.icon)
 
@@ -118,10 +112,10 @@ class UserInfo:
             x_2 = x_ + text_size + 20
             y_1 = y_ - 5
             y_2 = y_ + 45
-            
+
             shape = [(x_1, y_1), (x_2,y_2)]
             draw.rounded_rectangle(shape, fill ="#ffffff", radius = 13)
-        
+
         name = f"{member.name[:12]}.." if len(member.name)>12 else member.name
         display_name = f"{member.display_name[:12]}.." if len(member.display_name)>12 else member.display_name
         status = str(self.interaction.guild.get_member(member.id).status).upper()
@@ -142,9 +136,8 @@ class UserInfo:
         # SIDE BAR
         draw.text((758, 302), money, font = Assets.acumin_semibold_49, fill= "#ffffff", anchor="ma")
         draw.text((758, 733), "Kaldırıldı!", font = Assets.acumin_semibold_49, fill= "#ffffff", anchor="ma")
-        
-        # BOTTOM
 
+        # BOTTOM
         # ID
         y = 378
         id_text_len = draw.textlength(text = str(member.id) , font = Assets.acumin_bold_50)

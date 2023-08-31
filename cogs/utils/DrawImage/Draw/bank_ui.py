@@ -5,8 +5,7 @@
  * For more information, see README.md and LICENSE
 """
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
-from ...database.fetchdata import create_wallet
+from PIL import Image, ImageDraw
 from ..functions import Functions
 from ..assets import Assets
 
@@ -15,10 +14,10 @@ class DrawBankImages:
         self.client = client
         self.interaction = interaction
         self.transactions = transaction_list
+        self.balance = balance
 
     async def draw_bank_balance(self):
         user = self.interaction.user
-
         transactions = self.transactions
 
         #* --------------FIRST TRANSACTION--------------
@@ -28,9 +27,8 @@ class DrawBankImages:
         f_uid = first_transaction["user"] # User ID
 
         if isinstance(f_uid, int):
-            
             f_user = self.interaction.client.get_user(f_uid) # Get user in client
-            
+
             # User Check
             if f_user is None:
                 f_avatar, f_name = Functions.user_not_found_err()
@@ -43,7 +41,7 @@ class DrawBankImages:
                 else:
                     # Open Avatar
                     f_avatar = await Functions.open_avatar(f_avatar)
-            
+
             if first_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
                 f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
                 f_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
@@ -56,8 +54,8 @@ class DrawBankImages:
                 f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
                 f_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
                 f_transfer_color = "#e04339" # Red
+
         else:
-            
             f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
             f_name = first_transaction["user"]
             f_transfer_text = "Harcama" # Expense
@@ -67,7 +65,6 @@ class DrawBankImages:
             # Open Avatar
             #f_avatar = await Functions.open_avatar(f_avatar)
 
-        
         #* --------------SECOND TRANSACTION--------------
         if len(transactions) > 1:
             # Meaning of s in the variables is Second
@@ -76,7 +73,7 @@ class DrawBankImages:
             s_uid = second_transaction["user"] # User ID
             if isinstance(s_uid, int):
                 s_user = self.interaction.client.get_user(s_uid) # Get user in client
-                
+
                 # User Check
                 if s_user is None:
                     s_avatar, s_name = Functions.user_not_found_err()
@@ -86,10 +83,10 @@ class DrawBankImages:
 
                     if s_avatar is None:
                         s_avatar = Assets.default_avatar
-                    
+
                     # Open Avatar
                     s_avatar = await Functions.open_avatar(s_avatar)
-                
+
                 if second_transaction["transaction"]["is_incomming"] is True: # So Incomming Money Transer
                     s_transfer_amount = f"+{second_transaction['amount']:,}".replace(',', '.')
                     s_transfer_text = "Gelen Transfer" # is "Incomming Transfer"
@@ -102,6 +99,7 @@ class DrawBankImages:
                     s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
                     s_transfer_text = "Giden Transfer" # is "Outgoing Transfer"
                     s_transfer_color = "#e04339" # Red
+
             else:
                 s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
                 s_name = second_transaction["user"]
@@ -116,7 +114,6 @@ class DrawBankImages:
 
         #* --------------COMMAND USER AVATAR--------------
         user_avatar = user.avatar # Command user
-
         if user_avatar is None:
             user_avatar = Assets.default_avatar
 
@@ -169,7 +166,7 @@ class DrawBankImages:
 
             # Second Transaction Rectange Box
             if len(transactions) > 1:
-                
+
                 offset_y += 350
                 img.paste(rectangle, (offset_x, offset_y), rectangle)
 
@@ -195,18 +192,16 @@ class DrawBankImages:
 
         return img
 
-
     async def draw_bank_transactions(self):
         user = self.interaction.user
-
         transactions = self.transactions
-        
+
         img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
         rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
         w, h = img.size
 
         draw = ImageDraw.Draw(img)
-        
+
         offset_y = 539
 
         user_avatar = user.avatar
@@ -238,7 +233,7 @@ class DrawBankImages:
         for index, data in enumerate(transactions[:6]):
             if index % 2 == 0:
                 img.paste(rectangle, (0, offset_y), rectangle)
-            
+
             uid = data["user"]
 
             if isinstance(uid, int):
@@ -255,8 +250,6 @@ class DrawBankImages:
                     else:
                         avatar = await Functions.open_avatar(avatar)
 
-                
-                    
                 if data["transaction"]["is_incomming"] is True:
                     text = "Gelen Transfer"
                     amount = f"+{data['amount']:,}".replace(',', '.')
@@ -267,7 +260,7 @@ class DrawBankImages:
                     amount = f"-{data['amount']:,}".replace(',', '.')
                     color = red
                     transaction_side = "Kime: "
-                
+
             else:
                 name, avatar = Functions.expense_icon(uid)
                 transaction_side = ""
@@ -280,7 +273,6 @@ class DrawBankImages:
                     text = "Gelir"
                     amount = f"+{data['amount']:,}".replace(',', '.')
                     color = green
-
 
             avatar = Functions.circle(avatar, size = (170, 170))
             avatar = avatar.resize((170, 170), Image.LANCZOS)

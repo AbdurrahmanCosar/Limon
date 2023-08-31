@@ -6,8 +6,7 @@
 """
 
 from discord import Interaction, Member
-from discord.ext import commands
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from ..assets import Assets
 from ..functions import Functions
 from datetime import datetime
@@ -82,7 +81,7 @@ class DrawSendImages:
 
         #* --------------INFORMATION--------------
         date = datetime.now().strftime("%H:%M:%S  %d/%-m/%Y")
-        
+
         avatar = await Functions.open_avatar(avatar)
         avatar = Functions.circle(avatar, (140, 140))
         avatar = avatar.resize((140, 140), Image.LANCZOS)

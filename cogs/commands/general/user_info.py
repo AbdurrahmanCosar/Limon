@@ -10,8 +10,6 @@ from discord.ext import commands
 from io import BytesIO
 from cogs.utils.DrawImage.Draw.user_info_ui import UserInfo
 from typing import Optional
-# user veya interaction user objesi gönderilecek
-
 
 class UserInfoCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -30,7 +28,6 @@ class UserInfoCommand(commands.Cog):
         with BytesIO() as a:
             img.save(a, "PNG")
             a.seek(0)
-            
             await interaction.followup.send(content= None, file = File(a, "profilecard.png"))
 
 async def setup(bot: commands.Bot):

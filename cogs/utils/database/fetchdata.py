@@ -35,8 +35,6 @@ async def create_wallet(bot, _id):
     *    "transaction": {
     *        "type": admin,
     *        "is_incomming": bool
-
-
     """
 
     db = bot.database["limon"]
@@ -65,7 +63,6 @@ async def create_wallet(bot, _id):
 
     return await collection.find_one({"_id": _id}), collection
 
-
 async def create_career_data(bot, _id):
     db = bot.database["limon"]
     collection = db["career"]
@@ -86,9 +83,8 @@ async def create_career_data(bot, _id):
             "old_user": False
         }
         await collection.insert_one(new_data)
-    
-    return await collection.find_one({"_id": _id}), collection
 
+    return await collection.find_one({"_id": _id}), collection
 
 async def create_inventory_data(bot, _id):
     db = bot.database["limon"]
@@ -107,5 +103,5 @@ async def create_inventory_data(bot, _id):
             "items": {}
         }
         await collection.insert_one(new_data)
-    
+
     return await collection.find_one({"_id": _id}), collection

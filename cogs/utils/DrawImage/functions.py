@@ -14,7 +14,7 @@ class Functions:
         avatar = Assets.default_avatar
         name = "User"
         return avatar, name
-    
+
     async def open_avatar(u_avatar):
         avatar = u_avatar.replace(size=256)
         data = BytesIO(await avatar.read())
@@ -33,7 +33,7 @@ class Functions:
         pfp.putalpha(mask)
 
         return pfp
-    
+
     def draw_rounded_rectangle(y_, image_length):
         x_ = 232
 
@@ -67,5 +67,3 @@ class Functions:
         if expense_type in types:
             items = types[expense_type]
             return items["name"], items["image"]
-
-    

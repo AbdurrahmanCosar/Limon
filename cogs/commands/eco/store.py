@@ -27,28 +27,24 @@ sold = Emojis.sold
 new = Emojis.new
 cross = Emojis.cross
 
-
 class FishingEquipmentDropdown(ui.Select):
     def __init__(self, bot):
         self.bot = bot
-        # Set the options that will be presented inside the dropdown
+
         options = [
             SelectOption(label=str(fishes[item]["name"]), value=item, description=f"{fishes[item]['price']:,} LC", emoji='🎣')
             for item in fishes]
-        
         options.append(SelectOption(label="Ekipmanını Sat!", value="sellitem", description="Mevcut ekipmanını sat.", emoji=sell))
 
         super().__init__(placeholder='Balıkçılık Ekipmanı Seç...', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: Interaction):
-        
         user = interaction.user
         value = self.values[0]
         fishing_item = fishes[value]
 
         user_wallet, w_collection = await create_wallet(self.bot, user.id)
         user_inventory, i_collection = await create_inventory_data(self.bot, user.id)
-        
 
         if value == "sellitem":
             if "fishing" not in user_inventory["items"]:
@@ -64,7 +60,7 @@ class FishingEquipmentDropdown(ui.Select):
                 await i_collection.replace_one({"_id": user.id}, user_inventory)
 
                 await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
-        
+
         elif ("fishing" in user_inventory["items"]):
             return await interaction.response.send_message(content = f"{cross} Zaten bir balıkçılık ekipmanına sahipsiniz.", ephemeral = True)
 
@@ -93,7 +89,6 @@ class HuntingEquipmentDropdown(ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
-        # Set the options that will be presented inside the dropdown
         options = [
             SelectOption(label=str(hunts[item]["name"]), value=item, description=f"{hunts[item]['price']:,} LC", emoji='🏹')
             for item in hunts
@@ -124,7 +119,7 @@ class HuntingEquipmentDropdown(ui.Select):
                 await i_collection.replace_one({"_id": user.id}, user_inventory)
 
                 await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
-        
+
         elif ("hunting" in user_inventory["items"]):
             return await interaction.response.send_message(content = f"{cross} Zaten bir avcılık ekipmanına sahipsiniz.", ephemeral = True)
 
@@ -149,7 +144,6 @@ class ForestryEquipmentDropdown(ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
-        # Set the options that will be presented inside the dropdown
         options = [
             SelectOption(label=str(wood[item]["name"]), value=item, description=f"Ortalama {wood[item]['average_item']} Ağaç - {wood[item]['price']:,} LC", emoji='🌲')
             for item in wood
@@ -180,10 +174,10 @@ class ForestryEquipmentDropdown(ui.Select):
                 await i_collection.replace_one({"_id": user.id}, user_inventory)
 
                 await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
-        
+
         elif ("forestry" in user_inventory["items"]):
             return await interaction.response.send_message(content = f"{cross} Zaten bir ormancılık ekipmanına sahipsiniz.", ephemeral = True)
-        
+
         name = forestry_item["name"]
         price = forestry_item["price"]
 
@@ -200,7 +194,7 @@ class ForestryEquipmentDropdown(ui.Select):
 
         user_wallet -= price
         user_inventory["items"].update(data)
-        
+
         await w_collection.replace_one({"_id": user.id}, user_wallet)
         await i_collection.replace_one({"_id": user.id}, user_inventory)
 
@@ -210,7 +204,6 @@ class MiningEquipmentDropdown(ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
-        # Set the options that will be presented inside the dropdown
         options = [
             SelectOption(label=str(mines[item]["name"]), value=item, description=f"Ortalama {mines[item]['average_item']} Maden - {mines[item]['price']:,} LC", emoji='⛏️')
             for item in mines
@@ -241,10 +234,10 @@ class MiningEquipmentDropdown(ui.Select):
                 await i_collection.replace_one({"_id": user.id}, user_inventory)
 
                 await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
-        
+
         elif ("mining" in user_inventory["items"]):
             return await interaction.response.send_message(content = f"{cross} Zaten bir madencilik ekipmanına sahipsiniz.", ephemeral = True)
-        
+
         name = mining_item["name"]
         price = mining_item["price"]
 
@@ -261,18 +254,17 @@ class MiningEquipmentDropdown(ui.Select):
 
         user_wallet -= price
         user_inventory["items"].update(data)
-        
+
         await w_collection.replace_one({"_id": user.id}, user_wallet)
         await i_collection.replace_one({"_id": user.id}, user_inventory)
 
         await interaction.response.send_message(content = message)
 
-
 class SecondaryButtonMenu(ui.View):
     def __ini__(self, bot):
         super().__init__()
         self.bot = bot
-    
+
     @ui.button(label = "Balıkçılık", style=ButtonStyle.blurple, emoji='🎣')
     async def fishing_button(self, interaction: Interaction, button):
         view = ui.View()
@@ -309,13 +301,11 @@ class PrimaryButtonMenu(ui.View):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-    
+
     @ui.button(label = "Ekipmanlar", style= ButtonStyle.blurple)
     async def equipments_button(self, interaction: Interaction, button):
-
         view = SecondaryButtonMenu(self.bot)
         await interaction.response.edit_message(view = view)
-
 
 class Store(commands.Cog):
     def __ini__(self, bot: commands.Bot):
@@ -324,7 +314,6 @@ class Store(commands.Cog):
     @app_commands.command(name = "store", description="Open store and buy equipment")
     @app_commands.checks.dynamic_cooldown(set_cooldown(20))
     async def store(self, interaction: Interaction):
-
         embed = Embed(
             title = "Mağazaya Hoş Geldiniz",
             description = """
@@ -332,10 +321,10 @@ class Store(commands.Cog):
             Aynı zamanda aldığınız eşyaları buradan satabilirsiniz. Ürünleri, fiyatlarının **`%60`** LiCash'e satabilirsiniz.
             """,
             color = 0x2b2d31)
-        
+
         view = PrimaryButtonMenu(self.bot)
         view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
-            
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(Store(bot))

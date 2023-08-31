@@ -38,7 +38,6 @@ class FishingFoodDropdown(ui.Select):
 
         user = interaction.user
         value = self.values[0] # Selected option
-        
 
         food_name = market["fishfoods"][value]["name"]
         food_unit = market["fishfoods"][value]["unit"]
@@ -49,10 +48,9 @@ class FishingFoodDropdown(ui.Select):
         transaction_list = user_wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, food_price, False)
 
-        
         if await balance_check(interaction, user_wallet["cash"], food_price) is False:
             return
-        
+
         if "fishfoods" not in user_inv["items"]:
             fishfood_data = { "$set" : {"items.fishfoods" : {value: food_unit}}}
             await i_collection.update_one(user_inv ,fishfood_data)
@@ -67,8 +65,8 @@ class FishingFoodDropdown(ui.Select):
 
         user_wallet["cash"] -= food_price
         transaction_list = transactions.save_expense_data("market")
-        await w_collection.replace_one({"_id": user.id}, user_wallet)
 
+        await w_collection.replace_one({"_id": user.id}, user_wallet)
         await interaction.response.send_message(content = f"{new_emoji} :worm: **|** {interaction.user.mention} **{food_price:,} LC** ödeyerek {food_unit} adet **{food_name}** satın aldınız.")
 
 class AmmoDropdown(ui.Select):
@@ -96,10 +94,9 @@ class AmmoDropdown(ui.Select):
         transaction_list = user_wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, ammo_price, False)
 
-        
         if await balance_check(interaction, user_wallet["cash"], ammo_price) is False:
             return
-        
+
         if "ammo" not in user_inv["items"]:
             ammo_data = { "$set" : {"items.ammo" : {value: ammo_unit}}}
             await i_collection.update_one(user_inv, ammo_data)
@@ -114,12 +111,13 @@ class AmmoDropdown(ui.Select):
 
         user_wallet["cash"] -= ammo_price
         transaction_list = transactions.save_expense_data("market")
-        await w_collection.replace_one({"_id": user.id}, user_wallet)
 
+        await w_collection.replace_one({"_id": user.id}, user_wallet)
         await interaction.response.send_message(content = f"{new_emoji} **|** {interaction.user.mention} **{ammo_price:,} LC** ödeyerek {ammo_unit} adet **{ammo_name}** satın aldınız.")
 
-
 class ButtonMenu(ui.View):
+    def __init__(self):
+        super().__init__()
 
     @ui.button(label = "Balık Yemi", style = ButtonStyle.blurple)
     async def fishfood_button(self, interaction: Interaction, button):
@@ -130,7 +128,7 @@ class ButtonMenu(ui.View):
         view.add_item(FishingFoodDropdown())
         view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
-    
+
     @ui.button(label = "Mühimmat", style = ButtonStyle.blurple)
     async def ammo_button(self, interaction: Interaction, button):
 
@@ -140,7 +138,7 @@ class ButtonMenu(ui.View):
         view.add_item(AmmoDropdown())
         view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
-    
+
 class Market(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot

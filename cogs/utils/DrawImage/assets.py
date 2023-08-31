@@ -13,13 +13,12 @@ class _Assets:
     limon_avatar = Image.open("cogs/assets/images/SenderLimon.png").convert("RGBA")
     verify = Image.open(r"cogs/assets/images/badges/verify.png").convert("RGBA")
 
-    
     # Fonts
     acumin_black_158 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 158)
     acumin_black_90 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
     acumin_black_50 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 50, encoding="unic")
     acumin_bold_50 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBold.otf", 50, encoding="unic")
-    
+
     acumin_semibold_66 = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
     acumin_semibold_49 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 49, encoding="unic")
     acumin_semibold_47 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 47, encoding="unic")
@@ -33,9 +32,6 @@ class _Assets:
 
     coolvetica_50 = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
     coolvetica_condensed_70 = ImageFont.truetype("cogs/assets/fonts/coolveticaCondensedRG.otf", 70)
-    
-
-Assets = _Assets()
 
 class _Icons:
     _path = "cogs/assets/images/expense_icons/"
@@ -47,4 +43,5 @@ class _Icons:
         "sell": {"name": "Iş Geliri", "image": Image.open(_path + "sell_icon.png").convert("RGBA")},
     }
 
+Assets = _Assets()
 Icons = _Icons()

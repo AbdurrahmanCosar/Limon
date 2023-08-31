@@ -52,8 +52,6 @@ class Hunting(commands.Cog):
 
         weapon["durability"] -= 4
 
-        
-        
         if weapon["custom_id"] == "trap":
             trap_count = randint(2,4)
             preyed_hunts = []
@@ -76,6 +74,7 @@ class Hunting(commands.Cog):
 
         await add_xp(self.bot, user.id, "hunter_xp")
         await collection.replace_one({"_id": user.id}, inventory)
+
         await interaction.response.send_message(content = first_mesage)
         await sleep(4)
         await interaction.edit_original_response(content = message)

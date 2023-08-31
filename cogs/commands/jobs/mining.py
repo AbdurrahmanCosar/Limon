@@ -34,13 +34,12 @@ class Mining(commands.Cog):
     @app_commands.command(name="mining", description="Go mining!")
     @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def mining(self, interaction: Interaction):
-
         user = interaction.user
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
         if "mining" not in inventory["items"]:
             return await interaction.response.send_message(content=f"{Emojis.cross} Maden kazabilmek için bir madencilik ekipmanına sahip olmalısınız!", ephemeral=True)
-        
+
         equipment = inventory["items"]["mining"]
         if equipment["durability"] < 4:
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
@@ -71,6 +70,7 @@ class Mining(commands.Cog):
 
         await add_xp(self.bot, user.id, "miner_xp")
         await collection.replace_one({"_id": user.id}, inventory)
+
         await interaction.response.send_message(content = ":pick: Madene iniyoruz..")
         await sleep(6)
         await interaction.edit_original_response(content = message)

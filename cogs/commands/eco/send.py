@@ -32,22 +32,22 @@ class ConfirmButton(ui.View):
         if interaction.user.id != self.uid:
             await interaction.response.send_message(content = f"{Emojis.cross} Bu sizin banka hesabınız değil. İşlemi onaylama yetkiniz bulunmuyor!", ephemeral = True)
             return False
-        
-        interaction.message.author = interaction.user
 
+        interaction.message.author = interaction.user
         bucket = self.cd_mapping.get_bucket(interaction.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
             await interaction.response.send_message(content = f"{Emojis.clock} Buton bekleme süresinde lütfen **`{round(retry_after,1)}s`** bekleyini! ", ephemeral = True)
             return False
         return True
-    
+
     @ui.button(label = f"{SPACES} Gönder {SPACES}", style = ButtonStyle.success)
     async def confirm_button(self, interaction: Interaction, button):
         await interaction.response.defer()
+
         uid = interaction.user.id
-        
         wallet, collection = await create_wallet(self.client, uid)
+
         transaction_list = wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, self.amount, False)
 
@@ -55,10 +55,9 @@ class ConfirmButton(ui.View):
         transaction_list = transactions.save_transfer_data(uid)
         await add_xp(self.client, uid, "send_xp")
         await collection.replace_one({"_id": uid}, wallet)
-        
+
         img = await self.draw.draw_send_second()
-    
-        
+
         with BytesIO() as a:
             img.save(a, "PNG")
             a.seek(0)
@@ -75,13 +74,13 @@ class Send(commands.Cog):
         await interaction.response.defer()
 
         user = interaction.user
-        
+
         wallet, _ = await create_wallet(self.bot, user.id)
         balance = wallet["cash"]
 
         if balance < amount:
             return await interaction.response.send_message(content = f"{Emojis.cross} Göndermek istediğiniz miktar kadar LiCash'iniz bulunmuyor!", ephemeral = True) 
-        
+
         draw = DrawSendImages(interaction, target, amount, 15750)
         img = await draw.draw_send_first()
 
@@ -91,7 +90,6 @@ class Send(commands.Cog):
             img.save(a, "PNG")
             a.seek(0)
             await interaction.followup.send(content = None, file = File(a, "LimonSend.png"), view = button)
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Send(bot))

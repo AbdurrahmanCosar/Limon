@@ -33,20 +33,17 @@ class Button(ui.View, DrawBankImages):
                 child.disabled = True
 
     async def interaction_check(self, interaction: Interaction):
-
         if self.uid != interaction.user.id:
             await interaction.response.send_message(content = f"Bu banka hesabı size ait değil. İşlem yapamazsınız!", ephemeral=True)
             return False
-        
-        interaction.message.author = interaction.user
 
+        interaction.message.author = interaction.user
         bucket = self.cd_mapping.get_bucket(interaction.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
             await interaction.response.send_message(content = f"{Emojis.clock} Buton bekleme süresinde lütfen **`{round(retry_after,1)}s`** bekleyini! ", ephemeral = True)
             return False
         return True
-
 
     @ui.button(label=None, style = ButtonStyle.success, disabled = True, emoji='🏡', custom_id="balance_btn")
     async def balance_button(self, interaction: Interaction, button):
@@ -64,7 +61,7 @@ class Button(ui.View, DrawBankImages):
     async def transaction_button(self, interaction: Interaction, button):
         await interaction.response.defer()
         self.disable_buttons("transaction_btn")
-        
+
         img = await self.draw.draw_bank_transactions(self.client, interaction)
 
         with BytesIO() as x:
@@ -85,7 +82,6 @@ class Bank(commands.Cog):
         transaction_list = wallet["recent_transactions"]["transactions"]
 
         draw = DrawBankImages(self.bot, interaction, transaction_list, wallet["cash"])
-        
         img = await draw.draw_bank_balance(self.bot, interaction)
 
         with BytesIO() as a:
@@ -94,5 +90,4 @@ class Bank(commands.Cog):
             await interaction.followup.send(content = None, file = File(a, "LimonWallet.png"), view=Button(self.bot, interaction.user.id, draw))
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Bank(bot))        
-        
+    await bot.add_cog(Bank(bot))

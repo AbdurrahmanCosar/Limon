@@ -27,22 +27,20 @@ boxes = {
     "diamondBox": ["Elmas", 100000, 50000, 210000]
 }
 
-
 class OpenBox(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     async def interaction_check(self, interaction: Interaction) -> bool:
-        
         user = interaction.user
         data = interaction.data
-        
+
         for i in data["options"]:
             if i["name"] == "box":
                 value = i["value"]
-                user_data, collection = await create_wallet(self.bot, user.id)
+                user_data, _ = await create_wallet(self.bot, user.id)
                 check = balance_check(interaction, user_data["cash"], boxes[value][1])
-                
+
                 if check:
                     await add_xp(self.bot, user.id, "gamble_xp")
                     return True
@@ -60,13 +58,10 @@ class OpenBox(commands.Cog):
         Choice(name=f"Elmas Kasa - {boxes['diamondBox'][1]:,}LC", value="diamondBox"),
     ])
     async def openbox(self, interaction: Interaction, box: str):
-        
         user = interaction.user
         user_data, collection = await create_wallet(self.bot, user.id)
-        
 
         selected_box = boxes.get(box)
-        await balance_check(interaction, user_data["cash"], selected_box[1])
         reward = randint(selected_box[2], selected_box[3])
         message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward}LC** çıktı. Kâr: `**%{(reward - selected_box[1]) / 100}**`"
 
@@ -80,8 +75,3 @@ class OpenBox(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(OpenBox(bot))
-
-
-
-
-
