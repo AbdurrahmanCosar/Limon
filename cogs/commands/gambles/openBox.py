@@ -39,7 +39,7 @@ class OpenBox(commands.Cog):
             if i["name"] == "box":
                 value = i["value"]
                 user_data, _ = await create_wallet(self.bot, user.id)
-                check = balance_check(interaction, user_data["cash"], boxes[value][1])
+                check = await balance_check(interaction, user_data["cash"], boxes[value][1])
 
                 if check:
                     await add_xp(self.bot, user.id, "gamble_xp")
