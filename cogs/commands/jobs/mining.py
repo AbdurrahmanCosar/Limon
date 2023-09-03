@@ -48,12 +48,12 @@ class Mining(commands.Cog):
         if equipment["fuel"] < basic_item["mining"][equipment["custom_id"]]["liter_per_item"]:
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
 
-        if basic_item["mining"][equipment["custom_id"]]["type"] != "vehicle":
+        if basic_item["mining"][equipment["custom_id"]]["type"] == "vehicle":
             average_item = basic_item["mining"][equipment["custom_id"]]["average_item"]
             mine_count = randint(average_item - 1, average_item + 1)
 
+            # Problem of not running low on fuel will be fix
             equipment["fuel"] -= (basic_item["mining"][equipment["custom_id"]]["liter_per_item"] * mine_count)
-
             excavated_mine = []
             for _ in range(mine_count):
                 name, weight, mine = self.mine_goose()

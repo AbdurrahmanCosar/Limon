@@ -27,16 +27,16 @@ hunt_file = open("cogs/assets/yaml_files/job_yamls/hunts.yml", "rb")
 hunts_list = load(hunt_file, Loader = Loader) 
 
 class ButtonMenu(ui.View):
-    def __init__(self, uid: Member.id, client: commands.Bot, prices: list, embed: Embed):
+    def __init__(self, user: Member, client: commands.Bot, prices: list, embed: Embed):
         super().__init__()
-        self.id = uid
+        self.user = user
         self.client = client
         self.embed = embed
         self.prices = prices
         self.total_money = 0
 
     async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.id:
+        if interaction.user.id != self.user.id:
             await interaction.response.send_message(content = f"{Emojis.cross} Bu sizin envanteriniz değil. Buradaki butonları kullanamazsınız!", ephemeral = True)
             return False
         return True
@@ -44,10 +44,10 @@ class ButtonMenu(ui.View):
     def enable_button(self):
         for child in self.children:
             if child.custom_id == "withdraw":
-                if child.disabled is False:
-                    child.disabled = True
+                if child.disabled is True:
+                    child.disabled = False
 
-    @ui.button(label = "Balıkları Sat", style = ButtonStyle.primary, emoji = ':fish:', custom_id = "sellfishes")
+    @ui.button(label = "Balıkları Sat", style = ButtonStyle.primary, emoji = '🐟', custom_id = "sellfishes")
     async def sell_fishes_button(self, interaction: Interaction, button):
         user = interaction.user
 
@@ -61,31 +61,32 @@ class ButtonMenu(ui.View):
         inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["fishes"].clear()
 
-        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money:,}")
 
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.edit_message(embed = self.embed, view = self)
   
-    @ui.button(label = "Avları Sat", style = ButtonStyle.primary, emoji = ':deer:', custom_id = "sellhunts")
+    @ui.button(label = "Avları Sat", style = ButtonStyle.primary, emoji = '🦌', custom_id = "sellhunts")
     async def sell_hunts_button(self, interaction: Interaction, button):
         user = interaction.user
+        try:
+            button.label = "Avlar Satıldı!"  # New Button Label
+            button.style = ButtonStyle.secondary  # New Button Stlye
+            button.disabled = True  # New Button Disabled
 
-        button.label = "Avlar Satıldı!"  # New Button Label
-        button.style = ButtonStyle.secondary  # New Button Stlye
-        button.disabled = True  # New Button Disabled
+            self.total_money += self.prices[1]
+            self.enable_button()
 
-        self.total_money += self.prices[1]
-        self.enable_button()
+            inventory, collection = await create_inventory_data(self.client, user.id)
+            inventory["jobs_results"]["hunts"].clear()
+            self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
+        
+            await collection.replace_one({"_id": user.id}, inventory)
+            await interaction.response.edit_message(embed = self.embed, view = self)
+        except Exception as e:
+            print(e)
 
-        inventory, collection = await create_inventory_data(self.client, user.id)
-        inventory["jobs_results"]["hunts"].clear()
-
-        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
-
-        await collection.replace_one({"_id": user.id}, inventory)
-        await interaction.response.edit_message(embed = self.embed, view = self)
-
-    @ui.button(label = "Madenleri Sat", style = ButtonStyle.primary, emoji = ':gem:', custom_id = "sellmines")
+    @ui.button(label = "Madenleri Sat", style = ButtonStyle.primary, emoji = '💎', custom_id = "sellmines")
     async def sell_mines_button(self, interaction: Interaction, button):
         user = interaction.user
 
@@ -99,12 +100,12 @@ class ButtonMenu(ui.View):
         inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["mines"].clear()
 
-        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
 
         await collection.replace_one({"_id": user.id}, inventory)
-        await interaction.response.edit_message(embed = self.embed, view = self)
+        await interaction.response.send_message(embed = self.embed, view = self)
 
-    @ui.button(label = "Oduları Sat", style = ButtonStyle.primary, emoji = ':wood:', custom_id = "sellwood")
+    @ui.button(label = "Oduları Sat", style = ButtonStyle.primary, emoji = '🪵', custom_id = "sellwood")
     async def sell_wood_button(self, interaction: Interaction, button):
         user = interaction.user
 
@@ -118,7 +119,7 @@ class ButtonMenu(ui.View):
         inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["wood"].clear()
 
-        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: **{self.total_money}**")
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
 
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.edit_message(embed = self.embed, view = self)
@@ -138,7 +139,7 @@ class ButtonMenu(ui.View):
         button.label = "Paran Çekildi!"
         button.disabled = True
 
-        self.embed.set_footer(text = f"Hesabınıa aktarılan LiCash: **{self.total_money}**")
+        self.embed.set_footer(text = f"Hesabınıa aktarılan LiCash: {self.total_money}")
 
         await collection.replace_one({"_id": user.id}, wallet)
         await interaction.response.edit_message(embed = self.embed, view = self)
@@ -196,7 +197,7 @@ class Sell(commands.Cog):
 
         prices = [fish_price, hunt_price, mine_price, wood_price]
 
-        view = ButtonMenu(user.id, self.bot, prices,  embed=embed)
+        view = ButtonMenu(user, self.bot, prices,  embed=embed)
         view.add_item(CloseButton(user.id))
 
         if fish_price == 0:

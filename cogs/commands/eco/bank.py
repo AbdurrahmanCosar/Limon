@@ -50,7 +50,7 @@ class Button(ui.View, DrawBankImages):
         await interaction.response.defer()
         self.disable_buttons("balance_btn")
 
-        img = await self.draw.draw_bank_balance(self.client, interaction)
+        img = await self.draw.draw_bank_balance()
 
         with BytesIO() as x:
             img.save(x, "PNG")
@@ -62,7 +62,7 @@ class Button(ui.View, DrawBankImages):
         await interaction.response.defer()
         self.disable_buttons("transaction_btn")
 
-        img = await self.draw.draw_bank_transactions(self.client, interaction)
+        img = await self.draw.draw_bank_transactions()
 
         with BytesIO() as x:
             img.save(x, "PNG")
@@ -82,7 +82,7 @@ class Bank(commands.Cog):
         transaction_list = wallet["recent_transactions"]["transactions"]
 
         draw = DrawBankImages(self.bot, interaction, transaction_list, wallet["cash"])
-        img = await draw.draw_bank_balance(self.bot, interaction)
+        img = await draw.draw_bank_balance()
 
         with BytesIO() as a:
             img.save(a, "PNG")

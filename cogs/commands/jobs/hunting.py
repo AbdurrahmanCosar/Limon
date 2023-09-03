@@ -18,8 +18,8 @@ from random import choice, randint
 hunts_files = open("cogs/assets/yaml_files/job_yamls/hunts.yml", "rb")
 hunts = load(hunts_files, Loader=Loader)
 
-items_file = open("cogs/assets/yaml_files/market_yamls/basic_items.yml", "rb")
-market_items = load(items_file, Loader = Loader) 
+market_file = open("cogs/assets/yaml_files/market_yamls/market.yml", "rb")
+market_items = load(market_file, Loader = Loader) 
 
 class Hunting(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -42,9 +42,15 @@ class Hunting(commands.Cog):
             return await interaction.response.send_message(content=f"{Emojis.cross} Ava çıkabilmek için bir avcılık ekipmanına sahip olmalısınız!", ephemeral=True)
 
         weapon = inventory["items"]["hunting"]
-        required_ammo = market_items["hunting"][weapon]["ammo"]
-
-        if (required_ammo != None and ("ammo" not in inventory or inventory["ammo"][required_ammo] == 0)):
+        
+        # TODO: Ammonution for the type of weapon will be removed
+        if weapon['custom_id'] == "bow":
+            required_ammo = "arrow"
+        else:
+            required_ammo = "ammo"
+        
+        inv_items = inventory["items"]
+        if ("ammo" in inv_items and inv_items["ammo"][required_ammo] == 0) or (required_ammo not in inv_items["ammo"]):
                 return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True)
 
         if weapon["durability"] < 4:
@@ -68,8 +74,8 @@ class Hunting(commands.Cog):
         else:
             name, hunt = self.hunt_prey()
             first_mesage = ":bow_and_arrow: Av aranıyor.."
-            message = f":bow_and_arrow: Harika! Bir {name} avladık."
-            inventory["ammo"][required_ammo] -= 1
+            message = f":bow_and_arrow: Harika! Bir **{name}** avladık."
+            inv_items["ammo"][required_ammo] -= 1
             inventory["jobs_results"]["hunts"].append(hunt)
 
         await add_xp(self.bot, user.id, "hunter_xp")

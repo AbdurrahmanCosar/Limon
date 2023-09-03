@@ -48,11 +48,13 @@ class Forestry(commands.Cog):
         if equipment["fuel"] < basic_item["forestry"][equipment["custom_id"]]["liter_per_item"]:
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
 
-        if basic_item["forestry"][equipment["custom_id"]]["type"] != "vehicle":
+        if basic_item["forestry"][equipment["custom_id"]]["type"] == "vehicle":
             average_item = basic_item["forestry"][equipment["custom_id"]]["average_item"]
             tree_count = randint(average_item - 1, average_item + 1)
 
-            equipment["fuel"] -= (basic_item["forestry"][equipment["custom_id"]]["liter_per_item"] * tree_count)
+            # TODO: Problem of not running low on fuel will be fix
+            fuel_user = basic_item["forestry"][equipment["custom_id"]]["liter_per_item"] * tree_count
+            equipment["fuel"] -= fuel_user 
             felled_tree = []
 
             for _ in range(tree_count):

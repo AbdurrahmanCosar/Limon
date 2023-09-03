@@ -42,8 +42,10 @@ class Dropdown(ui.Select):
         wallet, w_collection = await create_wallet(self.client, user.id)
 
         value = self.values[0]
+        print(value)
         price = 12 * (100 - self.items[value]["durability"])
-        name = basic_items[inventory["items"][value]]["name"]
+        item_custom_id = inventory["items"][value]["custom_id"]
+        name = basic_items[value][item_custom_id]["name"]
 
         transaction_list = wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, price, False)
@@ -79,7 +81,8 @@ class Repairman(commands.Cog):
         user = interaction.user
         inventory, _ = await create_inventory_data(self.bot, user.id)
 
-        items = {k:v for k, v in inventory["items"].items() if v["durability"] < 100}
+        basic_items_keys = ("forestry", "mining", "hunting", "fishing")
+        items = {k:v for k, v in inventory["items"].items() if k in basic_items_keys and (v["durability"] < 100)}
         item_count = len(items)
 
         if item_count == 0:

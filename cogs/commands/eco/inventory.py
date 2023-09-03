@@ -35,13 +35,13 @@ items = load(item_yaml, Loader = Loader)
 # WILL BE ADD GAS STATION
 
 class Dropdown(ui.Select):
-    def __init__(self, client, vehicles, uid):
+    def __init__(self, client: commands.Bot, vehicles: dict, uid: int):
         self.client = client
         self.vehicles = vehicles
         self.uid = uid
 
         options = list({
-            SelectOption(label=f"%{v['fuel']} / {items[k][v['custom_id']]['gas_tank_liter']} -- {Game.FuelPerLiter * (items[k][v['custom_id']]['gas_tank_liter'] - v['fuel'])} LC", value=k, description=items[k][v["custom_id"]]["name"], emoji="🛠️")
+            SelectOption(label=f"%{v['fuel']} / {items[k][v['custom_id']]['gas_tank_liter']} -- {Game.FuelPerLiter * (items[k][v['custom_id']]['gas_tank_liter'] - v['fuel'])} LC", value=k, description=items[k][v['custom_id']]["name"], emoji="🛠️")
             for k, v in self.vehicles.items()
         })
 
@@ -60,7 +60,7 @@ class Dropdown(ui.Select):
 
         inventory_vehicle = inventory["items"][value]
         price = Game.FuelPerLiter * (items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"] - self.vehicles[value]["fuel"])
-        name = items[inventory_vehicle]["name"]
+        name = items[value][inventory_vehicle['custom_id']]["name"]
 
         transaction_list = wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, price, False)
@@ -89,17 +89,18 @@ class Dropdown(ui.Select):
         await interaction.followup.send(content = f"⛽ **|** {user.mention} İşte oldu! Senin için **{name}** ekipmanının deposunu doldurdum *({gas_tank_liter}L)*. Bunun için **{price:,} LC** ödedin.")
 
 class GasStationButton(ui.View):
-    def __init__(self, client, uid):
+    def __init__(self, client: commands.Bot, uid: int):
+        super().__init__()
         self.client = client
         self.uid = uid
 
     async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.id:
+        if interaction.user.id != self.uid:
             await interaction.response.send_message(content = f"{cross} Bu sizin garajınız değil. Buradaki butonları kullanamazsınız!", ephemeral = True)
             return False
         return True
 
-    @ui.button(label="Benzin Doldur!", style=ButtonStyle.success, emoji = "⛽")
+    @ui.button(label="Benzin Doldur!", style=ButtonStyle.success, emoji="⛽")
     async def fuel_button(self, interaction: Interaction, button):
         user = interaction.user
         inventory, _ = await create_inventory_data(self.client, user.id)
@@ -107,22 +108,18 @@ class GasStationButton(ui.View):
         vehicles = {
             k:v 
             for k, v in inventory["items"].items()
-            if k in ("forestry", "mining") and items[k]["type"] == "vehicle" and v["fuel"] < 100}
-
-        vehicle_count = len(vehicles)
-        if vehicle_count == 0:
-            return await interaction.response.send_message(content = "⛽ Araçlarının depoları zaten full! Önce onları kullanman gerekiyor.", ephemeral=True)
-
+            if k in ("forestry", "mining") and (items[k][v['custom_id']]["type"] == "vehicle") and (v["fuel"] < items[k][v['custom_id']]['gas_tank_liter'])}
+    
         view = ui.View()
         view.add_item(Dropdown(self.client, vehicles, user.id))
-        view.add_item(CloseButton(user.id)) 
+        view.add_item(CloseButton(user.id))
 
         embed = Embed(
             title="⛽ Benzin İstasyonuna Hoş Geldiniz!",
             description = f"""
             Merhaba. Araçlarının depolarını fulleyelim!
             - *Bakalım hangilerini deposu boşmuş?*
-                - *Doldurulması gereken `{vehicle_count}` aracınız var.*
+                - *Doldurulması gereken `{len(vehicles)}` aracınız var.*
                 - *Menüden bir tanesini seç ve deposunu doldur.*
 
             (Ücretler menüde yazıyor) 
@@ -163,12 +160,12 @@ class ButtonMenu(ui.View):
         user_items = inventory["items"]
         message = ""
 
-        if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]] == "manual"):
+        if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]["custom_id"]]["type"] == "manual"):
             u_item = user_items["forestry"]
-            i_item = items["forestry"][u_item]
+            i_item = items["forestry"][u_item["custom_id"]]
             message += f":axe: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
 
-        if ("mining" in user_items) and (items["mining"][user_items["mining"]] == "manual"):
+        if ("mining" in user_items) and (items["mining"][user_items["mining"]["custom_id"]]["type"] == "manual"):
             u_item = user_items["mining"]
             i_item = items["mining"][u_item["custom_id"]]
             message += f":pick: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
@@ -194,7 +191,7 @@ class ButtonMenu(ui.View):
             {message}""")
         embed.set_author(name=f"{user.name} adlı kullanıcının ekipmanları", icon_url = user.avatar.url)
 
-        await interaction.response.edit_message(view= self)
+        await interaction.response.edit_message(embed = embed, view=self)
 
     @ui.button(label  = "Çanta", style = ButtonStyle.blurple, custom_id = "backpack_button")
     async def backpack_button(self, interaction: Interaction, button):
@@ -208,7 +205,6 @@ class ButtonMenu(ui.View):
         wood = inventory["jobs_results"]["wood"]
         hunts = inventory["jobs_results"]["hunts"]
 
-
         """-------------------Fishes-------------------"""
         key_value = [fish.split('_') for fish in fishes]
         fish_dict = {
@@ -218,7 +214,7 @@ class ButtonMenu(ui.View):
             }
             for key in set(key for key, _ in key_value)
         }
-        fishes_ = [f":fish: **{fish_dict[fish]['count']}**x {fishes_list[fish]['name']} - **{fish_dict['value']}**cm" for fish in fish_dict]
+        fishes_ = [f":fish: **{fish_dict[fish]['count']}**x {fishes_list[fish]['name']} - **{fish_dict[fish]['value']}**cm" for fish in fish_dict]
         fishes_ = "\n".join(fishes_) if len(fishes_)>0 else "*Çantanızda hiç balık yok*"
 
         """-------------------Mines-------------------"""
@@ -230,7 +226,7 @@ class ButtonMenu(ui.View):
             }
             for key in set(key for key, _ in key_value)
         }
-        mines_ = [f":gem: **{mine_dict[mine]['count']}**x {mines_list[mine]['name']} - **{mine_dict['value']}**kg" for mine in mine_dict]
+        mines_ = [f":gem: **{mine_dict[mine]['count']}**x {mines_list[mine]['name']} - **{mine_dict[mine]['value']}**kg" for mine in mine_dict]
         mines_ = "\n".join(mines_) if len(mines_)>0 else "*Çantanızda hiç maden yok*"
 
         """-------------------Wood-------------------"""
@@ -242,15 +238,14 @@ class ButtonMenu(ui.View):
             }
             for key in set(key for key, _ in key_value)
         }
-        wood_ = [f":wood: **{wood_dict[w]['count']}**x {wood_list[w]['name']} - **{wood_dict['value']}**m" for w in wood_dict]
+        wood_ = [f":wood: **{wood_dict[w]['count']}**x {wood_list[w]['name']} - **{wood_dict[w]['value']}**m" for w in wood_dict]
         wood_ = "\n".join(wood_) if len(wood_)>0 else "*Çantanızda hiç odun yok*"
-
+        
         """-------------------Hunts-------------------"""
-        hunts_dict = {}
-        [hunts_.update({hunt: hunts_.get(hunt, 0) + 1}) for hunt in hunts]
+        hunts_dict = {hunt: {"count": hunts.count(hunt)} for hunt in hunts}
         hunts_ = [f":deer: **{hunts_dict[hunt]['count']}**x {hunts_list[hunt]['name']}" for hunt in hunts_dict]
-        wood_ = "\n".join(wood_) if len(wood_)>0 else "*Çantanızda hiç av yok*"
-
+        hunts_ = "\n".join(hunts_) if len(hunts_)>0 else "*Çantanızda hiç av yok*"
+        
         embed = Embed(
             color=0x2b2d31, 
             description= f"""
@@ -274,41 +269,50 @@ class ButtonMenu(ui.View):
 
         user_items = inventory["items"]
 
-        forestry_vehice_message = "*Bir orman aracınız yok!*"
-        mining_vehice_message = "*Bir maden aracınız yok!*"
+        forestry_vehicle_message = "*Bir orman aracınız yok!*"
+        mining_vehicle_message = "*Bir maden aracınız yok!*"
 
-        if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]] =="vehicle"):
+        vehicle_count = 0
+
+        if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]["custom_id"]]["type"] =="vehicle"):
 
             u_vehicle = user_items["forestry"] # in user iventory
             i_vehicle = items["forestry"][u_vehicle["custom_id"]] # in basic_items.yml file
-            forestry_vehice_message = f"""
+            forestry_vehicle_message = f"""
             ***{i_vehicle['name']}***\n
             🪵`Ortalama Ağaç: {i_vehicle['average_item']}`
             🛠️`Hasar Durumu: %{u_vehicle['durability']}`
             ⛽`Yakıt Deposu: {u_vehicle['fuel']}/**{i_vehicle['gas_tank_liter']}L**`
             """
+            vehicle_count += 1
 
-
-        if ("mining" in user_items) and (items["mining"][user_items["mining"]] == "vehicle"):
+        if ("mining" in user_items) and (items["mining"][user_items["mining"]["custom_id"]]["type"] == "vehicle"):
             u_vehicle = user_items["mining"] # in user iventory
-            i_vehicle = items["minig"][u_vehicle["custom_id"]] # in basic_items.yml file
-            mining_vehice_message = f"""
+            i_vehicle = items["mining"][u_vehicle["custom_id"]] # in basic_items.yml file
+            mining_vehicle_message = f"""
             ***{i_vehicle['name']}***\n
             💎`Ortalama Maden: {i_vehicle['average_item']}`
             🛠️`Hasar Durumu: %{u_vehicle['durability']}`
             ⛽`Yakıt Deposu: {u_vehicle['fuel']}/**{i_vehicle['gas_tank_liter']}L**`
             """
+            vehicle_count += 1
+
         embed = Embed(
             color=0x2b2d31, 
             description= f"""
             Bu sizin garajınız. Burada araçlarını ve durumarı görünür.
             \n════════════════════════════════\n
-            {forestry_vehice_message}\n════════════════════════════════
-            {mining_vehice_message}\n════════════════════════════════""")
+            {forestry_vehicle_message}\n════════════════════════════════
+            {mining_vehicle_message}\n════════════════════════════════""")
         embed.set_author(name=f"{user.name} adlı kullanıcının garajı", icon_url = user.avatar.url)
 
-        self.add_item(GasStationButton(self.client, user.id))
-        await interaction.response.edit_message(embed = embed, view = self)
+        view = GasStationButton(self.client, user.id)
+        
+        if vehicle_count == 0:
+            view.fuel_button.disabled = True
+            view.fuel_button.style = ButtonStyle.secondary
+
+        await interaction.response.edit_message(embed = embed, view = view)
 
 class Inventory(commands.Cog):
     def __init__(self, bot: commands.Bot):

@@ -24,8 +24,8 @@ ammonution = market["ammo"]
 new_emoji = Emojis.new
 
 class FishingFoodDropdown(ui.Select):
-    def __init__(self):
-
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
         # Set the options that will be presented inside the dropdown
         options = [
             SelectOption(label=f"x{fishfoods[fishfood]['unit']} {fishfoods[fishfood]['name']} ", value = fishfood, description=f"{fishfoods[fishfood]['unit']} tanesi {fishfoods[fishfood]['price']:,} LC", emoji='🪱')
@@ -70,7 +70,8 @@ class FishingFoodDropdown(ui.Select):
         await interaction.response.send_message(content = f"{new_emoji} :worm: **|** {interaction.user.mention} **{food_price:,} LC** ödeyerek {food_unit} adet **{food_name}** satın aldınız.")
 
 class AmmoDropdown(ui.Select):
-    def __init__(self):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
         # Set the options that will be presented inside the dropdown
         options = [
@@ -116,8 +117,9 @@ class AmmoDropdown(ui.Select):
         await interaction.response.send_message(content = f"{new_emoji} **|** {interaction.user.mention} **{ammo_price:,} LC** ödeyerek {ammo_unit} adet **{ammo_name}** satın aldınız.")
 
 class ButtonMenu(ui.View):
-    def __init__(self):
+    def __init__(self, bot: commands.Bot):
         super().__init__()
+        self.bot = bot
 
     @ui.button(label = "Balık Yemi", style = ButtonStyle.blurple)
     async def fishfood_button(self, interaction: Interaction, button):
@@ -125,7 +127,7 @@ class ButtonMenu(ui.View):
         embed = Embed()
         embed.set_author(name="Menüden satın almak istediğiniz yem türünü seçiniz.")
         view = ui.View()
-        view.add_item(FishingFoodDropdown())
+        view.add_item(FishingFoodDropdown(self.bot))
         view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
 
@@ -135,7 +137,7 @@ class ButtonMenu(ui.View):
         embed = Embed()
         embed.set_author(name="Menüden satın almak istediğiniz mühimmat türünü seçiniz.")
         view = ui.View()
-        view.add_item(AmmoDropdown())
+        view.add_item(AmmoDropdown(self.bot))
         view.add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed = embed, view = view)
 
@@ -153,7 +155,7 @@ class Market(commands.Cog):
             Bazı iş için gerekli araçları buradan LiCash karşılığında satın alabilirsiniz.
             Aşağıdaki butonlara tıklayarak açılan menüden istediğinizi satın alın. """,
             color = 0x2b2d31)
-        view = ButtonMenu().add_item(CloseButton(interaction.user.id))
+        view = ButtonMenu(self.bot).add_item(CloseButton(interaction.user.id))
         await interaction.response.send_message(embed=embed, view=view)
 
 async def setup(bot: commands.Bot):

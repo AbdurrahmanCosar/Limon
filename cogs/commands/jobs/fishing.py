@@ -37,6 +37,7 @@ class Fishing(commands.Cog):
     async def food_autocompletion(
         self,
         interaction: Interaction,
+        current: str,
         ) -> List[Choice[str]]:
         user = interaction.user
         inventory, _ = await create_inventory_data(self.bot, user.id)
