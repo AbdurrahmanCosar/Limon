@@ -15,11 +15,16 @@ class DataGenerator:
         self.amount = amount
         self.is_incomming = is_incomming
 
+    @property
+    def print_transaction(self):
+        return self.transactions
+
     def _limited(self, transactions: List):
         """Deleted for not exceed the limit"""
         if len(transactions) == 10:
             transactions.pop(-1)
             return transactions
+        return transactions
 
     def save_transfer_data(self, uid: int):
         """It is used for the user's money transfer"""

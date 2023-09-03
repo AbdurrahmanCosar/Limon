@@ -27,10 +27,10 @@ async def add_xp(client, _id, xp_category):
         "gamble_xp"    # 5
         ]
 
-    if (xp_category not in xp_types) or (5 < xp_category < 0):
+    if (xp_category not in xp_types) or (type(xp_category) is int and 5 < xp_category < 0):
         raise KeyError("Please enter a valid category! (0-5)")
 
-    if isinstance(int, xp_category):
+    if isinstance(xp_category, int):
         xp_category = xp_types[xp_category]
 
     user_data, collection = await create_career_data(client, _id)
