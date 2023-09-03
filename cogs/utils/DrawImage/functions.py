@@ -11,9 +11,9 @@ from .assets import Assets, Icons
 
 class Functions:
     def user_not_found_err():
-        avatar = Assets.default_avatar
         name = "User"
-        return avatar, name
+        avatar = Assets.default_avatar
+        return name, avatar
 
     async def open_avatar(u_avatar):
         avatar = u_avatar.replace(size=256)
