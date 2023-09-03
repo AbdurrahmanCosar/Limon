@@ -49,7 +49,7 @@ class OpenBox(commands.Cog):
 
     @app_commands.command(name="open-box", description="Open a box and get rich")
     @app_commands.describe(box="Select a box")
-    @app_commands.checks.dynamic_cooldown(set_cooldown())
+    @app_commands.checks.dynamic_cooldown(set_cooldown(10))
     @app_commands.choices(box=[
         Choice(name=f"Tahta Kasa - {boxes['woodenBox'][1]:,}LC", value="woodenBox"),
         Choice(name=f"Gümüş Kasa - {boxes['silverBox'][1]:,}LC" , value="silverBox"),
@@ -63,11 +63,11 @@ class OpenBox(commands.Cog):
 
         selected_box = boxes.get(box)
         reward = randint(selected_box[2], selected_box[3])
-        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward}LC** çıktı. Kâr: `**%{(reward - selected_box[1]) / 100}**`"
+        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward}LC** çıktı. Kâr: **`%{(reward - selected_box[1]) / 100}`**"
 
         user_data["cash"] -= selected_box[1]
         user_data["cash"] += reward
-        await collection.replace_one({"_id": user.id}, )
+        await collection.replace_one({"_id": user.id}, user_data)
 
         await interaction.response.send_message(content = ":gift: Kutu açılıyor..")
         await sleep(4)

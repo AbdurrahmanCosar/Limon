@@ -31,15 +31,18 @@ class Gambles(commands.Cog):
 
         user = interaction.user
         data = interaction.data
-
+        print(data)
         for i in data["options"]:
+            print(i)
             if i["name"] == "amount":
+                print(1)
                 value = i["value"]
                 user_data, _ = await create_wallet(self.bot, user.id)
                 check = await balance_check(interaction, user_data["cash"], value)
 
                 if check:
                     await add_xp(self.bot, user.id, "gamble_xp")
+                    print(2)
                     return True
                 return False
             return False
@@ -54,7 +57,7 @@ class Gambles(commands.Cog):
         num = randint(0,1)
         message = ""
         if num == 1:
-            user_data["cash"] += amount
+            user_data["cash"] += amount * 2
             message = f"{coinfront} Tebrikler! Coinflip oyunundan tam **{amount*2:,}LC** kazandınız."
         else:
             user_data["cash"] -= amount
@@ -66,20 +69,20 @@ class Gambles(commands.Cog):
     @app_commands.command(name="guess-number", description="[1-5] Guess the number and make LiCash")
     @app_commands.describe(guessnum="Enter your guess [1-5]", amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
-    async def guessnumber(self, interaction: Interaction, guessnum: app_commands.Range[int, 1,5], amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
+    async def guessnumber(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE], guessnum: app_commands.Range[int, 1,5]):
         user = interaction.user
-        user_data, collecion = await create_wallet(self.bot, user.id)
+        user_data, collection = await create_wallet(self.bot, user.id)
 
         num = randint(1,5)
         message = ""
         if guessnum == num:
-            message = f"{morelicash} Tebrikler! **{num}** rakamını doğru tahmin ettiniz ve tam **{amount*2:,}LC** kazandınız."
-            user_data["cash"] += amount*2
+            message = f"{morelicash} Tebrikler! **{num}** rakamını doğru tahmin ettiniz ve tam **{amount:,}LC** kazandınız."
+            user_data["cash"] += amount * 2
         else:
             message = f"{cross} Maalesef kaybettiniz;c **{num}** rakamını doğru tahmin edemediniz. **~{amount:,}LC~**"
             user_data["cash"] -= amount
 
-        await collecion.replace_one({"_id": user.id}, user_data)
+        await collection.replace_one({"_id": user.id}, user_data)
         await interaction.response.send_message(content = message)
 
     @app_commands.command(name="roll", description="Roll the dice and make LiCash")
@@ -89,22 +92,22 @@ class Gambles(commands.Cog):
         Choice(name="Çift", value="0"),
         Choice(name="Tek", value="1")
     ])
-    async def roll(self, interaction: Interaction, choose: str, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
+    async def roll(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE], choose: str):
 
         user = interaction.user
-        user_data, collecion = await create_wallet(self.bot, user.id)
+        user_data, collection = await create_wallet(self.bot, user.id)
 
         dice = randint(1,12)
         message = ""
 
         if (dice % 2 == 0 and int(choose) == 0) or (dice % 2 != 0 and int(choose) == 1):
-            user_data["cash"] += amount
+            user_data["cash"] += amount * 2
             message = f"{morelicash} Tebrikler! Iki zar sonucu **{dice}** geldi ve tam **{amount*2:,}LC** kazandınız."
         else:
             user_data["cash"] -= amount
             message = f"{cross} Maalesef kaybettiniz;c Iki zar sonucu **{dice}** geldi. **~{amount:,}LC~**"
 
-        await collecion.replace_one({"_id": user.id}, user_data)
+        await collection.replace_one({"_id": user.id}, user_data)
         await interaction.response.send_message(content = ":game_die: Zarlar atılıyor...")
         await sleep(3)
         await interaction.edit_original_response(content = message)
