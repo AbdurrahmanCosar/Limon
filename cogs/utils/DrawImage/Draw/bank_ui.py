@@ -9,6 +9,11 @@ from PIL import Image, ImageDraw
 from ..functions import Functions
 from ..assets import Assets
 
+"""
+TODO:
+The bot logo and the 'Admin' text will be set fır the Admin in transactions
+"""
+
 class DrawBankImages:
     def __init__(self, client, interaction, transaction_list: list, balance: int):
         self.client = client
@@ -31,7 +36,7 @@ class DrawBankImages:
 
             # User Check
             if f_user is None:
-                f_avatar, f_name = Functions.user_not_found_err()
+                f_name, f_avatar = Functions.user_not_found_err()
             else:
                 f_name = f_user.name
                 f_avatar = f_user.avatar
@@ -56,11 +61,18 @@ class DrawBankImages:
                 f_transfer_color = "#e04339" # Red
 
         else:
-            f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
-            f_name = first_transaction["user"]
-            f_transfer_text = "Harcama" # Expense
-            f_transfer_color = "#e04339" # Red
-            f_avatar = Assets.expense_avatar
+            if first_transaction["transaction"]["is_incomming"] is False:
+                f_transfer_amount = f"-{first_transaction['amount']:,}".replace(',', '.')
+                f_name = first_transaction["user"]
+                f_transfer_text = "Harcama" # Expense
+                f_transfer_color = "#e04339" # Red
+            else:
+                f_transfer_amount = f"+{first_transaction['amount']:,}".replace(',', '.')
+                f_name = first_transaction["user"]
+                f_transfer_text = "Gelir"
+                f_transfer_color = "#7eb44b"
+
+            f_name, f_avatar = Functions.expense_icon(f_name)
 
             # Open Avatar
             #f_avatar = await Functions.open_avatar(f_avatar)
@@ -76,7 +88,7 @@ class DrawBankImages:
 
                 # User Check
                 if s_user is None:
-                    s_avatar, s_name = Functions.user_not_found_err()
+                    s_name, s_avatar = Functions.user_not_found_err()
                 else:
                     s_name = s_user.name
                     s_avatar = s_user.avatar
@@ -101,11 +113,19 @@ class DrawBankImages:
                     s_transfer_color = "#e04339" # Red
 
             else:
-                s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
-                s_name = second_transaction["user"]
-                s_transfer_text = "Harcama" # Expense
-                s_transfer_color = "#e04339" # Red
-                s_avatar = Assets.expense_avatar
+                if second_transaction["transaction"]["is_incomming"] is False:
+                    s_transfer_amount = f"-{second_transaction['amount']:,}".replace(',', '.')
+                    s_name = second_transaction["user"]
+                    s_transfer_text = "Harcama" # Expense
+                    s_transfer_color = "#e04339" # Red
+                else:
+                    s_transfer_amount = f"+{second_transaction['amount']:,}".replace(',', '.')
+                    s_name = second_transaction["user"]
+                    s_transfer_text = "Gelir"
+                    s_transfer_color = "#7eb44b"
+
+                s_name, s_avatar = Functions.expense_icon(s_name)
+
 
         #* --------------BASE IMAGE AND RECTANGLE--------------
         img = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
@@ -184,7 +204,7 @@ class DrawBankImages:
 
                 # Transfer Amount
                 transfer_money_offset_y += 350
-                draw.text((1170, transfer_money_offset_y), text = s_transfer_amount, font = Assets.transfer_money_font, fill = s_transfer_color, anchor = "ra")
+                draw.text((1170, transfer_money_offset_y), text = s_transfer_amount, font = Assets.acumin_black_90, fill = s_transfer_color, anchor = "ra")
 
         #* --------------BOTTOM OPPORTUNITY BOX--------------
         draw.text((335,1901), text = "Fırsat Yok", font = Assets.coolvetica_50, fill = "#bcbcbc", anchor = "ma")
@@ -193,96 +213,101 @@ class DrawBankImages:
         return img
 
     async def draw_bank_transactions(self):
-        user = self.interaction.user
-        transactions = self.transactions
+        try:
+            user = self.interaction.user
+            transactions = self.transactions
 
-        img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
-        rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
-        w, h = img.size
+            img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
+            rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
+            w, h = img.size
 
-        draw = ImageDraw.Draw(img)
+            draw = ImageDraw.Draw(img)
 
-        offset_y = 539
+            offset_y = 539
 
-        user_avatar = user.avatar
-        if user_avatar is None:
-            user_avatar = Assets.default_avatar
-
-        #* --------------FONTS--------------
-        big_bold = Assets.bevietnam_bold_61
-        small_bold = Assets.bevietnam_bold_46
-        small_semibold = Assets.bevietnam_semibold_46
+            user_avatar = user.avatar
+            if user_avatar is None:
+                user_avatar = Assets.default_avatar
+            else:
+                user_avatar = await Functions.open_avatar(user_avatar)
+                        #* --------------FONTS--------------
+            big_bold = Assets.bevietnam_bold_61
+            small_bold = Assets.bevietnam_bold_46
+            small_semibold = Assets.bevietnam_semibold_46
 
         #* --------------COLOURS--------------
-        white = "#efefef"
-        gray = "#bcbcbc"
-        black = "#151515"
-        green = "#7eb44b"
-        red = "#e04339"
+            white = "#efefef"
+            gray = "#bcbcbc"
+            black = "#151515"
+            green = "#7eb44b"
+            red = "#e04339"
 
         #* --------------PROFILE--------------
-        user_avatar = await Functions.open_avatar(user_avatar)
-        user_avatar = Functions.circle(user_avatar,size = (180, 180))
-        user_avatar = user_avatar.resize((180, 180), Image.LANCZOS)
+            print(1)
+            user_avatar = Functions.circle(user_avatar,size = (179, 180))
+            user_avatar = user_avatar.resize((179, 180), Image.LANCZOS)
 
-        img.paste(user_avatar, (76, 76), user_avatar)
 
-        draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
-        draw.text((296, 128 + 30), text = user.name, font = big_bold, fill = white)
+            img.paste(user_avatar, (76, 76), user_avatar)
 
-        for index, data in enumerate(transactions[:6]):
-            if index % 2 == 0:
-                img.paste(rectangle, (0, offset_y), rectangle)
+            draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
+            draw.text((296, 128 + 30), text = user.name, font = big_bold, fill = white)
 
-            uid = data["user"]
+            for index, data in enumerate(transactions[:6]):
+                if index % 2 == 0:
+                    img.paste(rectangle, (0, offset_y), rectangle)
 
-            if isinstance(uid, int):
-                transfer_user = self.interaction.client.get_user(uid)
+                uid = data["user"]
 
-                if transfer_user is None:
-                    name, avatar = Functions.user_not_found_err()
-                else:
-                    name = transfer_user.name
-                    avatar = transfer_user.avatar
+                if isinstance(uid, int):
+                    transfer_user = self.interaction.client.get_user(uid)
 
-                    if avatar is None:
-                        avatar = Assets.default_avatar
+                    if transfer_user is None:
+                        name, avatar = Functions.user_not_found_err()
                     else:
-                        avatar = await Functions.open_avatar(avatar)
+                        name = transfer_user.name
+                        avatar = transfer_user.avatar
 
-                if data["transaction"]["is_incomming"] is True:
-                    text = "Gelen Transfer"
-                    amount = f"+{data['amount']:,}".replace(',', '.')
-                    color = green
-                    transaction_side = "Kimden: "
+                        if avatar is None:
+                            avatar = Assets.default_avatar
+                        else:
+                            avatar = await Functions.open_avatar(avatar)
+
+                    if data["transaction"]["is_incomming"] is True:
+                        text = "Gelen Transfer"
+                        amount = f"+{data['amount']:,}".replace(',', '.')
+                        color = green
+                        transaction_side = "Kimden: "
+                    else:
+                        text = "Giden Transfer"
+                        amount = f"-{data['amount']:,}".replace(',', '.')
+                        color = red
+                        transaction_side = "Kime: "
+
                 else:
-                    text = "Giden Transfer"
-                    amount = f"-{data['amount']:,}".replace(',', '.')
-                    color = red
-                    transaction_side = "Kime: "
+                    name, avatar = Functions.expense_icon(uid)
+                    transaction_side = ""
 
-            else:
-                name, avatar = Functions.expense_icon(uid)
-                transaction_side = ""
+                    if data["transaction"]["is_incomming"] is False:
+                        text = "Harcama"
+                        amount = f"-{data['amount']:,}".replace(',', '.')
+                        color = red
+                    else:
+                        text = "Gelir"
+                        amount = f"+{data['amount']:,}".replace(',', '.')
+                        color = green
+                print(2)
+                avatar = Functions.circle(avatar, size = (170, 170))
+                avatar = avatar.resize((170, 170), Image.LANCZOS)
+                img.paste(avatar, (75, offset_y + 25), avatar)
 
-                if data["transaction"]["is_incomming"] is False:
-                    text = "Harcama"
-                    amount = f"-{data['amount']:,}".replace(',', '.')
-                    color = red
-                else:
-                    text = "Gelir"
-                    amount = f"+{data['amount']:,}".replace(',', '.')
-                    color = green
+                draw.text((271, offset_y + 50), text = text, font = big_bold, fill = black)
+                draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
+                draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
+                draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
 
-            avatar = Functions.circle(avatar, size = (170, 170))
-            avatar = avatar.resize((170, 170), Image.LANCZOS)
-            img.paste(avatar, (75, offset_y + 25), avatar)
+                offset_y += 225
 
-            draw.text((271, offset_y + 50), text = text, font = big_bold, fill = black)
-            draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
-            draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
-            draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
-
-            offset_y += 225
-
-        return img
+            return img
+        except Exception as err:
+            print(err)
