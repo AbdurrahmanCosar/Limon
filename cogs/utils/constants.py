@@ -9,12 +9,12 @@ class _Link:
 
 class _Game:
     max_bet_value = 100000
-    FuelPerLiter: 4
-    FishPricePerSize: 3
-    MinePricePerKG: 2
-    WoodPricePerMeter: 3
-    AxeRefreshPrice: 10000
-    PickaxeRefreshPrice: 15000
+    FuelPerLiter = 4
+    FishPricePerSize = 3
+    MinePricePerKG = 2
+    WoodPricePerMeter = 3
+    AxeRefreshPrice = 10000
+    PickaxeRefreshPrice = 15000
 
 class _Emojis:
     enought_balance = "" # will be add
