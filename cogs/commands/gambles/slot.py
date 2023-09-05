@@ -29,11 +29,16 @@ class Slot(commands.Cog):
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         user = interaction.user
-        data = interaction.data
+        data = interaction.namespace
 
-        for i in data["options"]:
-            if i["name"] == "amount":
-                value = i["value"]
+        """
+        * Interaction.data gives us only the first option
+        * Interaction.namespace gives all options for the command
+        """
+
+        for i in data:
+            if i[0] == "amount":
+                value = i[1]
                 user_data, collection = await create_wallet(self.bot, user.id)
                 check = await balance_check(interaction, user_data["cash"], value)
 
