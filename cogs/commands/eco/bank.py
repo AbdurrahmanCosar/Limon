@@ -69,11 +69,11 @@ class Button(ui.View, DrawBankImages):
             x.seek(0)
             await interaction.edit_original_response(attachments = [File(x, "LimonTransaction.png")], view=self)
 
-class Bank(commands.Cog):
+class Balance(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "bank", description="View your bank account")
+    @app_commands.command(name = "balance", description="View your bank account")
     @app_commands.checks.dynamic_cooldown(set_cooldown(15))
     async def balance(self, interaction: Interaction):
         await interaction.response.defer()
@@ -90,4 +90,4 @@ class Bank(commands.Cog):
             await interaction.followup.send(content = None, file = File(a, "LimonWallet.png"), view=Button(self.bot, interaction.user.id, draw))
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Bank(bot))
+    await bot.add_cog(Balance(bot))
