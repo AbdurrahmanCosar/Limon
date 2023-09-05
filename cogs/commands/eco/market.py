@@ -51,16 +51,16 @@ class FishingFoodDropdown(ui.Select):
         if await balance_check(interaction, user_wallet["cash"], food_price) is False:
             return
 
-        if "fishfoods" not in user_inv["items"]:
-            fishfood_data = { "$set" : {"items.fishfoods" : {value: food_unit}}}
+        if "fishfoods" not in user_inv:
+            fishfood_data = { "$set" : {"fishfoods" : {value: food_unit}}}
             await i_collection.update_one(user_inv ,fishfood_data)
 
-        elif value not in user_inv["items"]["fishfoods"]:
-            user_inv["items"]["fishfoods"].update({value: food_unit})
+        elif value not in user_inv["fishfoods"]:
+            user_inv["fishfoods"].update({value: food_unit})
             await i_collection.replaceone({"_id": user.id}, user_inv)
 
-        elif value in user_inv["items"]["fishfoods"]:
-            user_inv["items"]["fishfoods"][value] += food_unit
+        elif value in user_inv["fishfoods"]:
+            user_inv["fishfoods"][value] += food_unit
             await i_collection.replace_one({"_id": user.id}, user_inv)
 
         user_wallet["cash"] -= food_price
@@ -98,16 +98,16 @@ class AmmoDropdown(ui.Select):
         if await balance_check(interaction, user_wallet["cash"], ammo_price) is False:
             return
 
-        if "ammo" not in user_inv["items"]:
-            ammo_data = { "$set" : {"items.ammo" : {value: ammo_unit}}}
+        if "ammo" not in user_inv:
+            ammo_data = { "$set" : {"ammo" : {value: ammo_unit}}}
             await i_collection.update_one(user_inv, ammo_data)
 
-        elif value not in user_inv["items"]["ammo"]:
-            user_inv["items"]["ammo"].update({value: ammo_unit})
+        elif value not in user_inv["ammo"]:
+            user_inv["ammo"].update({value: ammo_unit})
             await i_collection.replaceone({"_id": user.id}, user_inv)
 
-        elif value in user_inv["items"]["ammo"]:
-            user_inv["items"]["ammo"][value] += ammo_unit
+        elif value in user_inv["ammo"]:
+            user_inv["ammo"][value] += ammo_unit
             await i_collection.replace_one({"_id": user.id}, user_inv)
 
         user_wallet["cash"] -= ammo_price

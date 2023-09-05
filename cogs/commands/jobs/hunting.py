@@ -49,8 +49,7 @@ class Hunting(commands.Cog):
         else:
             required_ammo = "ammo"
         
-        inv_items = inventory["items"]
-        if ("ammo" in inv_items and inv_items["ammo"][required_ammo] == 0) or (required_ammo not in inv_items["ammo"]):
+        if ("ammo" in inventory and inventory["ammo"][required_ammo] == 0) or (required_ammo not in inventory["ammo"]):
                 return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True)
 
         if weapon["durability"] < 4:
