@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
 """
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from ...database.fetchdata import create_career_data, create_wallet
 from ..functions import Functions
 from ..assets import Assets
@@ -17,7 +17,7 @@ levels = {
     "hunter": {"gold": 200, "silver": 150, "bronze": 50},
     "miner": {"gold": 200, "silver": 150, "bronze": 50},
     "forester": {"gold": 200, "silver": 150, "bronze": 50},
-    "gable": {"gold": 200, "silver": 150, "bronze": 50}
+    "gambler": {"gold": 200, "silver": 150, "bronze": 50}
 }
 
 class UserInfo:
@@ -123,40 +123,47 @@ class UserInfo:
         created_at = member.created_at.strftime("%b %d, %Y")
         joined_at = member.joined_at.strftime("%b %d, %Y")
 
-        draw.text((227, display_name_offset_y), display_name ,font = Assets.acumin_black_50, fill = "#ffffff")
-        draw.text((227, name_offset_y), name, font = Assets.acumin_bold_50, fill = "#bcbcbc")
-        draw.text((44, 320), "USER ID", font =  Assets.acumin_black_50, fill = "#ffffff")
-        draw.text((44, 447), "STATUS", font =  Assets.acumin_black_50, fill="#ffffff")
-        draw.text((44, 583), "TOP ROLE", font =  Assets.acumin_black_50, fill="#ffffff")
+        acumin_black_50 = ImageFont.truetype(Assets.acumin_black, 50, encoding="unic")
+        acumin_bold_50 = ImageFont.truetype(Assets.acumin_bold, 50, encoding="unic")
+        acumin_semibold_47 = ImageFont.truetype(Assets.acumin_semibold, 47, encoding="unic")
+        acumin_semibold_49 = ImageFont.truetype(Assets.acumin_semibold, 49, encoding="unic")
+
+
+
+        draw.text((227, display_name_offset_y), display_name ,font = acumin_black_50, fill = "#ffffff")
+        draw.text((227, name_offset_y), name, font = acumin_bold_50, fill = "#bcbcbc")
+        draw.text((44, 320), "USER ID", font =  acumin_black_50, fill = "#ffffff")
+        draw.text((44, 447), "STATUS", font =  acumin_black_50, fill="#ffffff")
+        draw.text((44, 583), "TOP ROLE", font =  acumin_black_50, fill="#ffffff")
 
         # DATE
-        draw.text((67, 834), created_at, font = Assets.acumin_semibold_47, fill="#ffffff")
-        draw.text((356, 834), joined_at, font = Assets.acumin_semibold_47, fill="#ffffff")
+        draw.text((67, 834), created_at, font = acumin_semibold_47, fill="#ffffff")
+        draw.text((356, 834), joined_at, font = acumin_semibold_47, fill="#ffffff")
 
         # SIDE BAR
-        draw.text((758, 302), money, font = Assets.acumin_semibold_49, fill= "#ffffff", anchor="ma")
-        draw.text((758, 733), "Kaldırıldı!", font = Assets.acumin_semibold_49, fill= "#ffffff", anchor="ma")
+        draw.text((758, 302), money, font = acumin_semibold_49, fill= "#ffffff", anchor="ma")
+        draw.text((758, 733), "Kaldırıldı!", font = acumin_semibold_49, fill= "#ffffff", anchor="ma")
 
         # BOTTOM
         # ID
         y = 378
-        id_text_len = draw.textlength(text = str(member.id) , font = Assets.acumin_bold_50)
+        id_text_len = draw.textlength(text = str(member.id) , font = acumin_bold_50)
 
         rectangle(y, id_text_len)
-        draw.text((54, y), str(member.id), font = Assets.acumin_bold_50, fill = "#303338")
+        draw.text((54, y), str(member.id), font = acumin_bold_50, fill = "#303338")
 
         # Status
         y = 505
-        status_text_len = draw.textlength(text = str(status) , font = Assets.acumin_bold_50)
+        status_text_len = draw.textlength(text = str(status) , font = acumin_bold_50)
 
         rectangle(y, status_text_len)
-        draw.text((54, y), status, font = Assets.acumin_bold_50, fill = "#303338")
+        draw.text((54, y), status, font = acumin_bold_50, fill = "#303338")
 
         # Top Role
         y = 641
-        top_role_text_len = draw.textlength(text = str(top_role) , font = Assets.acumin_bold_50)
+        top_role_text_len = draw.textlength(text = str(top_role) , font = acumin_bold_50)
         rectangle(y, top_role_text_len)
-        draw.text((54, y), top_role, font = Assets.acumin_bold_50, fill = "#303338")
+        draw.text((54, y), top_role, font = acumin_bold_50, fill = "#303338")
 
         avatar = avatar.resize((180, 180), Image.LANCZOS)
         img.paste(avatar, (29,29), avatar)

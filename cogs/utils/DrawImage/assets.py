@@ -14,24 +14,15 @@ class _Assets:
     verify = Image.open(r"cogs/assets/images/badges/verify.png").convert("RGBA")
 
     # Fonts
-    acumin_black_158 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 158)
-    acumin_black_90 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 90)
-    acumin_black_50 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBlack.otf", 50, encoding="unic")
-    acumin_bold_50 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondBold.otf", 50, encoding="unic")
+    acumin_black = "cogs/assets/fonts/AcuminProExtraCondBlack.otf"
+    acumin_bold = "cogs/assets/fonts/AcuminProExtraCondBold.otf"
+    acumin_semibold = "cogs/assets/fonts/AcuminProExtraCondSemibold.otf"
 
-    acumin_semibold_66 = transfer_money_font = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 66)
-    acumin_semibold_49 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 49, encoding="unic")
-    acumin_semibold_47 = ImageFont.truetype("cogs/assets/fonts/AcuminProExtraCondSemibold.otf", 47, encoding="unic")
+    bevietnam_bold = "cogs/assets/fonts/BeVietnamPro-Bold.ttf"
+    bevietnam_semibold = "cogs/assets/fonts/BeVietnamPro-SemiBold.ttf"
 
-    bevietnam_bold_98 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 98)
-    bevietnam_bold_61 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 61)
-    bevietnam_bold_49 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 49)
-    bevietnam_bold_46 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 46)
-    bevietnam_bold_32 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-Bold.ttf", 32)
-    bevietnam_semibold_46 = ImageFont.truetype("cogs/assets/fonts/BeVietnamPro-SemiBold.ttf", 46)
-
-    coolvetica_50 = ImageFont.truetype("cogs/assets/fonts/coolveticaRG.otf", 50)
-    coolvetica_condensed_70 = ImageFont.truetype("cogs/assets/fonts/coolveticaCondensedRG.otf", 70)
+    coolvetica = "cogs/assets/fonts/coolveticaRG.otf"
+    coolvetica_condensed = "cogs/assets/fonts/coolveticaCondensedRG.otf"
 
 class _Icons:
     _path = "cogs/assets/images/expense_icons/"

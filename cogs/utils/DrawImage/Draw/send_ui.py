@@ -5,8 +5,10 @@
  * For more information, see README.md and LICENSE
 """
 
+from re import A
 from discord import Interaction, Member
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
+from discord.enums import E
 from ..assets import Assets
 from ..functions import Functions
 from datetime import datetime
@@ -33,10 +35,10 @@ class DrawSendImages:
         img = Image.open(r"cogs/assets/images/send_template.png").convert("RGBA")
         draw = ImageDraw.Draw(img)
 
-        big_font = Assets.bevietnam_bold_61
-        medium_font = Assets.bevietnam_bold_46
-        small_font = Assets.bevietnam_bold_32
+        big_font =  ImageFont.truetype(Assets.bevietnam_bold, 61, encoding="unic")
+        medium_font = ImageFont.truetype(Assets.bevietnam_bold, 46, encoding="unic")
 
+        small_font = ImageFont.truetype(Assets.bevietnam_bold, 32, encoding="unic")
         #* --------------COLOURS--------------
         gray = "#bcbcbc"
         black = "#151515"
@@ -72,8 +74,8 @@ class DrawSendImages:
         img = Image.open(r"cogs/assets/images/send_template_complete.png").convert("RGBA")
         draw = ImageDraw.Draw(img)
 
-        main_font = Assets.bevietnam_bold_98
-        secondary_font = Assets.bevietnam_bold_49 
+        main_font = ImageFont.truetype(Assets.bevietnam_bold, 98, encoding="unic")
+        secondary_font = ImageFont.truetype(Assets.bevietnam_bold, 49, encoding="unic")
 
         #* --------------COLOURS--------------
         white = "#ffffff"

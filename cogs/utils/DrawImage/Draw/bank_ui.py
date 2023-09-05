@@ -5,7 +5,8 @@
  * For more information, see README.md and LICENSE
 """
 
-from PIL import Image, ImageDraw
+from re import A
+from PIL import Image, ImageDraw, ImageFont
 from ..functions import Functions
 from ..assets import Assets
 
@@ -155,22 +156,29 @@ class DrawBankImages:
 
         money = f"{self.balance:,}".replace(',', '.') # User's money -> 1.000.000
 
+        # Fonts
+        acumin_black_158 = ImageFont.truetype(Assets.acumin_black, 158, encoding="unic")
+        acumin_black_90 =  ImageFont.ImageFont.truetype(Assets.acumin_black, 90, encoding="unic")
+        acumin_semobold_66 = ImageFont.truetype(Assets.acumin_semibold, 66, encoding="unic")
+        coolvetica_50 = ImageFont.truetype(Assets.coolvetica, 50, encoding="unic")
+        coolvetica_condensed_70 =  ImageFont.truetype(Assets.coolvetica_condensed, 70, encoding="unic")
+
         # Balance 
-        draw.text(((w/2),461), text = money, font = Assets.acumin_black_158, fill = "#ffffff", anchor = "ma")
+        draw.text(((w/2),461), text = money, font = acumin_black_158, fill = "#ffffff", anchor = "ma")
 
         # Account No
-        draw.text((333, 655), text = "Hesap No:", font = Assets.acumin_semibold_66, fill = "#bcbcbc")
-        draw.text((530, 655), text = str(user.id), font = Assets.acumin_semibold_66, fill = "#ffffff")
+        draw.text((333, 655), text = "Hesap No:", font = acumin_semibold_66, fill = "#bcbcbc")
+        draw.text((530, 655), text = str(user.id), font = acumin_semibold_66, fill = "#ffffff")
 
         #* --------------RECTANGLE TRANSFER BOX--------------
         if len(first_transaction) == 0:
             text = "Geçmiş İşlem Bulunamadı"
-            draw.text(((w/2), h/2), text = text, font = Assets.coolvetica_50, fill = "#bcbcbc", anchor = "ma")
+            draw.text(((w/2), h/2), text = text, font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
         else:
             img.paste(rectangle, (offset_x, offset_y), rectangle)
 
             # Transfer Text -> "Gelen Transfer" or "Giden Transfer"
-            draw.text((332, offset_y + 70), text = f_transfer_text, font = Assets.acumin_black_90, fill = "#ffffff")
+            draw.text((332, offset_y + 70), text = f_transfer_text, font = acumin_black_90, fill = "#ffffff")
 
             # Avatar 
             f_avatar = Functions.circle(f_avatar, size = (180, 180))
@@ -179,10 +187,10 @@ class DrawBankImages:
             img.paste(f_avatar, (112, offset_y + 40), f_avatar)
 
             # Transfer User
-            draw.text((332, offset_y + 131), text = f_name, font = Assets.coolvetica_condensed_70, fill = "#bcbcbc")
+            draw.text((332, offset_y + 131), text = f_name, font = coolvetica_condensed_70, fill = "#bcbcbc")
 
             # Transfer Amount
-            draw.text((1170, transfer_money_offset_y), text = f_transfer_amount, font = Assets.acumin_black_90, fill = f_transfer_color, anchor = "ra")
+            draw.text((1170, transfer_money_offset_y), text = f_transfer_amount, font = acumin_black_90, fill = f_transfer_color, anchor = "ra")
 
             # Second Transaction Rectange Box
             if len(transactions) > 1:
@@ -191,7 +199,7 @@ class DrawBankImages:
                 img.paste(rectangle, (offset_x, offset_y), rectangle)
 
                 # Transfer Text -> "Gelen Transfer" or "Giden Transfer"
-                draw.text((332, offset_y + 70), text = s_transfer_text, font = Assets.acumin_black_90, fill = "#ffffff")
+                draw.text((332, offset_y + 70), text = s_transfer_text, font = acumin_black_90, fill = "#ffffff")
 
                 # Avatar 
                 s_avatar = Functions.circle(s_avatar, size = (180, 180))
@@ -200,114 +208,112 @@ class DrawBankImages:
                 img.paste(s_avatar, (112, offset_y + 40), s_avatar)
 
                 # Transfer User
-                draw.text((332, offset_y + 131), text = s_name, font = Assets.coolvetica_condensed_70, fill = "#bcbcbc")
+                draw.text((332, offset_y + 131), text = s_name, font = coolvetica_condensed_70, fill = "#bcbcbc")
 
                 # Transfer Amount
                 transfer_money_offset_y += 350
-                draw.text((1170, transfer_money_offset_y), text = s_transfer_amount, font = Assets.acumin_black_90, fill = s_transfer_color, anchor = "ra")
+                draw.text((1170, transfer_money_offset_y), text = s_transfer_amount, font = acumin_black_90, fill = s_transfer_color, anchor = "ra")
 
         #* --------------BOTTOM OPPORTUNITY BOX--------------
-        draw.text((335,1901), text = "Fırsat Yok", font = Assets.coolvetica_50, fill = "#bcbcbc", anchor = "ma")
-        draw.text((915,1901), text = "Fırsat Yok", font = Assets.coolvetica_50, fill = "#bcbcbc", anchor = "ma")
+        draw.text((335,1901), text = "Fırsat Yok", font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
+        draw.text((915,1901), text = "Fırsat Yok", font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
 
         return img
 
     async def draw_bank_transactions(self):
-        try:
-            user = self.interaction.user
-            transactions = self.transactions
+        user = self.interaction.user
+        transactions = self.transactions
 
-            img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
-            rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
-            w, h = img.size
+        img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
+        rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
+        w, h = img.size
 
-            draw = ImageDraw.Draw(img)
+        draw = ImageDraw.Draw(img)
 
-            offset_y = 539
+        offset_y = 539
 
-            user_avatar = user.avatar
-            if user_avatar is None:
-                user_avatar = Assets.default_avatar
-            else:
-                user_avatar = await Functions.open_avatar(user_avatar)
+        user_avatar = user.avatar
+        if user_avatar is None:
+            user_avatar = Assets.default_avatar
+        else:
+            user_avatar = await Functions.open_avatar(user_avatar)
                         #* --------------FONTS--------------
-            big_bold = Assets.bevietnam_bold_61
-            small_bold = Assets.bevietnam_bold_46
-            small_semibold = Assets.bevietnam_semibold_46
+        big_bold = ImageFont.truetype(Assets.bevietnam_bold, 61, encoding="unic")
+        small_bold = ImageFont.truetype(Assets.bevietnam_bold, 46, encoding="unic")
+
+        small_semibold = ImageFont.truetype(Assets.bevietnam_semibold, 46, encoding="unic")  
 
         #* --------------COLOURS--------------
-            white = "#efefef"
-            gray = "#bcbcbc"
-            black = "#151515"
-            green = "#7eb44b"
-            red = "#e04339"
+        white = "#efefef"
+        gray = "#bcbcbc"
+        black = "#151515"
+        green = "#7eb44b"
+        red = "#e04339"
 
         #* --------------PROFILE--------------
-            print(1)
-            user_avatar = Functions.circle(user_avatar,size = (179, 180))
-            user_avatar = user_avatar.resize((179, 180), Image.LANCZOS)
+        user_avatar = Functions.circle(user_avatar,size = (179, 180))
+        user_avatar = user_avatar.resize((179, 180), Image.LANCZOS)
 
 
-            img.paste(user_avatar, (76, 76), user_avatar)
+        img.paste(user_avatar, (76, 76), user_avatar)
 
-            draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
-            draw.text((296, 128 + 30), text = user.name, font = big_bold, fill = white)
+        draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
+        draw.text((296, 128 + 30), text = user.name, font = big_bold, fill = white)
 
-            for index, data in enumerate(transactions[:6]):
-                if index % 2 == 0:
-                    img.paste(rectangle, (0, offset_y), rectangle)
+        for index, data in enumerate(transactions[:6]):
+            if index % 2 == 0:
+                img.paste(rectangle, (0, offset_y), rectangle)
 
-                uid = data["user"]
+            uid = data["user"]
 
-                if isinstance(uid, int):
-                    transfer_user = self.interaction.client.get_user(uid)
+            if isinstance(uid, int):
+                transfer_user = self.interaction.client.get_user(uid)
 
-                    if transfer_user is None:
-                        name, avatar = Functions.user_not_found_err()
-                    else:
-                        name = transfer_user.name
-                        avatar = transfer_user.avatar
-
-                        if avatar is None:
-                            avatar = Assets.default_avatar
-                        else:
-                            avatar = await Functions.open_avatar(avatar)
-
-                    if data["transaction"]["is_incomming"] is True:
-                        text = "Gelen Transfer"
-                        amount = f"+{data['amount']:,}".replace(',', '.')
-                        color = green
-                        transaction_side = "Kimden: "
-                    else:
-                        text = "Giden Transfer"
-                        amount = f"-{data['amount']:,}".replace(',', '.')
-                        color = red
-                        transaction_side = "Kime: "
-
+                if transfer_user is None:
+                    name, avatar = Functions.user_not_found_err()
                 else:
-                    name, avatar = Functions.expense_icon(uid)
-                    transaction_side = ""
+                    name = transfer_user.name
+                    avatar = transfer_user.avatar
 
-                    if data["transaction"]["is_incomming"] is False:
-                        text = "Harcama"
-                        amount = f"-{data['amount']:,}".replace(',', '.')
-                        color = red
+                    if avatar is None:
+                        avatar = Assets.default_avatar
                     else:
-                        text = "Gelir"
-                        amount = f"+{data['amount']:,}".replace(',', '.')
-                        color = green
-                print(2)
-                avatar = Functions.circle(avatar, size = (170, 170))
-                avatar = avatar.resize((170, 170), Image.LANCZOS)
-                img.paste(avatar, (75, offset_y + 25), avatar)
+                        avatar = await Functions.open_avatar(avatar)
 
-                draw.text((271, offset_y + 50), text = text, font = big_bold, fill = black)
-                draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
-                draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
-                draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
+                if data["transaction"]["is_incomming"] is True:
+                    text = "Gelen Transfer"
+                    amount = f"+{data['amount']:,}".replace(',', '.')
+                    color = green
+                    transaction_side = "Kimden: "
+                else:
+                    text = "Giden Transfer"
+                    amount = f"-{data['amount']:,}".replace(',', '.')
+                    color = red
+                    transaction_side = "Kime: "
 
-                offset_y += 225
+            else:
+                name, avatar = Functions.expense_icon(uid)
+                transaction_side = ""
 
-            return img
-        except Exception as err:
-            print(err)
+                if data["transaction"]["is_incomming"] is False:
+                    text = "Harcama"
+                    amount = f"-{data['amount']:,}".replace(',', '.')
+                    color = red
+                else:
+                    text = "Gelir"
+                    amount = f"+{data['amount']:,}".replace(',', '.')
+                    color = green
+
+            avatar = Functions.circle(avatar, size = (170, 170))
+            avatar = avatar.resize((170, 170), Image.LANCZOS)
+            img.paste(avatar, (75, offset_y + 25), avatar)
+
+            draw.text((271, offset_y + 50), text = text, font = big_bold, fill = black)
+            draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
+            draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
+            draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
+
+            offset_y += 225
+
+        return img
+
