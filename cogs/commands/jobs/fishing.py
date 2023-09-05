@@ -10,12 +10,12 @@ from discord import app_commands, Interaction
 from discord.app_commands import Choice
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
 from random import choice, randint
 from typing import List, Optional
-
 
 fishes_file = open("cogs/assets/yaml_files/job_yamls/fishes.yml", "rb")
 fishes = load(fishes_file, Loader = Loader) 
@@ -36,11 +36,11 @@ class Fishing(commands.Cog):
 
     async def food_autocompletion(
         self,
-        interaction: Interaction, 
-        current: str
+        interaction: Interaction,
+        current: str,
         ) -> List[Choice[str]]:
         user = interaction.user
-        inventory, collection = await create_inventory_data(self.bot, user.id)
+        inventory, _ = await create_inventory_data(self.bot, user.id)
 
         data = []
         # Remove food
@@ -58,34 +58,22 @@ class Fishing(commands.Cog):
 
         return data[:24]
 
-    
     @app_commands.command(name = "fishing", description="Go fishing!")
     @app_commands.describe(food = "Oltanıza hangi yemi takacaksınız?")
     @app_commands.autocomplete(food=food_autocompletion)
+    @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def fishing(self, interaction: Interaction, food: Optional[str]):
-
         user = interaction.user
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
-        # Rod Check
-
         if "fishing" not in inventory["items"]:
-            return await interaction.response.send_message(
-                content=f"{Emojis.cross} Balık tutabilmek için bir balıkçılık ekipmanına sahip olmalısınız!",
-                ephemeral=True)
+            return await interaction.response.send_message(content=f"{Emojis.cross} Balık tutabilmek için bir balıkçılık ekipmanına sahip olmalısınız!", ephemeral=True)
 
-        # User's rod
         rod = inventory["items"]["fishing"]
-        """*
-        rod: {custom_id: "harpoon", durability: 96}
-        """
-        
         if rod["durability"] < 4:
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} Oltanız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
-        rod["durability"] -= 4
 
-        # Fish List
-        
+        rod["durability"] -= 4
 
         if (food is None) and (rod["custom_id"] == "fishingrod"):
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} Hey, yem takmayı unuttun! Yem olmadan balık tutamayız.", ephemeral= True)
@@ -93,7 +81,7 @@ class Fishing(commands.Cog):
             inventory["fishfoods"][food] - 1
 
 
-        if rod["name"] == "fishnet":
+        if rod["custom_id"] == "fishnet":
             caught_fishes = []
             fish_count = randint(3,5)
 
@@ -112,9 +100,10 @@ class Fishing(commands.Cog):
             first_message = ":fishing_pole_and_fish: Olta atıldı.."
             message = f":fishing_pole_and_fish: **Harika!** {size}cm uzunluğunda bir {name} yakaladınız."
             inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
-        
+
         await add_xp(self.bot, user.id, "fisher_xp")
         await collection.replace_one({"_id": user.id}, inventory)
+
         await interaction.response.send_message(content = first_message)
         await sleep(4)
         await interaction.edit_original_response(content = message)

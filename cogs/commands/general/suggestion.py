@@ -5,12 +5,10 @@
  * For more information, see README.md and LICENSE
 """
 
-
 from discord import ui, app_commands, Embed, TextStyle, Interaction
 from discord.ext import commands
 import datetime
 from cogs.utils.constants import Link, Channels
-
 
 class SuggestionModal(ui.Modal, title= "Öneri"):
     answer = ui.TextInput(
@@ -41,23 +39,21 @@ class SuggestionModal(ui.Modal, title= "Öneri"):
         )
 
         suggestionsChannel = interaction.client.get_channel(Channels.suggestions)
-        
+
         try:
             await suggestionsChannel.send(embed = suggestionMessage)
             await interaction.response.send_message("✅ **|** Önerilerinizi aldık. Teşekkür ederiz :)", ephemeral = True)
         except:
             await interaction.response.send_message(embed = failMessage, ephemeral = True)
 
-
 class Suggestion(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
+
     @app_commands.command(name = "suggestion", description = "Make a suggestion for bot")
     async def suggestion(self, interaction: Interaction):
         modal = SuggestionModal()
         await interaction.response.send_modal(modal)
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Suggestion(bot))

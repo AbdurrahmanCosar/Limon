@@ -9,6 +9,7 @@ from asyncio import sleep
 from discord import app_commands, Interaction
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_inventory_data
+from cogs.utils.cooldown import set_cooldown
 from cogs.utils.functions import add_xp
 from cogs.utils.constants import Emojis
 from yaml import Loader, load
@@ -19,7 +20,6 @@ basic_item = load(basic_items_yaml, Loader=Loader)
 
 wood_yaml = open("cogs/assets/yaml_files/job_yamls/wood.yml", "rb")
 wood = load(wood_yaml, Loader=Loader)
-
 
 class Forestry(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -32,29 +32,29 @@ class Forestry(commands.Cog):
         return name, size, tree
 
     @app_commands.command(name="forestry", description="Go lumberjack!")
+    @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def forestry(self, interaction: Interaction):
-        
         user = interaction.user
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
         if "forestry" not in inventory["items"]:
-            return await interaction.response.send_message(
-                content=f"{Emojis.cross} Ağaç kesebilmek için bir ormancılık ekipmanına sahip olmalısınız!",
-                ephemeral=True)
+            return await interaction.response.send_message(content=f"{Emojis.cross} Ağaç kesebilmek için bir ormancılık ekipmanına sahip olmalısınız!", ephemeral=True)
 
         equipment = inventory["items"]["forestry"]
-
         if equipment["durability"] < 4:
             return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
         equipment["durability"] -= 4
 
+        if equipment["fuel"] < basic_item["forestry"][equipment["custom_id"]]["liter_per_item"]:
+            return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
 
-        if basic_item["forestry"][equipment]["type"] != "vehicle":
-            average_tree = basic_item["forestry"][equipment]["average_tree"]
-            tree_count = randint(average_tree - 1, average_tree + 1)
+        if basic_item["forestry"][equipment["custom_id"]]["type"] == "vehicle":
+            average_item = basic_item["forestry"][equipment["custom_id"]]["average_item"]
+            tree_count = randint(average_item - 1, average_item + 1)
 
-            equipment["fuel"] -= (basic_item["forestry"][equipment]["liter_per_tree"] * tree_count)
-
+            # TODO: Problem of not running low on fuel will be fix
+            fuel_user = basic_item["forestry"][equipment["custom_id"]]["liter_per_item"] * tree_count
+            equipment["fuel"] -= fuel_user 
             felled_tree = []
 
             for _ in range(tree_count):
@@ -63,21 +63,19 @@ class Forestry(commands.Cog):
                 inventory["jobs_results"]["wood"].append(f"{tree}_{size}")
             felled_tree_ = [f":wood: {tree[0]} - {tree[1]}m\n" for tree_list in felled_tree for tree in tree_list]
             message = f":articulated_lorry: Aracımız geri döndü. İşte kestiği ağaçlar:\n{felled_tree_}"
-        
+
         else:
             name, size, tree = self.cut_down_tree()
 
-            message = ":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
+            message = f":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
             inventory["jobs_results"]["wood"].append(f"{tree}_{size}")            
-        
+
         await add_xp(self.bot, user.id, "forester_xp")
         await collection.replace_one({"_id": user.id}, inventory)
+
         await interaction.response.send_message(content = ":evergreen_tree: Kesmek için bir ağaç arıyoruz..")
         await sleep(4)
         await interaction.edit_original_response(content = message)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Forestry(bot))
-
-
-    

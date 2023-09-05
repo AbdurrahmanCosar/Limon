@@ -4,26 +4,17 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 """
-
 class _Link:
     support_server = "https://discord.gg/8YX57rBGTM"
 
-Link = _Link
-
-class _Gamble:
-    max_bet_value = 100000
-
-Gamble = _Gamble()
-
 class _Game:
-    FuelPerLiter: 4
-    FishPricePerSize: 3
-    MinePricePerKG: 2
-    WoodPricePerKG: 3
-    AxeRefreshPrice: 10000
-    PickaxeRefreshPrice: 15000
-
-Game = _Game()
+    max_bet_value = 100000
+    FuelPerLiter = 4
+    FishPricePerSize = 3
+    MinePricePerKG = 2
+    WoodPricePerMeter = 3
+    AxeRefreshPrice = 10000
+    PickaxeRefreshPrice = 15000
 
 class _Emojis:
     enought_balance = "" # will be add
@@ -61,10 +52,17 @@ class _Emojis:
     done = "<:done:1066371678633996359>"
     decline = "<:decline:1066371673189789696>"
 
-Emojis = _Emojis()
-
 class _Channels:
     suggestions = 1063608269404381255
     report = None
 
-Channels = _Channels
+class _Users:
+    admins = [529577110197764096, 1047996741397532763]
+    bot = 994143430504620072
+
+
+Link = _Link
+Game = _Game()
+Emojis = _Emojis()
+Channels = _Channels()
+Users = _Users()

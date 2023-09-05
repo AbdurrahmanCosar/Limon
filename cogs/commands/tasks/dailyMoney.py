@@ -5,10 +5,8 @@
  * For more information, see README.md and LICENSE
 """
 
-import discord
 from discord.ext import commands, tasks
 from random import randint
-
 
 class DailyMoneyTask(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -22,7 +20,7 @@ class DailyMoneyTask(commands.Cog):
 
         db = self.bot.database["limon"]
         collection = db["wallet"]
-        
+
         money = randint(1000, 3400)
         self.daily_money_amount += money
 
@@ -34,7 +32,6 @@ class DailyMoneyTask(commands.Cog):
                 }
             }
         )
-
         print("Users were given money daily")
 
     @daily_money_task.before_loop

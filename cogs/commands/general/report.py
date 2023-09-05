@@ -5,17 +5,14 @@
  * For more information, see README.md and LICENSE
 """
 
-
 from discord import ui, app_commands, Embed, ButtonStyle, Interaction, TextStyle
 from discord.ext import commands
 from cogs.utils.constants import Link, Channels
 import datetime
 import asyncio
 
-
 class ReplyReportModal(ui.Modal, title= "Rapor Yanıtlama"):
-    
-        
+
     answer = ui.TextInput(
         label = "Raporu Yanıtlayın",
         style = TextStyle.paragraph,
@@ -29,7 +26,6 @@ class ReplyReportModal(ui.Modal, title= "Rapor Yanıtlama"):
         self.user_id = user_id
 
     async def on_submit(self, interaction: Interaction):
-
         user = interaction.client.get_user(int(self.user_id))
 
         reply_embed = Embed(
@@ -44,7 +40,6 @@ class ReplyReportModal(ui.Modal, title= "Rapor Yanıtlama"):
             await interaction.response.send_message(embed = reply_embed)
         except:
             await interaction.response.send_message(content = "Üzgünüm mesajı gönderemedim! Kullanıcı DM'leri kapatmış veya Limon ile bağlantsıını kesmiş olabilir!", ephemeral = True)
-        
 
 class ReplyReportButton(ui.View):
     def __init__(self, user_id):
@@ -61,11 +56,6 @@ class ReplyReportButton(ui.View):
         modal = ReplyReportModal(self.user_id)
         await interaction.response.send_modal(modal)
 
-        
-
-        
-        
-
 class ReportModal(ui.Modal, title= "Bildir"):
     answer = ui.TextInput(
         label = "Hata Nedir?",
@@ -76,7 +66,6 @@ class ReportModal(ui.Modal, title= "Bildir"):
     )
 
     async def on_submit(self, interaction: Interaction):
-
         reportMessage = Embed(
             title = "Hata Raporu",
             description = f"{self.answer}",
@@ -95,7 +84,7 @@ class ReportModal(ui.Modal, title= "Bildir"):
         )
 
         reportsChannel = interaction.client.get_channel(Channels.report)
-        
+
         try:
             view = ReplyReportButton(interaction.user.id)
             await reportsChannel.send(embed = reportMessage, view = view)
@@ -103,11 +92,10 @@ class ReportModal(ui.Modal, title= "Bildir"):
         except:
             await interaction.response.send_message(embed = failMessage, ephemeral = True)
 
-
 class Report(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
+
     @app_commands.command(name = "report", description = "Report errors and bugs")
     @app_commands.checks.cooldown(1, 50, key=lambda i: (i.user.id))
     async def report(self, interaction: Interaction):
@@ -117,7 +105,6 @@ class Report(commands.Cog):
     @commands.command(name = "reply")
     @commands.is_owner()
     async def reply(self, ctx, user_id):
-        
         try:
             user_id = int(user_id)
             user = self.bot.get_user(user_id)
@@ -129,10 +116,9 @@ class Report(commands.Cog):
 
             view = ReplyReportButton(user_id)
             await ctx.send(content = f"{user} adlı kullanıcıya hata yanıtı gönderin!", view = view)
-            
+
         except TypeError:
             await ctx.send("Hatalı ID")
-
         except:
             msg = await ctx.send("Bir hata oluştu!")
             await asyncio.sleep(3)

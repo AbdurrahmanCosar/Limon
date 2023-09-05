@@ -16,12 +16,12 @@ class Limon(commands.Bot):
             self,
             *args,
             testing_guild_id: Optional[int] = None,
-            database_connecion: str,
+            database_connection: str,
             **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.testing_guild_id = testing_guild_id
-        self.database = motor.motor_asyncio.AsyncIOMotorClient(database_connecion)
+        self.database = motor.motor_asyncio.AsyncIOMotorClient(database_connection)
         self.initial_extensions = self.extension_loader()
 
     async def on_ready(self):
@@ -42,7 +42,6 @@ class Limon(commands.Bot):
         return initial_extensions
 
     async def setup_hook(self) -> None:
-
         for extension in self.initial_extensions:
             await self.load_extension(extension)
 
