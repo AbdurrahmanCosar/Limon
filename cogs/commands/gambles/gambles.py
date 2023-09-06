@@ -30,19 +30,20 @@ class Gambles(commands.Cog):
     async def interaction_check(self, interaction: Interaction) -> bool:
 
         user = interaction.user
-        data = interaction.data
-        print(data)
-        for i in data["options"]:
-            print(i)
-            if i["name"] == "amount":
-                print(1)
-                value = i["value"]
+        data = interaction.namespace
+        """
+        * Interaction.data gives us only the first option
+        * Interaction.namespace gives all options for the command
+        """
+
+        for i in data:
+            if i[0] == "amount": # i[0] is Option name
+                value = i[1] # i[1] is Option value 
                 user_data, _ = await create_wallet(self.bot, user.id)
                 check = await balance_check(interaction, user_data["cash"], value)
 
                 if check:
                     await add_xp(self.bot, user.id, "gamble_xp")
-                    print(2)
                     return True
                 return False
             return False
