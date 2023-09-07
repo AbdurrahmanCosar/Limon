@@ -44,13 +44,13 @@ async def create_wallet(bot, _id):
     if existing_data is None:
         new_data = {
             "_id": _id,
-            "cash": 10000,
+            "cash": 20000,
             "accumulated_money": 0,
             "recent_transactions": {
                 "transactions": [
                     {
                         "user": 994143430504620072,
-                        "amount": 10000,
+                        "amount": 20000,
                         "transaction": {
                             "type": "admin",
                             "is_incomming": True
@@ -77,7 +77,7 @@ async def create_career_data(bot, _id):
                 "miner_xp": 0,
                 "forester_xp": 0,
                 "send_xp": 0,
-                "gamble_xp": 0
+                "gambler_xp": 0
             },
             "verified": False,
             "old_user": False
