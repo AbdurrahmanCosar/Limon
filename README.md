@@ -1,7 +1,7 @@
-![Limon](banner1.png)
-# 🍋 [Limon Discord Bot](https://discord.com/api/oauth2/authorize?client_id=994143430504620072&permissions=139586817088&scope=applications.commands%20bot)
-*Economy & Fun  
-[Support Server](https://discord.gg/8YX57rBGTM)*
+![Limon](Limon.png)
+# 🍋 [Limon - Discord Bot](https://discord.com/api/oauth2/authorize?client_id=994143430504620072&permissions=139586817088&scope=applications.commands%20bot)
+*A Verified Economy & Fun bot for Discord
+[Join to Support Server](https://discord.gg/8YX57rBGTM)*
 
 
 ## License
