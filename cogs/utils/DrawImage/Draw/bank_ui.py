@@ -158,8 +158,8 @@ class DrawBankImages:
 
         # Fonts
         acumin_black_158 = ImageFont.truetype(Assets.acumin_black, 158, encoding="unic")
-        acumin_black_90 =  ImageFont.ImageFont.truetype(Assets.acumin_black, 90, encoding="unic")
-        acumin_semobold_66 = ImageFont.truetype(Assets.acumin_semibold, 66, encoding="unic")
+        acumin_black_90 =  ImageFont.truetype(Assets.acumin_black, 90, encoding="unic")
+        acumin_semibold_66 = ImageFont.truetype(Assets.acumin_semibold, 66, encoding="unic")
         coolvetica_50 = ImageFont.truetype(Assets.coolvetica, 50, encoding="unic")
         coolvetica_condensed_70 =  ImageFont.truetype(Assets.coolvetica_condensed, 70, encoding="unic")
 
