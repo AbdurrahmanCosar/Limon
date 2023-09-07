@@ -26,14 +26,15 @@ class DailyMoney(commands.Cog):
 
         user_data, collection = await create_wallet(self.bot, interaction.user.id)
 
+        
         accumulated_money = user_data["accumulated_money"]
-        user_money = user_data["cash"]
+        await interaction.response.send_message(content = f"{morelicash} Günlük kazancınız **{accumulated_money:,}LC**")
 
-        user_money += accumulated_money
-        accumulated_money = 0
+        user_data["cash"] += accumulated_money
+        user_data["accumulated_money"] = 0
 
         await collection.replace_one({"_id": interaction.user.id}, user_data)
-        await interaction.response.send_message(content = f"{morelicash} Günlük kazancınız **{accumulated_money:,}LC**")
+        
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(DailyMoney(bot))

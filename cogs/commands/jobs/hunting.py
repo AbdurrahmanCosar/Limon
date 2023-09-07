@@ -74,7 +74,7 @@ class Hunting(commands.Cog):
             name, hunt = self.hunt_prey()
             first_mesage = ":bow_and_arrow: Av aranıyor.."
             message = f":bow_and_arrow: Harika! Bir **{name}** avladık."
-            inv_items["ammo"][required_ammo] -= 1
+            inventory["ammo"][required_ammo] -= 1
             inventory["jobs_results"]["hunts"].append(hunt)
 
         await add_xp(self.bot, user.id, "hunter_xp")

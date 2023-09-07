@@ -32,8 +32,6 @@ hunts_list = load(hunt_file, Loader = Loader)
 item_yaml = open("cogs/assets/yaml_files/market_yamls/basic_items.yml", "rb")
 items = load(item_yaml, Loader = Loader) 
 
-# WILL BE ADD GAS STATION
-
 class Dropdown(ui.Select):
     def __init__(self, client: commands.Bot, vehicles: dict, uid: int):
         self.client = client

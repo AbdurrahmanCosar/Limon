@@ -10,10 +10,11 @@ from discord.ext import commands
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.database.fetchdata import create_wallet
 from cogs.utils.functions import balance_check, add_xp
-from cogs.utils.constants import Game
+from cogs.utils.constants import Game, Emojis
 from random import randint
 
 MAX_BET_VALUE = Game.max_bet_value
+morelicash = Emojis.morelicash
 
 class UpAndDownButtons(ui.View):
     def __init__(self, client: commands.Bot, uid: int, embed: Embed, nums: list, amount: int):
@@ -60,7 +61,7 @@ class UpAndDownButtons(ui.View):
 
             if "?" not in self.unopened_list:
 
-                name, icon_url = f"{user.name} | Tebrikler! Hepsini doğru tahmin ederek {self.amount:,} LC kazandınız.", user.avatar.url
+                name, icon_url = f"{user.name} | {morelicash} Tebrikler! Hepsini doğru tahmin ederek {self.amount:,} LC kazandınız.", user.avatar.url
                 self.embed.set_author(name=name, icon_url=icon_url)
                 self.disabled_all_buttons()
 
@@ -115,7 +116,7 @@ class UpAndDownButtons(ui.View):
             name, icon_url = f"{user.name} {unopened_list_}", user.avatar.url
 
             if "?" not in self.unopened_list:
-                name, icon_url = f"{user.name} | Tebrikler! Hepsini doğru tahmin ederek 10 LC kazandınız.", user.avatar.url
+                name, icon_url = f"{user.name} | {morelicash} Tebrikler! Hepsini doğru tahmin ederek 10 LC kazandınız.", user.avatar.url
                 self.embed.set_author(name=name, icon_url=icon_url)
                 self.disabled_all_buttons()
 

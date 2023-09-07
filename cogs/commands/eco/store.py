@@ -22,9 +22,6 @@ hunts = items["hunting"]
 wood = items["forestry"]
 mines = items["mining"]
 
-print(wood)
-print(mines)
-
 sell = Emojis.sell
 sold = Emojis.sold
 new = Emojis.new
