@@ -1,13 +1,13 @@
 ---
 
 fishfoods:
-  livefishfood: {name: "Canlı Balık Yemi", unit: 10, price: 0}
-  proteinfood: {name: "Protein Yemleri", unit: 10, price: 0}
-  frozenfishfood: {name: "Dondurulmuş Balık Yemi", unit: 10, price: 0}
-  dryfishfood: {name: "Kuru Balık Yemi", unit: 10, price: 0}
+  livefishfood: {name: "Canlı Balık Yemi", unit: 10, price: 610}
+  proteinfood: {name: "Protein Yemleri", unit: 10, price: 640}
+  frozenfishfood: {name: "Dondurulmuş Balık Yemi", unit: 10, price: 690}
+  dryfishfood: {name: "Kuru Balık Yemi", unit: 10, price: 710}
 
 ammo:
-  arrow: {name: "Ok", unit: 10, price: 0}
-  ammo: {name: "Mermi Kutusu", unit: 10, price: 0}
+  arrow: {name: "Ok", unit: 10, price: 1100}
+  ammo: {name: "Mermi Kutusu", unit: 10, price: 2099}
 
   

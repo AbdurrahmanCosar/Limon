@@ -1,7 +1,7 @@
 ---
-pine: {name: Çam Ağacı, price: 300}
-oak: {name: Meşe Ağacı, price: 400}
-hornbeam: {name: Gürgen Ağaacı, price: 500}
+pine: {name: Çam Ağacı, price: 550}
+oak: {name: Meşe Ağacı, price: 590}
+hornbeam: {name: Gürgen Ağaacı, price: 650}
 redtree: {name: Kızıl Ağaç, price: 700}
 laden: {name: Ladin Ağacı, price: 800}
 cedar: {name: Sedir Ağacı, price: 900}

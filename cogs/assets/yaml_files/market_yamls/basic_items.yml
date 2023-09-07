@@ -1,21 +1,21 @@
 ---
 
 fishing:
-  fishingrod: {name: "Olta", price: 0}
-  harpoon: {name: "Zıpkın", price: 0}
-  fishnet: {name: "Balık Ağı", price: 0}
+  fishingrod: {name: "Olta", price: 2900}
+  harpoon: {name: "Zıpkın", price: 6499}
+  fishnet: {name: "Balık Ağı", price: 22999}
 
 hunting:
-  bow: {name: "Yay", ammo: "arrow",price: 0}
-  rifle: {name: "Av Tüfeği", ammo: "ammo",price: 0}
-  trap: {name: "Kapan", ammo: null, price: 0}
+  bow: {name: "Yay", ammo: "arrow",price: 4875}
+  rifle: {name: "Av Tüfeği", ammo: "ammo",price: 7999}
+  trap: {name: "Kapan", ammo: null, price: 17999}
 
 forestry:
-  bigvehicle: {type: "vehicle", name: "ScorpionKing - Büyük", average_item: 10, liter_per_item: 4, gas_tank_liter: 180, price: 0}
-  smallvehicle: {type: "vehicle", name: "HR46X - Küçük", average_item: 6, liter_per_item: 2, gas_tank_liter: 130, price: 0}
-  axe: {type: "manual", name: "Balta", average_item: 1 ,price: 0}
+  bigvehicle: {type: "vehicle", name: "ScorpionKing - Büyük", average_item: 10, liter_per_item: 4, gas_tank_liter: 180, price: 44999}
+  smallvehicle: {type: "vehicle", name: "HR46X - Küçük", average_item: 6, liter_per_item: 2, gas_tank_liter: 130, price: 24999}
+  axe: {type: "manual", name: "Balta", average_item: 1 ,price: 4780}
 
 mining:
-  bigvehicle: {type: "vehicle", name: "Büyük Maden Aracı", average_item: 4, liter_per_item: 5, gas_tank_liter: 200, price: 0}
-  smallvehicle: {type: "vehicle", name: "Küçük Maden Aracı", average_item: 2, liter_per_item: 3, gas_tank_liter: 150, price: 0}
-  pickaxe: {type: "manual", name: "Kazma", average_item: 1, price: 0}
+  bigvehicle: {type: "vehicle", name: "Büyük Maden Aracı", average_item: 4, liter_per_item: 5, gas_tank_liter: 200, price: 59999}
+  smallvehicle: {type: "vehicle", name: "Küçük Maden Aracı", average_item: 2, liter_per_item: 3, gas_tank_liter: 150, price: 25999}
+  pickaxe: {type: "manual", name: "Kazma", average_item: 1, price: 5210}

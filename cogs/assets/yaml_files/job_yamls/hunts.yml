@@ -1,25 +1,25 @@
 ---
-quail: {name: Bıldırcın, price: 390}
-sparrow: {name: Serçe, price: 280}
-partridge: {name: Keklik, price: 480}
-mallard: {name: Ördek, price: 400}
-wildgoose: {name: Kaz, price: 450}
-pig: {name: Domuz, price: 550}
-jackal: {name: Çakal, price: 580}
-rabbit: {name: Tavşan, price: 600}
-weasel: {name: Gelincik, price: 650}
-fox : {name: Tilki, price: 700}
-bear: {name: Ayı, price: 800}
-wildgoat: {name: Yaban Keçisi, price: 810}
-wildsheep: {name: Anadolu Yaban Koyunu, price: 870}
-ibex: {name: Kanca Boynuzlu Dağ Keçisi, price: 900}
+quail: {name: Bıldırcın, price: 650}
+sparrow: {name: Serçe, price: 650}
+partridge: {name: Keklik, price: 680}
+mallard: {name: Ördek, price: 700}
+wildgoose: {name: Kaz, price: 700}
+pig: {name: Domuz, price: 810}
+jackal: {name: Çakal, price: 700}
+rabbit: {name: Tavşan, price: 500}
+weasel: {name: Gelincik, price: 910}
+fox : {name: Tilki, price: 850}
+bear: {name: Ayı, price: 1000}
+wildgoat: {name: Yaban Keçisi, price: 990}
+wildsheep: {name: Anadolu Yaban Koyunu, price: 1060}
+ibex: {name: Kanca Boynuzlu Dağ Keçisi, price: 1070}
 roe: {name: Karaca, price: 950}
-gazelle: {name: Ceylan, price: 1000}
-reddeer: {name: Kızıl Geyik, price: 1050}
-ferret: {name: Dağ Gelinciği, price: 970}
+gazelle: {name: Ceylan, price: 800}
+reddeer: {name: Kızıl Geyik, price: 1150}
+ferret: {name: Dağ Gelinciği, price: 1050}
 deer: {name: Geyik, price: 1100}
-leopard: {name: Leopar, price: 1900}
-wolf: {name: Kurt, price: 1500}
-rhino: {name: Gergedan, price: 1600}
-elephant: {name: Fil, price: 2000}
-bison: {name: Bizon, price: 1700}
+leopard: {name: Leopar, price: 1800}
+wolf: {name: Kurt, price: 1450}
+rhino: {name: Gergedan, price: 1900}
+elephant: {name: Fil, price: 1800}
+bison: {name: Bizon, price: 2200}
