@@ -34,10 +34,10 @@ async def main():
     logger.addHandler(handler)
 
     async with Limon(
-            command_prefix = ".",
+            command_prefix = PREFIXES,
             #commands.when_mentioned,
             intents=discord.Intents.all(),
-            activity = discord.Streaming(name="Eco & Fun {/}", url="https://www.twitch.tv/iamabduley"),
+            activity = discord.Streaming(name="Eco & Fun {/} | New UPDATE!", url="https://www.twitch.tv/iamabduley"),
             testing_guild_id=1142517569950077068,
             database_connection=DB_CONNECTION 
     ) as bot:

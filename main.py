@@ -12,7 +12,6 @@ from discord.ext import commands
 import motor.motor_asyncio
 from cogs.utils.downloader import ImageDownloader
 from cogs.utils.database.admin_db import get_collection
-import asyncio
 
 
 class Limon(commands.Bot):
@@ -52,14 +51,14 @@ class Limon(commands.Bot):
                 files = os.listdir(f"./cogs/commands/{folder}")
 
                 for file in files:
-                    if file != "__pycache__":
+                    if file != "__pycache__" and file.endswith('.py'):
                         initial_extensions.append(f"cogs.commands.{folder}.{file[:-3]}")
 
         return initial_extensions
 
     async def setup_hook(self) -> None:
-        await self.download()
-        print(os.getcwd())
+        await self.download() # Download images
+
         initial_extensions = self.extension_loader()
         for extension in initial_extensions:
             await self.load_extension(extension)
