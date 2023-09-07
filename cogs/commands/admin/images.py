@@ -8,11 +8,8 @@ import os
 from discord import Embed
 from discord.ext import commands
 from cogs.utils.database.admin_db import get_collection
+from cogs.utils.downloader import ImageDownloader
 from asyncio import sleep
-from io import BytesIO
-from requests import get
-from PIL import Image
-from typing import Optional
 
 class WriteToDatabase:
     def __init__(self, bot: commands.Bot):
@@ -33,62 +30,7 @@ class WriteToDatabase:
         data, collection = await get_collection(self.bot)
         data['images'].pop(name)
         await collection.replace_one({"id": "admin"}, data)
-    
-class DownloadImage:
-    def __init__(self, link_dict: dict):
-        self.links = link_dict
 
-    def _switch_directory(self, folder_name: Optional[str] = None):
-        """
-        Checks the file path. If it is in the wrong directory, 
-        it comes back and enters the correct directory.
-        If it is in the main directory(images), it enters the specified directory
-
-        images: -> Main Folder
-            icon_folder -> Subfolder
-                icon.png
-            badge_folder -> Subfolder
-                badge.png
-        """
-        curr_path = os.getcwd().split('/')[-1]
-
-        if (folder_name and folder_name == curr_path) or (not folder_name and curr_path == "images"):
-            return
-        elif folder_name and curr_path != "images":
-            target_directory = '../' + folder_name
-        elif not folder_name and curr_path != "images":
-            target_directory = '..'
-        else:
-            target_directory = folder_name
-
-        os.chdir(target_directory)
-
-    async def download_image(self):
-        """Download images in database to specified directories"""
-        # Set directory
-        os.chdir("cogs/assets") 
-        os.makedirs("images", mode=0o777, exist_ok=True)
-        os.chdir("images")
-        os.makedirs("expense_icons", mode=0o777, exist_ok=True)
-        os.makedirs("badges", mode=0o777, exist_ok=True)
-        
-        try:
-            for key, value in self.links.items():
-                response = get(value)
-                img = Image.open(BytesIO(response.content)).convert("RGBA")
-
-                # Change directory
-                if key[:4] == "icon":
-                    self._switch_directory("expense_icons")
-                elif key[:5] == "badge":
-                    self._switch_directory("badges")
-                else:
-                    self._switch_directory()
-
-                img.save(f'{key}.png')
-            return True
-        except:
-            return False
 
 class ImagesCommands(commands.Cog, WriteToDatabase):
     def __init__(self, bot: commands.Bot):
@@ -98,7 +40,7 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
     @commands.is_owner()
     async def image(self, ctx):
         if ctx.invoked_subcommand is None:
-            process_type = ("`image load`", "`image remove`", "`image show`")
+            process_type = ("`image load`", "`image remove`", "`image show`", "`image download`")
             process_type = '\n'.join(process_type)
             await ctx.send(f'Geçersiz komut kullanımı! Hangi işlemi yapmak istiyorsunuz...\n{process_type}')
 
@@ -143,7 +85,8 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
     async def download(self, ctx):
         msg = await ctx.send(content = "İndirme başlatılıyor..")
         image_dict = await self.image_dict
-        downloader = await DownloadImage(image_dict).download_image()
+        downloader = await ImageDownloader(image_dict).start_download()
+
         if downloader is True:
             return await msg.edit(content = f"İndirme tamamlandı! `({len(image_dict)})`")
         await msg.edit(content = "Bir hata oluştu!")
