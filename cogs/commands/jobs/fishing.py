@@ -67,39 +67,47 @@ class Fishing(commands.Cog):
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
         if "fishing" not in inventory["items"]:
-            return await interaction.response.send_message(content=f"{Emojis.cross} Balık tutabilmek için bir balıkçılık ekipmanına sahip olmalısınız!", ephemeral=True)
+            fish = choice(self.fish_list[:4])
+            name = fishes[fish]['name']
+            size = randint(8,16)
 
-        rod = inventory["items"]["fishing"]
-        if rod["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Oltanız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
-
-        rod["durability"] -= 4
-
-        if (food is None) and (rod["custom_id"] == "fishingrod"):
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Hey, yem takmayı unuttun! Yem olmadan balık tutamayız.", ephemeral= True)
-        elif (food is not None):
-            inventory["fishfoods"][food] - 1
-
-
-        if rod["custom_id"] == "fishnet":
-            caught_fishes = []
-            fish_count = randint(3,5)
-
-            for _ in range(fish_count):
-                name, size, fish = self.catch_fish()
-                caught_fishes.append([name, size])
-                inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
-
-            caught_fishes_ = [f":fish: **{fish[0]}** - **{fish[1]}cm**\n" for fish_list in caught_fishes for fish in fish_list]
-            first_message = ":fishing_pole_and_fish: Ağ atıldı.."
-            message = f":fishing_pole_and_fish: **Ağ çekildi!** işte yakaladıklarımız:\n{caught_fishes_}"
+            first_message = ":fishing_pole_and_fish: Olta atıldı.."
+            warning_message = f" {Emojis.warning_message} Bu olta ile büyük ve farklı balıklar yakalayamazsınız. Yeni bir olta satın alın **`/store`**"
+            message = f":fishing_pole_and_fish: **Harika!** Ağaç dalı kullanarak yaptığınız basit bir olta {size}cm uzunluğunda bir {name} yakaladınız.\n" + warning_message
+            inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
 
         else:
-            name, size, fish = self.catch_fish()
+            rod = inventory["items"]["fishing"]
+            if rod["durability"] < 4:
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} Oltanız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
+
+            rod["durability"] -= 4
+
+            if (food is None) and (rod["custom_id"] == "fishingrod"):
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} Hey, yem takmayı unuttun! Yem olmadan balık tutamayız.", ephemeral= True)
+            elif (food is not None):
+                inventory["fishfoods"][food] - 1
+
+
+            if rod["custom_id"] == "fishnet":
+                caught_fishes = []
+                fish_count = randint(3,5)
+
+                for _ in range(fish_count):
+                    name, size, fish = self.catch_fish()
+                    caught_fishes.append([name, size])
+                    inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")a
+
+                caught_fishes_ = [f":fish: **{fish[0]}** - **{fish[1]}cm**\n" for fish_list in caught_fishes for fish in fish_list]
+                first_message = ":fishing_pole_and_fish: Ağ atıldı.."
+                message = f":fishing_pole_and_fish: **Ağ çekildi!** işte yakaladıklarımız:\n{caught_fishes_}"
+
+            else:
+                name, size, fish = self.catch_fish()
             
-            first_message = ":fishing_pole_and_fish: Olta atıldı.."
-            message = f":fishing_pole_and_fish: **Harika!** {size}cm uzunluğunda bir {name} yakaladınız."
-            inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
+                first_message = ":fishing_pole_and_fish: Olta atıldı.."
+                message = f":fishing_pole_and_fish: **Harika!** {size}cm uzunluğunda bir {name} yakaladınız."
+                inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
 
         await add_xp(self.bot, user.id, "fisher_xp")
         await collection.replace_one({"_id": user.id}, inventory)

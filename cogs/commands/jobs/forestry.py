@@ -38,37 +38,44 @@ class Forestry(commands.Cog):
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
         if "forestry" not in inventory["items"]:
-            return await interaction.response.send_message(content=f"{Emojis.cross} Ağaç kesebilmek için bir ormancılık ekipmanına sahip olmalısınız!", ephemeral=True)
-
-        equipment = inventory["items"]["forestry"]
-        if equipment["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
-        equipment["durability"] -= 4
-
-        if equipment["fuel"] < basic_item["forestry"][equipment["custom_id"]]["liter_per_item"]:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
-
-        if basic_item["forestry"][equipment["custom_id"]]["type"] == "vehicle":
-            average_item = basic_item["forestry"][equipment["custom_id"]]["average_item"]
-            tree_count = randint(average_item - 1, average_item + 1)
-
-            # TODO: Problem of not running low on fuel will be fix
-            fuel_user = basic_item["forestry"][equipment["custom_id"]]["liter_per_item"] * tree_count
-            equipment["fuel"] -= fuel_user 
-            felled_tree = []
-
-            for _ in range(tree_count):
-                name, size, tree = self.cut_down_tree()
-                felled_tree.append([name, size])
-                inventory["jobs_results"]["wood"].append(f"{tree}_{size}")
-            felled_tree_ = [f":wood: {tree[0]} - {tree[1]}m\n" for tree_list in felled_tree for tree in tree_list]
-            message = f":articulated_lorry: Aracımız geri döndü. İşte kestiği ağaçlar:\n{felled_tree_}"
-
+            tree = choice(list(wood.keys())[:4])
+            name = wood[tree]["name"]
+            size = randint(3, 10)
+            
+            warning_message = f" {Emojis.warning_message} Bu testere ile uzun ve farklı ağaçlar kesemezsiniz. Yeni bir balta satın alın **`/store`**"
+            message = f":wood: Harika! Basit bir testere kullanarak {size} metre uzunluğunda bir {name} kestiniz.\n" + warning_message
+            inventory["jobs_results"]["wood"].append(f"{tree}_{size}") 
+        
         else:
-            name, size, tree = self.cut_down_tree()
 
-            message = f":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
-            inventory["jobs_results"]["wood"].append(f"{tree}_{size}")            
+            equipment = inventory["items"]["forestry"]
+            if equipment["durability"] < 4:
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
+            equipment["durability"] -= 4
+
+            if equipment["fuel"] < basic_item["forestry"][equipment["custom_id"]]["liter_per_item"]:
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
+
+            if basic_item["forestry"][equipment["custom_id"]]["type"] == "vehicle":
+                average_item = basic_item["forestry"][equipment["custom_id"]]["average_item"]
+                tree_count = randint(average_item - 1, average_item + 1)
+
+                fuel_user = basic_item["forestry"][equipment["custom_id"]]["liter_per_item"] * tree_count
+                equipment["fuel"] -= fuel_user 
+                felled_tree = []
+
+                for _ in range(tree_count):
+                    name, size, tree = self.cut_down_tree()
+                    felled_tree.append([name, size])
+                    inventory["jobs_results"]["wood"].append(f"{tree}_{size}")
+                felled_tree_ = [f":wood: {tree[0]} - {tree[1]}m\n" for tree_list in felled_tree for tree in tree_list]
+                message = f":articulated_lorry: Aracımız geri döndü. İşte kestiği ağaçlar:\n{felled_tree_}"
+
+            else:
+                name, size, tree = self.cut_down_tree()
+
+                message = f":wood: Harika! {size} metre uzunluğunda bir {name} kestiniz."
+                inventory["jobs_results"]["wood"].append(f"{tree}_{size}")            
 
         await add_xp(self.bot, user.id, "forester_xp")
         await collection.replace_one({"_id": user.id}, inventory)

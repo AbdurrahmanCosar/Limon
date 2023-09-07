@@ -39,43 +39,52 @@ class Hunting(commands.Cog):
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
         if "hunting" not in inventory["items"]:
-            return await interaction.response.send_message(content=f"{Emojis.cross} Ava çıkabilmek için bir avcılık ekipmanına sahip olmalısınız!", ephemeral=True)
 
-        weapon = inventory["items"]["hunting"]
-        
-        # TODO: Ammonution for the type of weapon will be removed
-        if weapon['custom_id'] == "bow":
-            required_ammo = "arrow"
-        else:
-            required_ammo = "ammo"
-        
-        if ("ammo" in inventory and inventory["ammo"][required_ammo] == 0) or (required_ammo not in inventory["ammo"]):
-                return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True)
-
-        if weapon["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
-
-        weapon["durability"] -= 4
-
-        if weapon["custom_id"] == "trap":
-            trap_count = randint(2,4)
-            preyed_hunts = []
-
-            for _ in range(trap_count):
-                name, hunt = self.hunt_prey()
-                preyed_hunts.append(name)
-                inventory["jobs_results"]["hunts"].append(hunt)
-
-            preyed_hunts = [f":deer: {name}\n" for name in preyed_hunts]
-            first_mesage = f":mouse_trap: Av için **{trap_count}** tane kapan kuruldu!"
-            message = f":mouse_trap: Kapanları kontrol ettik ve işte yakaladıklarımız:\n{preyed_hunts}"
-
-        else:
-            name, hunt = self.hunt_prey()
+            hunt = choice(list(hunts.keys())[:4])
+            name = hunts[hunt]["name"]
+            
             first_mesage = ":bow_and_arrow: Av aranıyor.."
-            message = f":bow_and_arrow: Harika! Bir **{name}** avladık."
-            inventory["ammo"][required_ammo] -= 1
+            warning_message = f" {Emojis.warning_message} Bu sapan ile değerli ve farklı hayvanlar avlayamazsınız. Yeni bir ekipman satın alın **`/store`**"
+            message = f":bow_and_arrow: Harika! Basit bir sapan kullanarak  **{name}** avladık.\n" + warning_message
             inventory["jobs_results"]["hunts"].append(hunt)
+
+        else:
+
+            weapon = inventory["items"]["hunting"]
+        
+            # TODO: Ammonution for the type of weapon will be removed
+            if weapon['custom_id'] == "bow":
+                required_ammo = "arrow"
+            else:
+                required_ammo = "ammo"
+        
+            if ("ammo" in inventory and inventory["ammo"][required_ammo] == 0) or (required_ammo not in inventory["ammo"]):
+                    return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True)
+
+            if weapon["durability"] < 4:
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
+
+            weapon["durability"] -= 4
+
+            if weapon["custom_id"] == "trap":
+                trap_count = randint(2,4)
+                preyed_hunts = []
+
+                for _ in range(trap_count):
+                    name, hunt = self.hunt_prey()
+                    preyed_hunts.append(name)
+                    inventory["jobs_results"]["hunts"].append(hunt)
+
+                preyed_hunts = [f":deer: {name}\n" for name in preyed_hunts]
+                first_mesage = f":mouse_trap: Av için **{trap_count}** tane kapan kuruldu!"
+                message = f":mouse_trap: Kapanları kontrol ettik ve işte yakaladıklarımız:\n{preyed_hunts}"
+
+            else:
+                name, hunt = self.hunt_prey()
+                first_mesage = ":bow_and_arrow: Av aranıyor.."
+                message = f":bow_and_arrow: Harika! Bir **{name}** avladık."
+                inventory["ammo"][required_ammo] -= 1
+                inventory["jobs_results"]["hunts"].append(hunt)
 
         await add_xp(self.bot, user.id, "hunter_xp")
         await collection.replace_one({"_id": user.id}, inventory)

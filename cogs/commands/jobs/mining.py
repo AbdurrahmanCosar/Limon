@@ -38,35 +38,43 @@ class Mining(commands.Cog):
         inventory, collection = await create_inventory_data(self.bot, user.id)
 
         if "mining" not in inventory["items"]:
-            return await interaction.response.send_message(content=f"{Emojis.cross} Maden kazabilmek için bir madencilik ekipmanına sahip olmalısınız!", ephemeral=True)
-
-        equipment = inventory["items"]["mining"]
-        if equipment["durability"] < 4:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
-        equipment["durability"] -= 4
-
-        if equipment["fuel"] < basic_item["mining"][equipment["custom_id"]]["liter_per_item"]:
-            return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
-
-        if basic_item["mining"][equipment["custom_id"]]["type"] == "vehicle":
-            average_item = basic_item["mining"][equipment["custom_id"]]["average_item"]
-            mine_count = randint(average_item - 1, average_item + 1)
-
-            # Problem of not running low on fuel will be fix
-            equipment["fuel"] -= (basic_item["mining"][equipment["custom_id"]]["liter_per_item"] * mine_count)
-            excavated_mine = []
-            for _ in range(mine_count):
-                name, weight, mine = self.mine_goose()
-                excavated_mine.append([name, weight])
-                inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
-                excavated_mine_ = [f":gem: {mine[0]} - {mine[1]}m\n"  for mine in excavated_mine]
-                message = f":pick: Aracımız geri döndü. İşte çıkardığı madenler:\n{excavated_mine_}"
+            mine = choice(list(mines.keys())[:4])
+            name = mines[mine]["name"]
+            weight = randint(5, 13)
+            
+            warning_message = f" {Emojis.warning_message} Bu kazma ile ağır ve farklı madenler çıkaramazsınız. Yeni bir kazma satın alın **`/store`**"
+            message = f":gem: Harika! Basit bir kazma kullanarak madenden {weight}kg ağırlığında {name} çıkardınız.\n" + warning_message
+            inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
 
         else:
-            name, weight, mine = self.mine_goose()
+            equipment = inventory["items"]["mining"]
+            if equipment["durability"] < 4:
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
+            equipment["durability"] -= 4
 
-            message = f":gem: Harika! Madenden {weight}kg ağırlığında {name} çıkardınız."
-            inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
+            if equipment["fuel"] < basic_item["mining"][equipment["custom_id"]]["liter_per_item"]:
+                return await interaction.response.send_message(content = f"{Emojis.whiteCross} :fuelpump: Aracınızın yakıtı bitmek üzere. Yakıt doldurmanız gerekiyor `/inventory > Garaj > Depoyu Doldur`", ephemeral=True)
+
+            if basic_item["mining"][equipment["custom_id"]]["type"] == "vehicle":
+                average_item = basic_item["mining"][equipment["custom_id"]]["average_item"]
+                mine_count = randint(average_item - 1, average_item + 1)
+
+                # Problem of not running low on fuel will be fix
+                equipment["fuel"] -= (basic_item["mining"][equipment["custom_id"]]["liter_per_item"] * mine_count)
+                excavated_mine = []
+
+                for _ in range(mine_count):
+                    name, weight, mine = self.mine_goose()
+                    excavated_mine.append([name, weight])
+                    inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
+                    excavated_mine_ = [f":gem: {mine[0]} - {mine[1]}m\n"  for mine in excavated_mine]
+                    message = f":pick: Aracımız geri döndü. İşte çıkardığı madenler:\n{excavated_mine_}"
+
+            else:
+                name, weight, mine = self.mine_goose()
+
+                message = f":gem: Harika! Madenden {weight}kg ağırlığında {name} çıkardınız."
+                inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
 
         await add_xp(self.bot, user.id, "miner_xp")
         await collection.replace_one({"_id": user.id}, inventory)
