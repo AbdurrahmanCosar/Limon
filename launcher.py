@@ -9,7 +9,6 @@ import asyncio
 import logging
 import logging.handlers
 import discord
-from discord.ext import commands
 import os
 from main import Limon
 from dotenv import load_dotenv
@@ -17,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 DB_CONNECTION = os.getenv("MONGO_CONNECTION")
 TOKEN = os.getenv("BOT_TOKEN")
+PREFIXES = ('.', '<@994143430504620072>', 'limon', 'lim', '10')
 
 async def main():
     logger = logging.getLogger('discord')
@@ -34,9 +34,10 @@ async def main():
     logger.addHandler(handler)
 
     async with Limon(
-            commands.when_mentioned,
+            command_prefix = ".",
+            #commands.when_mentioned,
             intents=discord.Intents.all(),
-            activity = discord.Streaming(name="Economy & Fun {/}", url="https://www.twitch.tv/iamabduley"),
+            activity = discord.Streaming(name="Eco & Fun {/}", url="https://www.twitch.tv/iamabduley"),
             testing_guild_id=1142517569950077068,
             database_connection=DB_CONNECTION 
     ) as bot:
