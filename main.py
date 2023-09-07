@@ -6,7 +6,6 @@
 """
 
 import os
-from re import A
 from typing import Optional
 import discord
 from discord.ext import commands
