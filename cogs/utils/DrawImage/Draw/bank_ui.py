@@ -4,16 +4,10 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 """
-
-from re import A
 from PIL import Image, ImageDraw, ImageFont
 from ..functions import Functions
 from ..assets import Assets
 
-"""
-TODO:
-The bot logo and the 'Admin' text will be set fır the Admin in transactions
-"""
 
 class DrawBankImages:
     def __init__(self, client, interaction, transaction_list: list, balance: int):
@@ -283,6 +277,10 @@ class DrawBankImages:
                         amount = f"+{data['amount']:,}".replace(',', '.')
                         color = green
                         transaction_side = "Kimden: "
+
+                        if data["transaction"]["type"] == "admin":
+                            text = "Hediye"
+                            avatar = Assets.limon_avatar
                     else:
                         text = "Giden Transfer"
                         amount = f"-{data['amount']:,}".replace(',', '.')
