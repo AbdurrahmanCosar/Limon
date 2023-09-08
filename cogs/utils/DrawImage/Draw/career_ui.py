@@ -32,7 +32,7 @@ class CareerUI:
                         if user_value >= level_value:
                             data = {
                                     "point": user_value,
-                                    "image": f"{level_key}_{user_key[:-3].png}"
+                                    "image": f"badge_{level_key}_{user_key[:-3]}.png"
                                     }
                             badges.append(data)
                             break
@@ -41,12 +41,29 @@ class CareerUI:
     def get_badge_name(self, badge: str) -> str:
         splits = badge.split('_')
         
-        if splits[0] == "gold":
-            return "Usta"
-        elif splits[0] == "silver":
-            return "Amatör"
+        level = ""
+        job = ""
+        print(splits[2][:-4])
+        
+        if splits[1] == "gold":
+            level = "Usta "
+        elif splits[1] == "silver":
+            level = "Amatör "
         else:
-            return "Acemi"
+            level =  "Acemi "
+            
+        if splits[2][:-4] == "fisher":
+            job = "Balıkçı"
+        elif splits[2][:-4] == "miner":
+            job = "Madenci"
+        elif splits[2][:-4] == "forester":
+            job = "Ormancı"
+        elif splits[2][:-4] == "hunter":
+            job = "Avcı"
+        else:
+            job = "Kumarbaz"
+        
+        return level + job
 
     def draw_career_ui(self) -> Image:
         badges = self.get_badges()
@@ -63,10 +80,10 @@ class CareerUI:
         second_row_offset_x = 49
         second_row_offset_y = 340
 
-        font_size = 30
+        font_size = 35
 
         # Load default font
-        font = ImageFont.truetype(Assets.coolvetica, font_size, encoding="unic")
+        font = ImageFont.truetype(Assets.acumin_semibold, font_size, encoding="unic")
 
         # Check to see if there are any badges
         if len(badges) == 0:
@@ -76,6 +93,7 @@ class CareerUI:
 
         # Paste rectangle as a table (2x2)
         for badge in badges[:4]:
+            _path_of_badge = "cogs/assets/images/badges/" + badge["image"]
             badge_name = self.get_badge_name(str(badge["image"]))
             point = f"{badge['point']} puan"
 
@@ -85,7 +103,7 @@ class CareerUI:
                 font = ImageFont.truetype(Assets.coolvetica, font_size, encoding="unic")
 
             # Load icon (badge image)
-            icon = Image.open(badge["image"]).convert("RGBA")
+            icon = Image.open(_path_of_badge).convert("RGBA")
             icon = icon.resize((100,100), Image.LANCZOS)
             i_w, i_h = icon.size
 
@@ -101,7 +119,6 @@ class CareerUI:
 
                 # Write badge name and points
                 draw.text(((first_row_offset_x + (w // 2)), ((h // 2) + 70)), text = badge_name, font = font, fill = "#ffffff", anchor = "ma")
-
                 draw.text(((first_row_offset_x + (w // 2)), ((h // 2) + 100)), text = point, font = font, fill = "#ffffff", anchor = "ma")
 
                 # Set new position
@@ -111,14 +128,13 @@ class CareerUI:
             else:
 
                 # Paste rectangle
-                img.paste(rectangle, (second_row_offset_x, second_row_offset_y), rectangle)
+                img.paste(rectangle, (second_row_offset_x, second_row_offset_y),rectangle)
                 icon_offset_x = second_row_offset_x + (w // 2 - i_w // 2)
-                icon_offset_y = second_row_offset_y+ (h // 2 - i_h // 2)
+                icon_offset_y = second_row_offset_y + (h // 3 - i_h // 2)
                 img.paste(icon, (icon_offset_x, icon_offset_y), icon)
 
                 # Write badge name and points
-                draw.text(((second_row_offset_x + (w // 2)), ((h // 2) + 20)), text = badge_name, font = font, fill = "#ffffff", anchor = "ma")
-
-                draw.text(((second_row_offset_x + (w // 2)), ((h // 2) + 50)), text = point, font = font, fill = "#ffffff", anchor = "ma")
-
+                draw.text(((second_row_offset_x + (w // 2)), (second_row_offset_y + (h // 2) + 20)), text = badge_name, font = font, fill = "#ffffff", anchor = "ma")
+                draw.text(((second_row_offset_x + (w // 2)), (second_row_offset_y + (h // 2) + 50)), text = point, font = font, fill = "#ffffff", anchor = "ma")
+                second_row_offset_x += (w + 40)
         return img

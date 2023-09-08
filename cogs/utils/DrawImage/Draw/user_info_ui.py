@@ -70,7 +70,7 @@ class UserInfo:
 
         if len(user_badges) > 0:
             for i in user_badges[:7]:
-                badge = Image.open(f"cogs/assets/images/badges/{i}").convert("RGBA")
+                badge = Image.open(f"cogs/assets/images/badges/badge_{i}").convert("RGBA")
                 badges.append(badge)
                 len_badge += 45
 
