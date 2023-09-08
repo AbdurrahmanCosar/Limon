@@ -24,10 +24,10 @@ async def add_xp(client, _id, xp_category):
         "miner_xp",    # 2
         "forester_xp", # 3
         "send_xp",     # 4
-        "gamble_xp"    # 5
+        "gambler_xp"   # 5
         ]
 
-    if (xp_category not in xp_types) or (type(xp_category) is int and 5 < xp_category < 0):
+    if (xp_category not in xp_types) or isinstance(xp_category, int) and  (5 < xp_category < 0):
         raise KeyError("Please enter a valid category! (0-5)")
 
     if isinstance(xp_category, int):
@@ -37,4 +37,3 @@ async def add_xp(client, _id, xp_category):
     user_data["xp"][xp_category] += 2
 
     await collection.replace_one({"_id": _id}, user_data)
-    print(f"Added XP to ({_id})")
