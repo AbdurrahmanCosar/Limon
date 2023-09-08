@@ -67,6 +67,7 @@ class Dropdown(ui.Select):
         if await balance_check(interaction, wallet['cash'], price) is False:
             return
 
+        filled_gas = items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"] - self.vehicles[value]["fuel"]
         gas_tank_liter = items[value][inventory_vehicle["custom_id"]]["gas_tank_liter"]
 
         inventory["items"][value]["fuel"] = gas_tank_liter
@@ -84,7 +85,7 @@ class Dropdown(ui.Select):
         except:
             await interaction.response.edit_message(view = None)
 
-        await interaction.followup.send(content = f"⛽ **|** {user.mention} İşte oldu! Senin için **{name}** ekipmanının deposunu doldurdum *({gas_tank_liter}L)*. Bunun için **{price:,} LC** ödedin.")
+        await interaction.followup.send(content = f"⛽ **|** {user.mention} İşte oldu! Senin için **{name}** ekipmanının deposunu doldurdum *({filled_gas}L)*. Bunun için **{price:,} LC** ödedin.")
 
 class GasStationButton(ui.View):
     def __init__(self, client: commands.Bot, uid: int):
@@ -280,7 +281,7 @@ class ButtonMenu(ui.View):
             ***{i_vehicle['name']}***\n
             🪵`Ortalama Ağaç: {i_vehicle['average_item']}`
             🛠️`Hasar Durumu: %{u_vehicle['durability']}`
-            ⛽`Yakıt Deposu: {u_vehicle['fuel']}/**{i_vehicle['gas_tank_liter']}L**`
+            ⛽`Yakıt Deposu: {u_vehicle['fuel']}/`**`{i_vehicle['gas_tank_liter']}L`**
             """
             vehicle_count += 1
 
@@ -291,7 +292,7 @@ class ButtonMenu(ui.View):
             ***{i_vehicle['name']}***\n
             💎`Ortalama Maden: {i_vehicle['average_item']}`
             🛠️`Hasar Durumu: %{u_vehicle['durability']}`
-            ⛽`Yakıt Deposu: {u_vehicle['fuel']}/**{i_vehicle['gas_tank_liter']}L**`
+            ⛽`Yakıt Deposu: {u_vehicle['fuel']}/`**`{i_vehicle['gas_tank_liter']}L`**
             """
             vehicle_count += 1
 
