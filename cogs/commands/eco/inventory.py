@@ -158,12 +158,12 @@ class ButtonMenu(ui.View):
         user_items = inventory["items"]
         message = ""
 
-        if ("forestry" in user_items) and (items["forestry"][user_items["forestry"]["custom_id"]]["type"] == "manual"):
+        if ("forestry" in user_items):
             u_item = user_items["forestry"]
             i_item = items["forestry"][u_item["custom_id"]]
             message += f":axe: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
 
-        if ("mining" in user_items) and (items["mining"][user_items["mining"]["custom_id"]]["type"] == "manual"):
+        if ("mining" in user_items):
             u_item = user_items["mining"]
             i_item = items["mining"][u_item["custom_id"]]
             message += f":pick: {i_item['name']} - Hasar Durumu: **%{u_item['durability']}**\n"
@@ -316,7 +316,13 @@ class Inventory(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "inventory", description="Open inventory and view your equipments/items")
+    @app_commands.command(
+            name = "inventory", 
+            description="Open inventory and view your equipments/items",
+            extras= {
+                'category': 'job',
+                'help': "Ekpmanlarınızı ve Kazançlarınızı görüntüleyin ve araçlarınıza yakıt doldurun."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(10))
     async def inventory(self, interaction: Interaction):
         embed = Embed(
