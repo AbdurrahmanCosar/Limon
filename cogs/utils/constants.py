@@ -18,7 +18,7 @@ class _Game:
 
 class _Emojis:
     enought_balance = "" # will be add
-    warning_message "<:attention:1073617535280365701>"
+    warning_message = "<:attention:1073617535280365701>"
     licash = "<:LiCash:1065713526217392260>"
     morelicash = "<:morelicash:1065713539572052054>"
     coinfront = "<:coinfront:1149405026758963303>"
