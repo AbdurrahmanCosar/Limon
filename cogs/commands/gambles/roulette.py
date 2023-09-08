@@ -49,6 +49,10 @@ class RouletteButtons(ui.View, UpdateData):
 
         self.cd_mapping = commands.CooldownMapping.from_cooldown(1, 5, commands.BucketType.member)
 
+    def disable_buttons(self):
+        for child in self.children:
+            child.disabled = True
+
     async def interaction_check(self, interaction: Interaction) -> bool:        
         if self.user.id != interaction.user.id:
             await interaction.response.send_message(content = f"{Emojis.cross} Bu sizin oyununuz değil. Butonlarla etkileşimde bulunamazsınız. Yeni bir oyun başlatın -> **`/roulette`**", ephemeral = True)
@@ -67,6 +71,7 @@ class RouletteButtons(ui.View, UpdateData):
             return False
 
         await add_xp(self.bot, self.user.id, "gambler_xp")
+        self.disable_buttons()
         return True
     
     @property
@@ -75,7 +80,7 @@ class RouletteButtons(ui.View, UpdateData):
         return embed 
 
     def _embed_(self, color):
-        embed = Embed(color = color, description = "Aynı miktarda tekrar oynamak için butonları kullanabilirsiniz.")
+        embed = Embed(color = color
         return embed 
 
     def _win_embed(self, message: str, multplie: int = 2):
@@ -88,18 +93,14 @@ class RouletteButtons(ui.View, UpdateData):
 
     @ui.button(label="Black", style = ButtonStyle.secondary, row=0)
     async def black_button(self, interaction: Interaction, button):
-
         num = choice(self.numbers)
-
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
 
         if num % 2 == 0:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed("Top siyahın üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed("Top siyahın üzerinde durdu"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed("Kırmızı geldi"))
+            await interaction.response.edit_message(embed = self._lose_embed("Kırmızı geldi"), view = self)
 
 
 
@@ -107,102 +108,81 @@ class RouletteButtons(ui.View, UpdateData):
     async def red_button(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if num % 2 == 0:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed("Siyah geldi"),)
+            await interaction.response.edit_message(embed = self._lose_embed("Siyah geldi"), view = self)
         else:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed("Top kırmzının üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed("Top kırmzının üzerinde durdu"), view = self)
 
     @ui.button(label="Green", style=ButtonStyle.success, row=0)
     async def green_button(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if num == 0:
             await self.increase_balance(5)
-            await interaction.edit_original_response(embed = self._win_embed("İnanılmaz!! Top yeşilin üzerinde durdu", 5))
+            await interaction.response.edit_message(embed = self._win_embed("İnanılmaz!! Top yeşilin üzerinde durdu", 5), view = self)
         elif num % 2 == 0:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed("Siyah geldi"))
+            await interaction.response.edit_message(embed = self._lose_embed("Siyah geldi"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed("Kırmızı geldi"))
+            await interaction.response.edit_message(embed = self._lose_embed("Kırmızı geldi"), view = self)
 
     @ui.button(label="1-18", style = ButtonStyle.blurple, row=0)
     async def column1_button(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if 1 <= num <= 18:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
 
     @ui.button(label="19-36", style = ButtonStyle.blurple, row=0)
     async def column2_button(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if 19 <= num <= 36:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
 
     @ui.button(label="İlk Oniki", style = ButtonStyle.blurple, row = 1)
     async def first_twelve(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if 1 <= num <= 12:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed(f" {button.label} |Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._lose_embed(f" {button.label} |Top {num} üzerinde durdu"), view = self)
 
     @ui.button(label="İkinci Oniki", style = ButtonStyle.blurple, row = 1)
     async def second_twelve(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if 12 <= num <= 24:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
 
     @ui.button(label="Üçüncü Oniki", style = ButtonStyle.blurple, row = 1)
     async def thirty_twelve(self, interaction: Interaction, button):
         num = choice(self.numbers)
 
-        await interaction.response.send_message(embed = self._waiting_messsage, ephemeral=True)
-        await sleep(3)
-
         if 24 <= num <= 36:
             await self.increase_balance()
-            await interaction.edit_original_response(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._win_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
         else:
             await self.decrease_balance()
-            await interaction.edit_original_response(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"))
+            await interaction.response.edit_message(embed = self._lose_embed(f" {button.label} | Top {num} üzerinde durdu"), view = self)
 
 class Roulette(commands.Cog):
     def __init__(self, bot: commands.Bot):
