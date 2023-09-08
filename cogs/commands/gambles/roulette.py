@@ -79,11 +79,11 @@ class RouletteButtons(ui.View, UpdateData):
         return embed 
 
     def _win_embed(self, message: str, multplie: int = 2):
-        embed = self._embed_(0x56ce41).set_author(name = f"{morelicash} Tebriker, {self.user.name}! {message} ve {self.amount * multplie} LC kazandınız.", icon_url = self.user.avatar.url)
+        embed = self._embed_(0x56ce41).set_author(name = f"Tebriker, {self.user.name}! {message} ve {self.amount * multplie} LC kazandınız.", icon_url = self.user.avatar.url)
         return embed
 
     def _lose_embed(self, message: str):
-        embed = self._embed_(0xda3939).set_author(name = f"{whitecross} Maalesef, {self.user.name}! {message} ve kaybettiniz. ({self.amount:,}LC)",  icon_url = self.user.avatar.url)
+        embed = self._embed_(0xda3939).set_author(name = f"Maalesef, {self.user.name}! {message} ve kaybettiniz. ({self.amount:,}LC)",  icon_url = self.user.avatar.url)
         return embed
 
     @ui.button(label="Black", style = ButtonStyle.secondary, row=0)
