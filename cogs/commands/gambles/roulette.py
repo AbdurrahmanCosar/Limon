@@ -80,7 +80,7 @@ class RouletteButtons(ui.View, UpdateData):
         return embed 
 
     def _embed_(self, color):
-        embed = Embed(color = color
+        embed = Embed(color = color)
         return embed 
 
     def _win_embed(self, message: str, multplie: int = 2):
