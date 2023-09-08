@@ -96,7 +96,7 @@ class Fishing(commands.Cog):
                 for _ in range(fish_count):
                     name, size, fish = self.catch_fish()
                     caught_fishes.append([name, size])
-                    inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")a
+                    inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
 
                 caught_fishes_ = [f":fish: **{fish[0]}** - **{fish[1]}cm**\n" for fish_list in caught_fishes for fish in fish_list]
                 first_message = ":fishing_pole_and_fish: Ağ atıldı.."
