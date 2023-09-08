@@ -11,8 +11,8 @@ hunting:
   trap: {name: "Kapan", ammo: null, price: 17999}
 
 forestry:
-  bigvehicle: {type: "vehicle", name: "ScorpionKing - Büyük", average_item: 10, liter_per_item: 4, gas_tank_liter: 180, price: 44999}
-  smallvehicle: {type: "vehicle", name: "HR46X - Küçük", average_item: 6, liter_per_item: 2, gas_tank_liter: 130, price: 24999}
+  bigvehicle: {type: "vehicle", name: "ScorpionKing - Büyük", average_item: 5, liter_per_item: 4, gas_tank_liter: 180, price: 44999}
+  smallvehicle: {type: "vehicle", name: "HR46X - Küçük", average_item: 3, liter_per_item: 2, gas_tank_liter: 130, price: 24999}
   axe: {type: "manual", name: "Balta", average_item: 1 ,price: 4780}
 
 mining:
