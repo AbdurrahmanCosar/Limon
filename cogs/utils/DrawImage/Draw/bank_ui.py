@@ -119,7 +119,7 @@ class DrawBankImages:
 
                 f_name, f_avatar = Functions.expense_icon(f_name)
 
-                img.paste(rectangle, (offset_x, offset_y), rectangle)
+            img.paste(rectangle, (offset_x, offset_y), rectangle)
 
             # Transfer Text -> "Gelen Transfer" or "Giden Transfer"
             draw.text((332, offset_y + 70), text = f_transfer_text, font = acumin_black_90, fill = "#ffffff")
