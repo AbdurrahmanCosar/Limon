@@ -4,12 +4,10 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 """
-import os
 from discord import Embed
 from discord.ext import commands
 from cogs.utils.database.admin_db import get_collection
 from cogs.utils.downloader import ImageDownloader
-from asyncio import sleep
 
 class WriteToDatabase:
     def __init__(self, bot: commands.Bot):
@@ -36,7 +34,7 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, hidden=True)
     @commands.is_owner()
     async def image(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -44,7 +42,7 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
             process_type = '\n'.join(process_type)
             await ctx.send(f'Geçersiz komut kullanımı! Hangi işlemi yapmak istiyorsunuz...\n{process_type}')
 
-    @image.command()
+    @image.command(hidden=True)
     @commands.is_owner()
     async def load(self, ctx, name:str, url: str):
         if not name or not url:
@@ -58,7 +56,7 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
         await self.load_image(name, url)
         await ctx.send(embed = embed)
 
-    @image.command()
+    @image.command(hidden=True)
     @commands.is_owner()
     async def remove(self, ctx, name:str):
         if not name:
@@ -71,7 +69,7 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
         await self.remove_image(name)
         await ctx.send(content = "Görsel silindi!")
 
-    @image.command()
+    @image.command(hidden=True)
     @commands.is_owner()
     async def show(self, ctx):
         image_dict = await self.image_dict
@@ -80,7 +78,7 @@ class ImagesCommands(commands.Cog, WriteToDatabase):
         embed = Embed(description = images)
         await ctx.send(embed = embed)
 
-    @image.command()
+    @image.command(hidden=True)
     @commands.is_owner()
     async def download(self, ctx):
         msg = await ctx.send(content = "İndirme başlatılıyor..")
