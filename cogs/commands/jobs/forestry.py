@@ -31,7 +31,13 @@ class Forestry(commands.Cog):
         size = randint(3, 20)
         return name, size, tree
 
-    @app_commands.command(name="forestry", description="Go lumberjack!")
+    @app_commands.command(
+            name="forestry", 
+            description="Go lumberjack!",
+            extras={
+                'category': 'job',
+                'help': "Ormana dalın ve ağaç kesin."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def forestry(self, interaction: Interaction):
         user = interaction.user
@@ -68,7 +74,7 @@ class Forestry(commands.Cog):
                     name, size, tree = self.cut_down_tree()
                     felled_tree.append([name, size])
                     inventory["jobs_results"]["wood"].append(f"{tree}_{size}")
-                felled_tree_ = [f":wood: {tree[0]} - {tree[1]}m\n" for tree_list in felled_tree for tree in tree_list]
+                felled_tree_ = "\n".join([f":wood: {tree[0]} - {tree[1]}m" for tree in felled_tree])
                 message = f":articulated_lorry: Aracımız geri döndü. İşte kestiği ağaçlar:\n{felled_tree_}"
 
             else:

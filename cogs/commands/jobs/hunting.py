@@ -31,7 +31,13 @@ class Hunting(commands.Cog):
 
         return name, hunt
 
-    @app_commands.command(name = "hunting", description = "Go hunting!")
+    @app_commands.command(
+            name = "hunting", 
+            description = "Go hunting!",
+            extras = {
+                'category': 'job',
+                'help': "Silahınızı alın ve ava çıkın."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def hunting(self, interaction: Interaction):
 
@@ -58,7 +64,12 @@ class Hunting(commands.Cog):
             else:
                 required_ammo = "ammo"
         
-            if ("ammo" in inventory and inventory["ammo"][required_ammo] == 0) or (required_ammo not in inventory["ammo"]):
+            if (    
+                    "ammo" not in  inventory or 
+                    "ammo" in inventory and (
+                        required_ammo not in inventory['ammo'] or
+                        inventory["ammo"][required_ammo] == 0)
+                ):
                     return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True)
 
             if weapon["durability"] < 4:
@@ -75,7 +86,7 @@ class Hunting(commands.Cog):
                     preyed_hunts.append(name)
                     inventory["jobs_results"]["hunts"].append(hunt)
 
-                preyed_hunts = [f":deer: {name}\n" for name in preyed_hunts]
+                preyed_hunts = "\n".join([f":deer: {name}" for name in preyed_hunts])
                 first_mesage = f":mouse_trap: Av için **{trap_count}** tane kapan kuruldu!"
                 message = f":mouse_trap: Kapanları kontrol ettik ve işte yakaladıklarımız:\n{preyed_hunts}"
 
