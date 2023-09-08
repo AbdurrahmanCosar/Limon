@@ -104,7 +104,7 @@ class AmmoDropdown(ui.Select):
 
         elif value not in user_inv["ammo"]:
             user_inv["ammo"].update({value: ammo_unit})
-            await i_collection.replaceone({"_id": user.id}, user_inv)
+            await i_collection.replace_one({"_id": user.id}, user_inv)
 
         elif value in user_inv["ammo"]:
             user_inv["ammo"][value] += ammo_unit
@@ -145,7 +145,13 @@ class Market(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "market", description = "Open market and buy utilities")
+    @app_commands.command(
+            name = "market", 
+            description = "Open market and buy utilities",
+            extras={
+                'category': 'job',
+                'help': "Ekipmanlarınızı kullanmak için ihtiyacınız olanları satın alın (yem, cephane vs.)."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(20))
     async def market(self, interaction: Interaction):
 

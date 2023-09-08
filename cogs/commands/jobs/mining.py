@@ -31,7 +31,13 @@ class Mining(commands.Cog):
         weight = randint(10, 20)
         return name, weight, mine
 
-    @app_commands.command(name="mining", description="Go mining!")
+    @app_commands.command(
+            name="mining", 
+            description="Go mining!",
+            extras={
+                'category': 'job',
+                'help': "Kazmanızı alın ve maden kazın."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def mining(self, interaction: Interaction):
         user = interaction.user
@@ -66,7 +72,7 @@ class Mining(commands.Cog):
                     name, weight, mine = self.mine_goose()
                     excavated_mine.append([name, weight])
                     inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
-                    excavated_mine_ = [f":gem: {mine[0]} - {mine[1]}m\n"  for mine in excavated_mine]
+                    excavated_mine_ = "\n".join([f":gem: {mine[0]} - {mine[1]}m"  for mine in excavated_mine])
                     message = f":pick: Aracımız geri döndü. İşte çıkardığı madenler:\n{excavated_mine_}"
 
             else:

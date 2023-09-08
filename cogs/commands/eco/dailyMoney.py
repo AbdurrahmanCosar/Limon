@@ -20,12 +20,16 @@ class DailyMoney(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="daily", description="Günlük LiCash'inizi alın.")
+    @app_commands.command(
+            name="daily", 
+            description="Günlük LiCash'inizi alın.",
+            extras={
+                'category': 'eco',
+                'help': "Hesabınıza yatan günlü LiCash'inizi alın.'"
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(60))
     async def daily_money(self, interaction: Interaction):
-
         user_data, collection = await create_wallet(self.bot, interaction.user.id)
-
         
         accumulated_money = user_data["accumulated_money"]
         await interaction.response.send_message(content = f"{morelicash} Günlük kazancınız **{accumulated_money:,}LC**")

@@ -168,7 +168,13 @@ class UpOrDownGame(commands.Cog):
                 i += 1
         return nums
 
-    @app_commands.command(name="up-or-down", description="Guess next number and win")
+    @app_commands.command(
+            name="up-or-down", 
+            description="Guess next number and win",
+            extras={
+                'category': 'gamble',
+                'help': "Sonraki sayının, öncekinden büyük mü, küçük mü olacağını tahmin ederek seriyi tamamlayın."
+            })
     @app_commands.describe(amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def up_or_down_game(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
@@ -179,7 +185,7 @@ class UpOrDownGame(commands.Cog):
         if check is False:
             return
 
-        await add_xp(self.bot, user.id, "gamble_xp")
+        await add_xp(self.bot, user.id, "gambler_xp")
 
         nums = self.random_numlist_generator()
         unopened_list = " ".join([str(nums[0]), " - ?", "- ?", "- ?", "- ?"])

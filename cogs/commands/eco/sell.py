@@ -132,15 +132,15 @@ class ButtonMenu(ui.View):
         transaction_list = wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, self.total_money, True)
 
+        self.embed.set_footer(text = f"Hesabınıa aktarılan LiCash: {self.total_money}")
+
         wallet["cash"] += self.total_money
         transaction_list = transactions.save_expense_data("sell")
         self.total_money = 0
 
         button.label = "Paran Çekildi!"
         button.disabled = True
-
-        self.embed.set_footer(text = f"Hesabınıa aktarılan LiCash: {self.total_money}")
-
+        
         await collection.replace_one({"_id": user.id}, wallet)
         await interaction.response.edit_message(embed = self.embed, view = self)
 
@@ -148,7 +148,13 @@ class Sell(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="sell", description="Sell your (fishes, hunts etc.)")
+    @app_commands.command(
+            name="sell", 
+            description="Sell your (fishes, hunts etc.)",
+            extras={
+                'category': 'job',
+                'help': "İş yaparak kazandıklarınızı(balıklar, odunlar vs.) satın."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(30))
     async def sell(self, interaction: Interaction):
         user = interaction.user
@@ -190,10 +196,10 @@ class Sell(commands.Cog):
             "Elindekileri sattıktan sonra paranı çekmeyi unutma! İşte senin envanterin:"
         )
         embed.set_author(name=user.name, icon_url=user.avatar.url)
-        embed.add_field(name = ":fish: Balıklar", value = f"{fish_count} adet balığınız var\nToplam **{fish_price}LC**", inline = True)
-        embed.add_field(name = ":deer: Avlar", value = f"{hunt_count} adet avınız var\nToplam **{hunt_price}LC**", inline = True)
-        embed.add_field(name = ":gem: Madenler", value = f"{mine_count} adet madeniniz var\nToplam **{mine_price}LC**", inline = False)
-        embed.add_field(name = ":wood: Odunlar", value = f"{wood_count} adet odununuz var\nToplam **{wood_price}LC**", inline = True)
+        embed.add_field(name = ":fish: Balıklar", value = f"{fish_count} adet balığınız var\nToplam **{fish_price:,}LC**", inline = True)
+        embed.add_field(name = ":deer: Avlar", value = f"{hunt_count} adet avınız var\nToplam **{hunt_price:,}LC**", inline = True)
+        embed.add_field(name = ":gem: Madenler", value = f"{mine_count} adet madeniniz var\nToplam **{mine_price:,}LC**", inline = False)
+        embed.add_field(name = ":wood: Odunlar", value = f"{wood_count} adet odununuz var\nToplam **{wood_price:,}LC**", inline = True)
 
         prices = [fish_price, hunt_price, mine_price, wood_price]
 

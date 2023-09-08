@@ -43,12 +43,18 @@ class Gambles(commands.Cog):
                 check = await balance_check(interaction, user_data["cash"], value)
 
                 if check:
-                    await add_xp(self.bot, user.id, "gamble_xp")
+                    await add_xp(self.bot, user.id, "gambler_xp")
                     return True
                 return False
-            return False
+        return False
 
-    @app_commands.command(name="coinflip", description="Play coinflip")
+    @app_commands.command(
+            name="coinflip", 
+            description="Play coinflip",
+            extras={
+                'category': 'gamble',
+                'help': "Yazı-Tura atarak paranızı katlayın."
+            })
     @app_commands.describe(amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def coinflip(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
@@ -62,12 +68,18 @@ class Gambles(commands.Cog):
             message = f"{coinfront} Tebrikler! Coinflip oyunundan tam **{amount*2:,}LC** kazandınız."
         else:
             user_data["cash"] -= amount
-            message = f"{coinback} Maalesef kaybettiniz;c **~{amount:,}LC~**"
+            message = f"{coinback} Maalesef kaybettiniz;c **~~{amount:,}LC~~**"
 
         await collection.replace_one({"_id": user.id}, user_data)
         await interaction.response.send_message(content = message)
 
-    @app_commands.command(name="guess-number", description="[1-5] Guess the number and make LiCash")
+    @app_commands.command(
+            name="guess-number", 
+            description="[1-5] Guess the number and make LiCash",
+            extras={
+                'category': 'gamble',
+                'help': "[1-5] arası sayıyı tahmin edin ve paranızı katlayın." 
+            })
     @app_commands.describe(guessnum="Enter your guess [1-5]", amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def guessnumber(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE], guessnum: app_commands.Range[int, 1,5]):
@@ -80,13 +92,19 @@ class Gambles(commands.Cog):
             message = f"{morelicash} Tebrikler! **{num}** rakamını doğru tahmin ettiniz ve tam **{amount:,}LC** kazandınız."
             user_data["cash"] += amount * 2
         else:
-            message = f"{cross} Maalesef kaybettiniz;c **{num}** rakamını doğru tahmin edemediniz. **~{amount:,}LC~**"
+            message = f"{cross} Maalesef kaybettiniz;c **{num}** rakamını doğru tahmin edemediniz. **~~{amount:,}LC~~**"
             user_data["cash"] -= amount
 
         await collection.replace_one({"_id": user.id}, user_data)
         await interaction.response.send_message(content = message)
 
-    @app_commands.command(name="roll", description="Roll the dice and make LiCash")
+    @app_commands.command(
+            name="roll", 
+            description="Roll the dice and make LiCash",
+            extras={
+                'category': 'gamble',
+                'help': "İki zarın toplam sonucunun çift mi, tek mi olacağını tahmin edin."
+            })
     @app_commands.describe(choose="Choose", amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     @app_commands.choices(choose = [
@@ -106,7 +124,7 @@ class Gambles(commands.Cog):
             message = f"{morelicash} Tebrikler! Iki zar sonucu **{dice}** geldi ve tam **{amount*2:,}LC** kazandınız."
         else:
             user_data["cash"] -= amount
-            message = f"{cross} Maalesef kaybettiniz;c Iki zar sonucu **{dice}** geldi. **~{amount:,}LC~**"
+            message = f"{cross} Maalesef kaybettiniz;c Iki zar sonucu **{dice}** geldi. **~~{amount:,}LC~~**"
 
         await collection.replace_one({"_id": user.id}, user_data)
         await interaction.response.send_message(content = ":game_die: Zarlar atılıyor...")

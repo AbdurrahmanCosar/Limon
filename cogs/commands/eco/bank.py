@@ -73,7 +73,13 @@ class Balance(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "balance", description="View your bank account")
+    @app_commands.command(
+            name = "balance",
+            description="View your bank account", 
+            extras={
+                'category': "eco", 
+                'help': "Banka hesabını ve işlem geçmişini görüntüleyin."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(15))
     async def balance(self, interaction: Interaction):
         await interaction.response.defer()

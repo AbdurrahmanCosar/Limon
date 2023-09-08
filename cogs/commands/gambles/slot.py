@@ -43,12 +43,18 @@ class Slot(commands.Cog):
                 check = await balance_check(interaction, user_data["cash"], value)
 
                 if check:
-                    await add_xp(self.bot, user.id, "gamble_xp")
+                    await add_xp(self.bot, user.id, "gambler_xp")
                     return True
                 return False
             return False
 
-    @app_commands.command(name="slot", description="Play slot")
+    @app_commands.command(
+            name="slot", 
+            description="Play slot",
+            extras={
+                'category': 'gamble',
+                'help': "Slot oynayın ve gelen resme göre paranızı farklı katlarına katlayın."
+            })
     @app_commands.describe(amount="Enter the bet amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def slot(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):

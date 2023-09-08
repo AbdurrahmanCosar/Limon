@@ -35,7 +35,13 @@ class Career(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "career", description = "View your jobs points")
+    @app_commands.command(
+            name = "career", 
+            description = "View your jobs points",
+            extras={
+                'category': 'general',
+                'help': "Puanlarınızı ve rozetlerinizi görüntüleyin."
+            })
     async def career(self, interaction: Interaction):
         await interaction.response.defer()
 

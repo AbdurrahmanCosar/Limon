@@ -66,7 +66,7 @@ class RouletteButtons(ui.View, UpdateData):
             await interaction.response.send_message(content = f"{Emojis.clock} Buton bekleme süresinde lütfen **`{round(retry_after,1)}s`** bekleyini! ", ephemeral = True)
             return False
 
-        await add_xp(self.bot, self.user.id, "gamble_xp")
+        await add_xp(self.bot, self.user.id, "gambler_xp")
         return True
     
     @property
@@ -208,7 +208,13 @@ class Roulette(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "roulette", description="Play Roulette")
+    @app_commands.command(
+            name = "roulette", 
+            description="Play Roulette",
+            extras={
+                'category': 'gamble',
+                'help': "Butonlar ile rulet oynayın ve paranızı katlayın."
+            })
     @app_commands.describe(amount="Enter the bet amount")
     async def roulette(self, interaction: Interaction, amount: app_commands.Range[int, 1, MAX_BET_VALUE]):
         user = interaction.user

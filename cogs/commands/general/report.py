@@ -96,13 +96,19 @@ class Report(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "report", description = "Report errors and bugs")
+    @app_commands.command(
+            name = "report", 
+            description = "Report errors and bugs",
+            extras={
+                'category': 'general',
+                'help': "Karşılaştığınız hataları, destek sunucusuna gelmeden bildirin."
+            })
     @app_commands.checks.cooldown(1, 50, key=lambda i: (i.user.id))
     async def report(self, interaction: Interaction):
         modal = ReportModal()
         await interaction.response.send_modal(modal)
 
-    @commands.command(name = "reply")
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def reply(self, ctx, user_id):
         try:

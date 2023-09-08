@@ -15,7 +15,13 @@ class UserInfoCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "user-info", description = "Show info about the user")
+    @app_commands.command(
+            name = "user-info", 
+            description = "Show info about the user",
+            extras={
+                'category': 'general',
+                'help': "Kendiniz veya belirttiğiniz kullanıcı hakkında bilgi edinin."
+            })
     @app_commands.describe(user = "Select a user")
     async def user_info(self, interaction: Interaction, user: Optional[Member]):
         await interaction.response.defer()

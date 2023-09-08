@@ -328,7 +328,13 @@ class Store(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "store", description="Open store and buy equipment")
+    @app_commands.command(
+            name = "store", 
+            description = "Open store and buy equipment",
+            extras = {
+                'category': 'job',
+                'help': "İş yapmak için gerekli ekipmanları satın alın."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown(20))
     async def store(self, interaction: Interaction):
         embed = Embed(

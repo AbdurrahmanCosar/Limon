@@ -47,12 +47,18 @@ class OpenBox(commands.Cog):
                 check = await balance_check(interaction, user_data["cash"], boxes[value][1])
 
                 if check:
-                    await add_xp(self.bot, user.id, "gamble_xp")
+                    await add_xp(self.bot, user.id, "gambler_xp")
                     return True
                 return False
             return False
 
-    @app_commands.command(name="open-box", description="Open a box and get rich")
+    @app_commands.command(
+            name="open-box", 
+            description="Open a box and get rich",
+            extras={
+                'category': 'gamble',
+                'help': "Kutu açın ve zengin olun."
+            })
     @app_commands.describe(box="Select a box")
     @app_commands.checks.dynamic_cooldown(set_cooldown(10))
     @app_commands.choices(box=[
@@ -68,7 +74,7 @@ class OpenBox(commands.Cog):
 
         selected_box = boxes.get(box)
         reward = randint(selected_box[2], selected_box[3])
-        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward}LC** çıktı. Kâr: **`%{(reward - selected_box[1]) / 100}`**"
+        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr: **`%{(reward - selected_box[1]) / 100}`**"
 
         user_data["cash"] -= selected_box[1]
         user_data["cash"] += reward

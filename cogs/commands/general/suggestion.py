@@ -50,7 +50,13 @@ class Suggestion(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "suggestion", description = "Make a suggestion for bot")
+    @app_commands.command(
+            name = "suggestion", 
+            description = "Make a suggestion for bot",
+            extras={
+                'category': 'general',
+                'help': "Önerilerinizi ve isteklerinizi destek sunucusuna gelmeden bildirin."
+            })
     async def suggestion(self, interaction: Interaction):
         modal = SuggestionModal()
         await interaction.response.send_modal(modal)

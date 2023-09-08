@@ -74,7 +74,13 @@ class Repairman(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "repair", description = "Go to Jack and repair your items")
+    @app_commands.command(
+            name = "repair", 
+            description = "Go to Jack and repair your items",
+            extras={
+                'category': 'eco',
+                'help': "Hasarlı ekimanlarınızı ve araçlarınızı onarın."
+            })
     @app_commands.checks.dynamic_cooldown(set_cooldown())
     async def repairman(self, interaction: Interaction):
 

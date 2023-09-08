@@ -76,7 +76,13 @@ class Send(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "send", description = "Send LiCash to Your Friends")
+    @app_commands.command(
+            name = "send", 
+            description = "Send LiCash to Your Friends",
+            extras = {
+                'category': 'eco',
+                'help': "Arkadaşlarınıza LiCash gönderin."
+            })
     @app_commands.describe(target = "Tag your friend", amount = "Enter the amount")
     @app_commands.checks.dynamic_cooldown(set_cooldown(15))
     async def send(self, interaction: Interaction, target: Member, amount: app_commands.Range[int, 1000, 1000000]):
