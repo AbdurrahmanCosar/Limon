@@ -14,9 +14,9 @@ from ..functions import Functions
 from datetime import datetime
 
 class DrawSendImages:
-    def __init__(self, interaction: Interaction, user: Member, amount: int, balance: int):
+    def __init__(self, interaction: Interaction, target: Member, amount: int, balance: int):
         self.interaction = interaction
-        self.user = user
+        self.target = target
         self.amount = amount
         self.balance = balance
 
@@ -28,8 +28,8 @@ class DrawSendImages:
         if avatar is None:
             avatar = Assets.default_avatar
 
-        target_name = self.user.name
-        target_id = self.user.id
+        target_name = self.target.name
+        target_id = self.target.id
         amount = f"{self.amount:,}".replace(',','.')
 
         img = Image.open(r"cogs/assets/images/send_template.png").convert("RGBA")
@@ -51,7 +51,7 @@ class DrawSendImages:
 
         draw.text((299, 552), text = user.name, font = medium_font, fill = gray)
         draw.text((299, 605), text = str(user.id), font = small_font, fill = gray)
-        draw.text((1154, 578), text = str(self.balance), font = medium_font, fill = gray, anchor = "ra")
+        draw.text((1154, 578), text = f"{self.balance:,}".replace(',', '.'), font = medium_font, fill = gray, anchor = "ra")
 
         #* --------------INFORMATION--------------
         draw.text((192, 944), text = target_name, font = big_font, fill = black)
@@ -68,7 +68,7 @@ class DrawSendImages:
         if avatar is None:
             avatar = Assets.default_avatar
 
-        target_name = self.user.name
+        target_name = self.target.name
         amount = f"{self.amount:,}".replace(',','.')
 
         img = Image.open(r"cogs/assets/images/send_template_complete.png").convert("RGBA")
