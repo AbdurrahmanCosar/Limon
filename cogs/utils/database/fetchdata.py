@@ -1,5 +1,5 @@
 """
- * Limon Bot for Discord
+ * limlim Bot for Discord
  * Copyright (C) 2022 AbdurrahmanCosar
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
@@ -37,7 +37,7 @@ async def create_wallet(bot, _id):
     *        "is_incomming": bool
     """
 
-    db = bot.database["limon"]
+    db = bot.database["limlim"]
     collection = db["wallet"]
 
     existing_data = await collection.find_one({"_id": _id})
@@ -64,7 +64,7 @@ async def create_wallet(bot, _id):
     return await collection.find_one({"_id": _id}), collection
 
 async def create_career_data(bot, _id):
-    db = bot.database["limon"]
+    db = bot.database["limlim"]
     collection = db["career"]
 
     existing_data = await collection.find_one({"_id": _id})
@@ -87,7 +87,7 @@ async def create_career_data(bot, _id):
     return await collection.find_one({"_id": _id}), collection
 
 async def create_inventory_data(bot, _id):
-    db = bot.database["limon"]
+    db = bot.database["limlim"]
     collection = db["inventory"]
 
     existing_data = await collection.find_one({"_id": _id})
