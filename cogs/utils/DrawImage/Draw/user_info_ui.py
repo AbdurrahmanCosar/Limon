@@ -118,8 +118,8 @@ class UserInfo:
 
         name = f"{member.name[:12]}.." if len(member.name)>12 else member.name
         display_name = f"{member.display_name[:12]}.." if len(member.display_name)>12 else member.display_name
-        status = str(self.interaction.guild.get_member(member.id).status).upper()
-        top_role = member.top_role.name.upper()
+        status = "Kaldırıldı!" #str(self.interaction.guild.get_member(member.id).status).upper()
+        top_role = "Kaldrıldı!" #member.top_role.name.upper()
         created_at = member.created_at.strftime("%b %d, %Y")
         joined_at = member.joined_at.strftime("%b %d, %Y")
 
