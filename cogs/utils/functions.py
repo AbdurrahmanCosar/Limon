@@ -4,7 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 """
-from cogs.utils.constants import Emojis
+from cogs.utils.constants import Emojis, Users
 from cogs.utils.database.fetchdata import create_career_data
 
 enought_balance = Emojis.enought_balance
@@ -37,3 +37,9 @@ async def add_xp(client, _id, xp_category):
     user_data["xp"][xp_category] += 2
 
     await collection.replace_one({"_id": _id}, user_data)
+
+def is_admin(uid: int) -> bool:
+    if uid in Users.admins:
+        return True
+    return False
+
