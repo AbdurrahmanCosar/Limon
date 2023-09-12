@@ -35,12 +35,12 @@ async def main():
 
     async with Limon(
             command_prefix = PREFIXES,
-            #commands.when_mentioned,
-            intents=discord.Intents.all(),
-            activity = discord.Streaming(name="Eco & Fun {/} | New UPDATE!", url="https://www.twitch.tv/iamabduley"),
-            #testing_guild_id=1142517569950077068,
-            database_connection=DB_CONNECTION 
+            intents = discord.Intents.default(),
+            activity = discord.Streaming(
+                name="Eco & Fun {/} | New UPDATE!",
+                url="https://www.twitch.tv/iamabduley"),
+            database_connection = str(DB_CONNECTION)
     ) as bot:
-        await bot.start(TOKEN)
+        await bot.start(str(TOKEN))
 
 asyncio.run(main())
