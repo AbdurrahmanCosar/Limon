@@ -50,8 +50,9 @@ class FishingEquipmentDropdown(ui.Select):
                 if "fishing" not in user_inventory["items"]:
                     return await interaction.response.send_message(content = f"{cross} Mevcut bir balıkçılık ekipmanınız bulunmuyor.", ephemeral = True)
                 else:
-                    name = fishes[value]["name"]
-                    price = fishes[value]["price"] * 60 // 100
+                    users_fishing_item = user_inventory["items"]["fishing"]["custom_id"]
+                    name = fishes[users_fishing_item]["name"]
+                    price = fishes[users_fishing_item]["price"] * 60 // 100
 
                     user_wallet["cash"] += int(price)
                     user_inventory["items"].pop("fishing")
@@ -59,7 +60,7 @@ class FishingEquipmentDropdown(ui.Select):
                     await w_collection.replace_one({"_id": user.id}, user_wallet)
                     await i_collection.replace_one({"_id": user.id}, user_inventory)
 
-                    await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
+                    return await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
 
             elif ("fishing" in user_inventory["items"]):
                 return await interaction.response.send_message(content = f"{cross} Zaten bir balıkçılık ekipmanına sahipsiniz.", ephemeral = True)
@@ -69,9 +70,8 @@ class FishingEquipmentDropdown(ui.Select):
             durability = 100
 
             transaction_list = user_wallet["recent_transactions"]["transactions"]
-            print(transaction_list)
             transactions = DataGenerator(transaction_list, price, False)
-            print(transactions.print_transaction)
+
 
 
             if await balance_check(interaction, user_wallet["cash"], price) is False:
@@ -113,8 +113,9 @@ class HuntingEquipmentDropdown(ui.Select):
             if "hunting" not in user_inventory["items"]:
                 return await interaction.response.send_message(content = f"{cross} Mevcut bir avcılık ekipmanınız bulunmuyor.", ephemeral = True)
             else:
-                name = hunts[value]["name"]
-                price = hunts[value]["price"] * 60 // 100
+                users_hunting_item = user_inventory["items"]["hunting"]["custom_id"]
+                name = hunts[users_hunting_item]["name"]
+                price = hunts[users_hunting_item]["price"] * 60 // 100
 
                 user_wallet["cash"] += int(price)
                 user_inventory["items"].pop("hunting")
@@ -122,7 +123,7 @@ class HuntingEquipmentDropdown(ui.Select):
                 await w_collection.replace_one({"_id": user.id}, user_wallet)
                 await i_collection.replace_one({"_id": user.id}, user_inventory)
 
-                await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
+                return await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
 
         elif ("hunting" in user_inventory["items"]):
             return await interaction.response.send_message(content = f"{cross} Zaten bir avcılık ekipmanına sahipsiniz.", ephemeral = True)
@@ -136,8 +137,6 @@ class HuntingEquipmentDropdown(ui.Select):
 
         transaction_list = user_wallet["recent_transactions"]["transactions"]
         transactions = DataGenerator(transaction_list, price, False)
-
-        print(transactions.print_transaction)
 
         data = {"hunting": {"custom_id": value, "durability": durability}}
 
@@ -173,8 +172,9 @@ class ForestryEquipmentDropdown(ui.Select):
             if "forestry" not in user_inventory["items"]:
                 return await interaction.response.send_message(content = f"{cross} Mevcut bir ormancılık ekipmanınız bulunmuyor.", ephemeral = True)
             else:
-                name = wood[value]["name"]
-                price = wood[value]["price"] * 60 // 100
+                users_forestry_item = user_inventory["items"]["forestry"]["custom_id"]
+                name = wood[users_forestry_item]["name"]
+                price = wood[users_forestry_item]["price"] * 60 // 100
 
                 user_wallet["cash"] += int(price)
                 user_inventory["items"].pop("forestry")
@@ -198,8 +198,7 @@ class ForestryEquipmentDropdown(ui.Select):
 
         if wood[value]["type"] == "vehicle":
             data = {"forestry": {"custom_id": value, "durability": 100, "fuel": wood[value]["gas_tank_liter"]}}
-            message = f"""{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n
-            `🪵Ortalama Ağaç: {wood[value]['average_item']}`\n🪫`Yakıt Tüketimi/Ağaç: {wood[value]['liter_per_item']}`\n⛽`Yakıt Deposu: {wood[value]['gas_tank_liter']}L`"""
+            message = f"""{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n`🪵Ortalama Ağaç: {wood[value]['average_item']}`\n🪫`Yakıt Tüketimi/Ağaç: {wood[value]['liter_per_item']}`\n⛽`Yakıt Deposu: {wood[value]['gas_tank_liter']}L`"""
         else:
             data = {"forestry": {"custom_id": value, "durability": 100}}
             message = f"{new}🌲 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız."
@@ -236,8 +235,9 @@ class MiningEquipmentDropdown(ui.Select):
             if "mining" not in user_inventory["items"]:
                 return await interaction.response.send_message(content = f"{cross} Mevcut bir madencilik ekipmanınız bulunmuyor.", ephemeral = True)
             else:
-                name = mines[value]["name"]
-                price = mines[value]["price"] * 60 // 100
+                users_mining_item = user_inventory["items"]["mining"]["custom_id"]
+                name = mines[users_mining_item]["name"]
+                price = mines[users_mining_item]["price"] * 60 // 100
 
                 user_wallet["cash"] += int(price)
                 user_inventory["items"].pop("mining")
@@ -245,7 +245,7 @@ class MiningEquipmentDropdown(ui.Select):
                 await w_collection.replace_one({"_id": user.id}, user_wallet)
                 await i_collection.replace_one({"_id": user.id}, user_inventory)
 
-                await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
+                return await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
 
         elif ("mining" in user_inventory["items"]):
             return await interaction.response.send_message(content = f"{cross} Zaten bir madencilik ekipmanına sahipsiniz.", ephemeral = True)
@@ -261,8 +261,7 @@ class MiningEquipmentDropdown(ui.Select):
 
         if mines[value]["type"] == "vehicle":
             data = {"mining": {"custom_id": value, "durability": 100, "fuel": mines[value]["gas_tank_liter"]}}
-            message = f"""{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n
-            `💎Ortalama Maden: {mines[value]['average_item']}`\n🪫`Yakıt Tüketimi/Maden: {mines[value]['liter_per_item']}`\n⛽`Yakıt Deposu: {mines[value]['gas_tank_liter']}L`"""
+            message = f"""{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.\n`💎Ortalama Maden: {mines[value]['average_item']}`\n🪫`Yakıt Tüketimi/Maden: {mines[value]['liter_per_item']}`\n⛽`Yakıt Deposu: {mines[value]['gas_tank_liter']}L`"""
         else:
             data = {"mining": {"custom_id": value, "durability": 100}}
             message = f"{new}⛏️ **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız."

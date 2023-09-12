@@ -104,7 +104,7 @@ class Fishing(commands.Cog):
                     caught_fishes.append([name, size])
                     inventory["jobs_results"]["fishes"].append(f"{fish}_{size}")
 
-                caught_fishes_ = "\n".join([f":fish: **{fish[0]}** - **{fish[1]}cm**" for fish_list in caught_fishes for fish in fish_list])
+                caught_fishes_ = "\n".join([f":fish: **{fish[0]}** - **{fish[1]}cm**" for fish in caught_fishes])
                 first_message = ":fishing_pole_and_fish: Ağ atıldı.."
                 message = f":fishing_pole_and_fish: **Ağ çekildi!** işte yakaladıklarımız:\n{caught_fishes_}"
 
