@@ -60,7 +60,7 @@ class OpenBox(commands.Cog):
                 'help': "Kutu açın ve zengin olun."
             })
     @app_commands.describe(box="Select a box")
-    @app_commands.checks.dynamic_cooldown(set_cooldown(10))
+    @app_commands.checks.dynamic_cooldown(set_cooldown(7200))
     @app_commands.choices(box=[
         Choice(name=f"Tahta Kasa - {boxes['woodenBox'][1]:,}LC", value="woodenBox"),
         Choice(name=f"Gümüş Kasa - {boxes['silverBox'][1]:,}LC" , value="silverBox"),
