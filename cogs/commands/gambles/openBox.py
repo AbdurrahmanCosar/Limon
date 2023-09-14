@@ -75,7 +75,7 @@ class OpenBox(commands.Cog):
         selected_box = boxes.get(box)
         reward = randint(selected_box[2], selected_box[3])
         percentage = ((reward - selected_box[1]) / selected_box[1]) * 100
-        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr: **`%{(reward - selected_box[1]) /}`**"
+        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr:  `{percentage}`**"
 
         user_data["cash"] -= selected_box[1]
         user_data["cash"] += reward
