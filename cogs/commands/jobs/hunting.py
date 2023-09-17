@@ -55,22 +55,7 @@ class Hunting(commands.Cog):
             inventory["jobs_results"]["hunts"].append(hunt)
 
         else:
-
             weapon = inventory["items"]["hunting"]
-        
-            # TODO: Ammonution for the type of weapon will be removed
-            if weapon['custom_id'] == "bow":
-                required_ammo = "arrow"
-            else:
-                required_ammo = "ammo"
-        
-            if (    
-                    "ammo" not in  inventory or 
-                    "ammo" in inventory and (
-                        required_ammo not in inventory['ammo'] or
-                        inventory["ammo"][required_ammo] == 0)
-                ):
-                    return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True)
 
             if weapon["durability"] < 4:
                 return await interaction.response.send_message(content = f"{Emojis.whiteCross} Ekipmanınız eskimiş olmalı. Lütfen Jack ustaya gidin ve yenileyin.", ephemeral=True)
@@ -91,6 +76,21 @@ class Hunting(commands.Cog):
                 message = f":mouse_trap: Kapanları kontrol ettik ve işte yakaladıklarımız:\n{preyed_hunts}"
 
             else:
+                # TODO: Ammonution for the type of weapon will be removed
+                if weapon['custom_id'] == "bow":
+                    required_ammo = "arrow"
+                else:
+                    required_ammo = "ammo"
+
+                if (    
+                    "ammo" not in  inventory or 
+                    "ammo" in inventory and (
+                        required_ammo not in inventory['ammo'] or
+                        inventory["ammo"][required_ammo] == 0)
+                ):
+                    return await interaction.response.send_message(content=f"{Emojis.whiteCross} Hiç cephanen yok! Cephane olmadan ava çıkamazsın.", ephemeral=True) 
+
+
                 name, hunt = self.hunt_prey()
                 first_mesage = ":bow_and_arrow: Av aranıyor.."
                 message = f":bow_and_arrow: Harika! Bir **{name}** avladık."
