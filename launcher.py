@@ -18,6 +18,9 @@ DB_CONNECTION = os.getenv("MONGO_CONNECTION")
 TOKEN = os.getenv("BOT_TOKEN")
 PREFIXES = ('.', '<@994143430504620072>', 'limon', 'lim', '10')
 
+intents = discord.Intents.default()
+intents.members = True
+
 async def main():
     logger = logging.getLogger('discord')
     logger.setLevel(logging.INFO)
@@ -35,7 +38,7 @@ async def main():
 
     async with Limon(
             command_prefix = PREFIXES,
-            intents = discord.Intents.default(),
+            intents = intents,
             activity = discord.Streaming(
                 name="Eco & Fun {/} | New UPDATE!",
                 url="https://www.twitch.tv/iamabduley"),
