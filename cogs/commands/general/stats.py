@@ -7,21 +7,26 @@
 
 from discord import Embed, utils, app_commands, Interaction
 from discord.ext import commands
+from cogs.utils.constants import Users
 
 class Stats(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "stats", description = "View the bot stats")
+    @app_commands.command(name = "ping", description = "View the bot latency")
     async def stats(self, interaction: Interaction):
 
         delta = utils.utcnow() - self.bot.uptime
         delta = str(delta).split(".")[0]
 
-        embed = Embed(
-            description= f"**Guild Count**\n{len(self.bot.guilds)} servers!\n\n**Uptime**\n{delta}s!\n\n**Ping**\n🏓 Pong! {round(self.bot.latency * 1000)}ms",
-            color = 0x2b2d31)
-        await interaction.response.send_message(embed = embed)
+        if interaction.user.id in Users.admins:
+            embed = Embed(
+                description = f"**Guild Count**\n{len(self.bot.guilds)} servers!\n\n**Uptime**\n{delta}s!\n\n**Ping**\n🏓 Pong! {round(self.bot.latency * 1000)}ms"
+,
+                color = 0x2b2d31)
+            return await interaction.response.send_message(embed = embed, ephemeral = True)
+
+        await interaction.response.send_message(content = f"🏓 Pong! {round(self.bot.latency * 1000)}ms", ephemeral = True)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Stats(bot))
