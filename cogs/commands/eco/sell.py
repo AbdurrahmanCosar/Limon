@@ -103,9 +103,9 @@ class ButtonMenu(ui.View):
         self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
 
         await collection.replace_one({"_id": user.id}, inventory)
-        await interaction.response.send_message(embed = self.embed, view = self)
+        await interaction.response.edit_message(embed = self.embed, view = self)
 
-    @ui.button(label = "Oduları Sat", style = ButtonStyle.primary, emoji = '🪵', custom_id = "sellwood")
+    @ui.button(label = "Odunları Sat", style = ButtonStyle.primary, emoji = '🪵', custom_id = "sellwood")
     async def sell_wood_button(self, interaction: Interaction, button):
         user = interaction.user
 
