@@ -60,7 +60,7 @@ class OpenBox(commands.Cog):
                 'help': "Kutu açın ve zengin olun."
             })
     @app_commands.describe(box="Select a box")
-    @app_commands.checks.dynamic_cooldown(set_cooldown(7200))
+    @app_commands.checks.dynamic_cooldown(set_cooldown(900))
     @app_commands.choices(box=[
         Choice(name=f"Tahta Kasa - {boxes['woodenBox'][1]:,}LC", value="woodenBox"),
         Choice(name=f"Gümüş Kasa - {boxes['silverBox'][1]:,}LC" , value="silverBox"),
@@ -75,7 +75,7 @@ class OpenBox(commands.Cog):
         selected_box = boxes.get(box)
         reward = randint(selected_box[2], selected_box[3])
         percentage = int(((reward - selected_box[1]) / selected_box[1]) * 100)
-        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr: **`{percentage}`**"
+        message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr: **`%{percentage}`**"
 
         user_data["cash"] -= selected_box[1]
         user_data["cash"] += reward
