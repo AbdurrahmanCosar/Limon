@@ -24,7 +24,8 @@ boxes = {
     "silverBox": ["Gümüş", 20000, 17000, 30000],
     "goldenBox": ["Altın", 50000, 35000, 60000],
     "platinBox": ["Platin", 70000, 59000, 80000],
-    "diamondBox": ["Elmas", 100000, 50000, 210000]
+    "diamondBox": ["Elmas", 100000, 50000, 210000],
+    "emeraldBox": ["Zümrüt", 150000, 75000, 250000]
 }
 
 class OpenBox(commands.Cog):
@@ -67,13 +68,22 @@ class OpenBox(commands.Cog):
         Choice(name=f"Altın Kasa - {boxes['goldenBox'][1]:,}LC", value="goldenBox"),
         Choice(name=f"Platin Kasa - {boxes['platinBox'][1]:,}LC", value="platinBox"),
         Choice(name=f"Elmas Kasa - {boxes['diamondBox'][1]:,}LC", value="diamondBox"),
+        Choice(name=f"Zümrüt Kasa - {boxes['emeraldBox'][1]:,}LC", value="emeraldBox")
     ])
     async def openbox(self, interaction: Interaction, box: str):
         user = interaction.user
         user_data, collection = await create_wallet(self.bot, user.id)
 
         selected_box = boxes.get(box)
-        reward = randint(selected_box[2], selected_box[3])
+
+        reward = 0
+        is_win = randint(1,10)
+
+        if is_win >= 5:
+            reward = randint(selected_box[1], selected_box[3])
+        else:
+            reward = randint(selected_box[2], selected_box[1])
+
         percentage = int(((reward - selected_box[1]) / selected_box[1]) * 100)
         message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr: **`%{percentage}`**"
 
