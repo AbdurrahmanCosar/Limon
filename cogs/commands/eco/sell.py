@@ -69,22 +69,20 @@ class ButtonMenu(ui.View):
     @ui.button(label = "Avları Sat", style = ButtonStyle.primary, emoji = '🦌', custom_id = "sellhunts")
     async def sell_hunts_button(self, interaction: Interaction, button):
         user = interaction.user
-        try:
-            button.label = "Avlar Satıldı!"  # New Button Label
-            button.style = ButtonStyle.secondary  # New Button Stlye
-            button.disabled = True  # New Button Disabled
 
-            self.total_money += self.prices[1]
-            self.enable_button()
+        button.label = "Avlar Satıldı!"  # New Button Label
+        button.style = ButtonStyle.secondary  # New Button Stlye
+        button.disabled = True  # New Button Disabled
 
-            inventory, collection = await create_inventory_data(self.client, user.id)
-            inventory["jobs_results"]["hunts"].clear()
-            self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
+        self.total_money += self.prices[1]
+        self.enable_button()
+
+        inventory, collection = await create_inventory_data(self.client, user.id)
+        inventory["jobs_results"]["hunts"].clear()
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money:,}")
         
-            await collection.replace_one({"_id": user.id}, inventory)
-            await interaction.response.edit_message(embed = self.embed, view = self)
-        except Exception as e:
-            print(e)
+        await collection.replace_one({"_id": user.id}, inventory)
+        await interaction.response.edit_message(embed = self.embed, view = self)
 
     @ui.button(label = "Madenleri Sat", style = ButtonStyle.primary, emoji = '💎', custom_id = "sellmines")
     async def sell_mines_button(self, interaction: Interaction, button):
@@ -100,7 +98,7 @@ class ButtonMenu(ui.View):
         inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["mines"].clear()
 
-        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money:,}")
 
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.edit_message(embed = self.embed, view = self)
@@ -119,7 +117,7 @@ class ButtonMenu(ui.View):
         inventory, collection = await create_inventory_data(self.client, user.id)
         inventory["jobs_results"]["wood"].clear()
 
-        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money}")
+        self.embed.set_footer(text = f"Satıcıdan alınacak toplam LiCash: {self.total_money:,}")
 
         await collection.replace_one({"_id": user.id}, inventory)
         await interaction.response.edit_message(embed = self.embed, view = self)
@@ -136,13 +134,18 @@ class ButtonMenu(ui.View):
 
         wallet["cash"] += self.total_money
         transaction_list = transactions.save_expense_data("sell")
-        self.total_money = 0
+        
 
         button.label = "Paran Çekildi!"
         button.disabled = True
-        
+
         await collection.replace_one({"_id": user.id}, wallet)
         await interaction.response.edit_message(embed = self.embed, view = self)
+        await interaction.followup.send(
+            content = f"{Emojis.morelicash} {user.mention} **|** İş yaparak elde ettiklerinizi başarıyla sattınız." +
+            f"\nToplam geliriniz **{self.total_money:,}LC** -> **`/ balance`** komutu ile paranızı kontrol edebilirsiniz.")
+
+        self.total_money = 0
 
 class Sell(commands.Cog):
     def __init__(self, bot: commands.Bot):
