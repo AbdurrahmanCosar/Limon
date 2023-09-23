@@ -5,13 +5,12 @@
  * For more information, see README.md and LICENSE
 """
 
-from re import A
 from discord import Interaction, Member
 from PIL import Image, ImageDraw, ImageFont
-from discord.enums import E
 from ..assets import Assets
 from ..functions import Functions
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 class DrawSendImages:
     def __init__(self, interaction: Interaction, target: Member, amount: int, balance: int):
@@ -82,7 +81,8 @@ class DrawSendImages:
         black = "#151515"
 
         #* --------------INFORMATION--------------
-        date = datetime.now().strftime("%H:%M:%S  %d/%-m/%Y")
+        TURKIYE_ISTANBUL = ZoneInfo("Europe/Istanbul")
+        date = datetime.now(tz = TURKIYE_ISTANBUL).strftime("%H:%M:%S -  %d/%-m/%Y")
 
         avatar = await Functions.open_avatar(avatar)
         avatar = Functions.circle(avatar, (140, 140))

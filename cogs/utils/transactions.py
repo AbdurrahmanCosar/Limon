@@ -6,6 +6,7 @@
 """
 from typing import List
 from .DrawImage.assets import Icons
+from .constants import Users
 
 class DataGenerator:
     """Prepares a transaction data for user's transactions list"""
@@ -57,3 +58,16 @@ class DataGenerator:
             return self.transactions
         else:
             raise KeyError
+
+    def save_admin_data(self):
+        """It is used for the user's money transfer from admin"""
+        data = {
+            "user": Users.bot, # The bot ID
+            "amount": self.amount,
+            "transaction": {
+                "type": "admin",
+                "is_incomming": self.is_incomming
+            }
+        }
+        self.transactions.insert(0, data)
+        return self.transactions
