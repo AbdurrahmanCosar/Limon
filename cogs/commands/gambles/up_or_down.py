@@ -61,7 +61,7 @@ class UpAndDownButtons(ui.View):
 
             if "?" not in self.unopened_list:
 
-                name, icon_url = f"{user.name} | {morelicash} Tebrikler! Hepsini doğru tahmin ederek {self.amount:,} LC kazandınız.", user.avatar.url
+                name, icon_url = f"{user.name} | Tebrikler! Hepsini doğru tahmin ederek {self.amount:,} LC kazandınız.", user.avatar.url
                 self.embed.set_author(name=name, icon_url=icon_url)
                 self.disabled_all_buttons()
 
@@ -116,7 +116,7 @@ class UpAndDownButtons(ui.View):
             name, icon_url = f"{user.name} {unopened_list_}", user.avatar.url
 
             if "?" not in self.unopened_list:
-                name, icon_url = f"{user.name} | {morelicash} Tebrikler! Hepsini doğru tahmin ederek 10 LC kazandınız.", user.avatar.url
+                name, icon_url = f"{user.name} | Tebrikler! Hepsini doğru tahmin ederek 10 LC kazandınız.", user.avatar.url
                 self.embed.set_author(name=name, icon_url=icon_url)
                 self.disabled_all_buttons()
 
