@@ -127,9 +127,13 @@ class GasStationButton(ui.View):
 
         await interaction.response.edit_message(embed = embed, view = view)
 
+    @ui.button(label="Geri", style=ButtonStyle.danger)
+    async def back_button(self, interaction: Interaction, button):
+        view = ButtonMenu(self.uid, self.client)
+        await interaction.response.edit_message(view = view)
 
 class ButtonMenu(ui.View):
-    def __init__(self, uid, client):
+    def __init__(self, uid: int, client: commands.Bot):
         super().__init__()
         self.id = uid
         self.client = client
