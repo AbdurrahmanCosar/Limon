@@ -13,7 +13,13 @@ class Stats(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "ping", description = "View the bot latency")
+    @app_commands.command(
+        name = "ping",
+        description = "View the bot latency",
+        extras={
+                'category': 'general',
+                'help': "Botun gecikme değerlerini görüntüleyin."
+            })
     async def stats(self, interaction: Interaction):
 
         delta = utils.utcnow() - self.bot.uptime

@@ -34,10 +34,14 @@ def _create_embed(user: Member, commands: str, count: int, title: str) -> Embed:
     return embed
 
 def get_commands(bot: commands.Bot, topic: str) -> str and int:
-    commandlist = [
-        f"**`/ {command.name}`**\n{command.extras['help']}\n"
-        for command in bot.tree.walk_commands()
-        if command.extras['category'] == topic]
+    try:
+        commandlist = [
+            f"**`/ {command.name}`**\n{command.extras['help']}\n"
+            for command in bot.tree.walk_commands()
+            if command.extras['category'] == topic]
+    except:
+        pass
+
     commandcount = len(commandlist)
     commandlist = '\n'.join(commandlist)
 
