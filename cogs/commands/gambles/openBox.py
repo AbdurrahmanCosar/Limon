@@ -19,7 +19,7 @@ from random import randint
 morelicash = Emojis.morelicash
 
 boxes = {
-    # 'boxName': [name, boxPrice, mixValue, maxValue]
+    # 'boxName': [name, boxPrice, minValue, maxValue]
     "woodenBox": ["Tahta", 10000, 7000, 20000],
     "silverBox": ["Gümüş", 20000, 17000, 30000],
     "goldenBox": ["Altın", 50000, 35000, 60000],
@@ -75,19 +75,20 @@ class OpenBox(commands.Cog):
         user_data, collection = await create_wallet(self.bot, user.id)
 
         selected_box = boxes.get(box)
+        box_price = selected_box[1]
 
         reward = 0
         is_win = randint(1,10)
 
-        if is_win >= 5:
-            reward = randint(selected_box[1], selected_box[3])
+        if is_win > 5:
+            reward = randint(box_price, selected_box[3])
         else:
-            reward = randint(selected_box[2], selected_box[1])
+            reward = randint(selected_box[2], box_price)
 
-        percentage = int(((reward - selected_box[1]) / selected_box[1]) * 100)
+        percentage = int(((reward - box_price) / box_price) * 100)
         message = f"{selected_box[0]} kasa açıldı! Içinden tam **{reward:,}LC** çıktı. Kâr: **`%{percentage}`**"
 
-        user_data["cash"] -= selected_box[1]
+        user_data["cash"] -= box_price
         user_data["cash"] += reward
         await collection.replace_one({"_id": user.id}, user_data)
 
