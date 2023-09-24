@@ -75,7 +75,7 @@ class Mining(commands.Cog):
                     name, weight, mine = self.mine_goose()
                     excavated_mine.append([name, weight])
                     inventory["jobs_results"]["mines"].append(f"{mine}_{weight}")
-                    excavated_mine_ = "\n".join([f":gem: {mine[0]} - {mine[1]}m"  for mine in excavated_mine])
+                    excavated_mine_ = "\n".join([f":gem: {mine[0]} - {mine[1]}kg"  for mine in excavated_mine])
                     message = f":pick: Aracımız geri döndü. İşte çıkardığı madenler:\n{excavated_mine_}"
 
             else:
