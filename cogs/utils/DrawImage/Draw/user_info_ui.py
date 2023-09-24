@@ -11,6 +11,10 @@ from ..functions import Functions
 from ..assets import Assets
 from discord import Interaction, Member
 from discord.ext.commands import Bot
+from yaml import load, Loader
+
+degree_yaml = open("cogs/assets/yaml_files/market_yamls/degrees.yml", "rb")
+degrees = load(degree_yaml, Loader=Loader)
 
 levels = {
     "fisher": {"gold": 200, "silver": 150, "bronze": 50},
@@ -41,6 +45,16 @@ class UserInfo:
                             break
         return badges
 
+    async def get_degree(self):
+        career, _ = await create_career_data(self.client, self.user.id)
+
+        if 'degree' in career:
+            key = career['degree']
+            name = degrees[key]['name']
+            return name
+
+        return "Unvan yok"
+
     async def draw_user_info(self):
         TINT_COLOR = (0, 0, 0) # Black
         TRANSPARENCY = .25 # Degree of transparency, 0-100%
@@ -58,7 +72,7 @@ class UserInfo:
 
         member = self.user
 
-        offset_y = 162 
+        offset_y = 162
         offset_x = 235
         len_badge = 0
 
@@ -120,6 +134,7 @@ class UserInfo:
         display_name = f"{member.display_name[:12]}.." if len(member.display_name)>12 else member.display_name
         status = "Kaldırıldı!" #str(self.interaction.guild.get_member(member.id).status).upper()
         top_role = "Kaldrıldı!" #member.top_role.name.upper()
+        degree = await self.get_degree()
         created_at = member.created_at.strftime("%b %d, %Y")
         joined_at = member.joined_at.strftime("%b %d, %Y")
 
@@ -152,12 +167,12 @@ class UserInfo:
         rectangle(y, id_text_len)
         draw.text((54, y), str(member.id), font = acumin_bold_50, fill = "#303338")
 
-        # Status
+        # Degree
         y = 505
-        status_text_len = draw.textlength(text = str(status) , font = acumin_bold_50)
+        degree_text_len = draw.textlength(text = str(degree) , font = acumin_bold_50)
 
-        rectangle(y, status_text_len)
-        draw.text((54, y), status, font = acumin_bold_50, fill = "#303338")
+        rectangle(y, degree_text_len)
+        draw.text((54, y), degree, font = acumin_bold_50, fill = "#303338")
 
         # Top Role
         y = 641

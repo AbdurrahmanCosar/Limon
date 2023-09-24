@@ -245,9 +245,10 @@ class DrawBankImages:
 
 
         img.paste(user_avatar, (76, 76), user_avatar)
+        user_name = f"{user.name[:12]}.." if len(user.name)>12 else user.name
 
         draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
-        draw.text((296, 128 + 30), text = user.name, font = big_bold, fill = white)
+        draw.text((296, 128 + 30), text = user_name, font = big_bold, fill = white)
         
         if len(transactions) == 0:
             draw.text(((w // 2), (h // 2)), text = "Geçmiş işlem bulunamadı", font = small_semibold, fill = gray, anchor = "ma")
@@ -300,6 +301,7 @@ class DrawBankImages:
                         amount = f"+{data['amount']:,}".replace(',', '.')
                         color = green
 
+                name = f"{name[:12]}.." if len(name)>12 else name
                 avatar = Functions.circle(avatar, size = (170, 170))
                 avatar = avatar.resize((170, 170), Image.LANCZOS)
                 img.paste(avatar, (75, offset_y + 25), avatar)
