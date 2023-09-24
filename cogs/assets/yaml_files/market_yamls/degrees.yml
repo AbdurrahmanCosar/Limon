@@ -1,0 +1,8 @@
+---
+titan: {name: "Titan", price: 1000000000}
+lordofmoney: {name: "Paranın Efendisi", price: 10000000}
+legendarymilloner: {name: "Efsane Milyoner", price: 5000000}
+ambitiousworker: {name: "Hırslı İşçi", price: 2000000}
+showoffenthusiast: {name: "Gösteriş Meraklısı", price: 1500000}
+charitable: {name: "Hayırsever", price: 500000}
+newbie: {name: "Çaylak", price: 200000}

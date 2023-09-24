@@ -12,11 +12,15 @@ from cogs.utils.functions import balance_check
 from cogs.utils.transactions import DataGenerator
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.buttons import CloseButton
-from cogs.utils.database.fetchdata import create_wallet, create_inventory_data
+from cogs.utils.database.fetchdata import create_career_data, create_wallet, create_inventory_data
 from yaml import load, Loader
 
 item_yaml = open("cogs/assets/yaml_files/market_yamls/basic_items.yml", "rb")
 items = load(item_yaml, Loader=Loader)
+
+degree_yaml = open("cogs/assets/yaml_files/market_yamls/degrees.yml", "rb")
+degrees = load(degree_yaml, Loader=Loader)
+
 fishes = items["fishing"]
 hunts = items["hunting"]
 wood = items["forestry"]
@@ -26,6 +30,7 @@ sell = Emojis.sell
 sold = Emojis.sold
 new = Emojis.new
 cross = Emojis.cross
+
 
 class FishingEquipmentDropdown(ui.Select):
     def __init__(self, bot):
@@ -39,56 +44,54 @@ class FishingEquipmentDropdown(ui.Select):
         super().__init__(placeholder='Balıkçılık Ekipmanı Seç...', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: Interaction):
-        try:
-            user = interaction.user
-            value = self.values[0]
+        user = interaction.user
+        value = self.values[0]
 
-            user_wallet, w_collection = await create_wallet(self.bot, user.id)
-            user_inventory, i_collection = await create_inventory_data(self.bot, user.id)
+        user_wallet, w_collection = await create_wallet(self.bot, user.id)
+        user_inventory, i_collection = await create_inventory_data(self.bot, user.id)
 
-            if value == "sellitem":
-                if "fishing" not in user_inventory["items"]:
-                    return await interaction.response.send_message(content = f"{cross} Mevcut bir balıkçılık ekipmanınız bulunmuyor.", ephemeral = True)
-                else:
-                    users_fishing_item = user_inventory["items"]["fishing"]["custom_id"]
-                    name = fishes[users_fishing_item]["name"]
-                    price = fishes[users_fishing_item]["price"] * 60 // 100
+        if value == "sellitem":
+            if "fishing" not in user_inventory["items"]:
+                return await interaction.response.send_message(content = f"{cross} Mevcut bir balıkçılık ekipmanınız bulunmuyor.", ephemeral = True)
+            else:
+                users_fishing_item = user_inventory["items"]["fishing"]["custom_id"]
+                name = fishes[users_fishing_item]["name"]
+                price = fishes[users_fishing_item]["price"] * 60 // 100
 
-                    user_wallet["cash"] += int(price)
-                    user_inventory["items"].pop("fishing")
+                user_wallet["cash"] += int(price)
+                user_inventory["items"].pop("fishing")
 
-                    await w_collection.replace_one({"_id": user.id}, user_wallet)
-                    await i_collection.replace_one({"_id": user.id}, user_inventory)
+                await w_collection.replace_one({"_id": user.id}, user_wallet)
+                await i_collection.replace_one({"_id": user.id}, user_inventory)
 
-                    return await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
+                return await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ekipmanınızı {price:,} LC'e sattınız.")
 
-            elif ("fishing" in user_inventory["items"]):
-                return await interaction.response.send_message(content = f"{cross} Zaten bir balıkçılık ekipmanına sahipsiniz.", ephemeral = True)
+        elif ("fishing" in user_inventory["items"]):
+            return await interaction.response.send_message(content = f"{cross} Zaten bir balıkçılık ekipmanına sahipsiniz.", ephemeral = True)
 
-            name = fishes[value]["name"]
-            price = fishes[value]["price"]
-            durability = 100
+        name = fishes[value]["name"]
+        price = fishes[value]["price"]
+        durability = 100
 
-            transaction_list = user_wallet["recent_transactions"]["transactions"]
-            transactions = DataGenerator(transaction_list, price, False)
-
+        transaction_list = user_wallet["recent_transactions"]["transactions"]
+        transactions = DataGenerator(transaction_list, price, False)
 
 
-            if await balance_check(interaction, user_wallet["cash"], price) is False:
-                return
 
-            data = {"fishing": {"custom_id": value,"durability": durability}}
+        if await balance_check(interaction, user_wallet["cash"], price) is False:
+            return
 
-            user_inventory["items"].update(data)
-            user_wallet["cash"] -= price
-            transaction_list = transactions.save_expense_data("store")
+        data = {"fishing": {"custom_id": value,"durability": durability}}
 
-            await i_collection.replace_one({"_id": user.id}, user_inventory)
-            await w_collection.replace_one({"_id": user.id}, user_wallet)
+        user_inventory["items"].update(data)
+        user_wallet["cash"] -= price
+        transaction_list = transactions.save_expense_data("store")
 
-            await interaction.response.send_message(content = f"{new}🎣 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.")
-        except Exception as e:
-            print(e)
+        await i_collection.replace_one({"_id": user.id}, user_inventory)
+        await w_collection.replace_one({"_id": user.id}, user_wallet)
+
+        await interaction.response.send_message(content = f"{new}🎣 **{user.name} |** {name} ekipmanını **{price:,} LC** ödeyerek satın aldınız.")
+
 
 class HuntingEquipmentDropdown(ui.Select):
     def __init__(self, bot):
@@ -275,6 +278,59 @@ class MiningEquipmentDropdown(ui.Select):
 
         await interaction.response.send_message(content = message)
 
+
+# Buy Degrees
+class DegreesMenu(ui.Select):
+    def __init__(self, bot):
+        self.bot = bot
+
+        options = [
+            SelectOption(label = f"{v['name']}", value=k, description=f"{v['price']:,} LiCash")
+            for k, v in degrees.items()
+        ]
+        options.append(SelectOption(label = "Ünvanı Kaldır!", value="removedegree", description="Mevcut ünvanınızı satın!", emoji=sell))
+
+        super().__init__(placeholder='Ünvan Seç...', min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: Interaction):
+        user = interaction.user
+        value = self.values[0]
+
+        wallet, w_collection = await create_wallet(self.bot, user.id)
+        career, c_collection = await create_career_data(self.bot, user.id)
+
+        if value == "removedegree":
+            if "degree" in career:
+                name = degrees[career['degree']]['name']
+                price = degrees[career['degree']]['price'] * 30 // 100 
+                
+                career.pop('degree')
+                wallet['cash'] += price
+                
+                await c_collection.replace_one({"_id": user.id}, career)
+                await w_collection.replace_one({"_id": user.id}, wallet)
+                await interaction.response.send_message(content = f"{sold} **{user.name} |** {name} ünvanınızı **{price:,}LC** karşılığında sattınız!")
+                return
+
+        degree_name = degrees[value]['name']
+        degree_price = degrees[value]['price']
+
+        if await balance_check(interaction, wallet['cash'], degree_price) is False:
+            return
+
+        if 'degree' not in career:
+            data = { "$set": {"degree": value}}
+            await c_collection.update_one(career, data)
+        else:
+            career.update({'degree': value})
+            await c_collection.replace_one({"_id": user.id}, career)
+
+        wallet['cash'] -= degree_price
+        await w_collection.replace_one({"_id": user.id}, wallet)
+        await interaction.response.send_message(content = f"**{new} {user.name} |** {degree_price:,}LC ödeyerek **{degree_name}** ünvanına sahip oldunuz. **`/ user-info`** komutu ile görüntüleyebilirsiniz.")
+
+
+
 class SecondaryButtonMenu(ui.View):
     def __init__(self, bot):
         super().__init__()
@@ -318,10 +374,17 @@ class PrimaryButtonMenu(ui.View):
         super().__init__()
         self.bot = bot
 
-    @ui.button(label = "Ekipmanlar", style= ButtonStyle.blurple)
+    @ui.button(label = "Ekipmanlar", style = ButtonStyle.blurple)
     async def equipments_button(self, interaction: Interaction, button):
         view = SecondaryButtonMenu(self.bot)
         await interaction.response.edit_message(view = view)
+
+    @ui.button(label = "Ünvanlar", style = ButtonStyle.success)
+    async def degrees_button(self, interaction: Interaction, button):
+        view = ui.View()
+        view.add_item(DegreesMenu(self.bot))
+        view.add_item(CloseButton(interaction.user.id))
+        await interaction.response.send_message(view = view)
 
 class Store(commands.Cog):
     def __init__(self, bot: commands.Bot):
