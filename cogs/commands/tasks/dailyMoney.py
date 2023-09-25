@@ -18,7 +18,7 @@ class DailyMoneyTask(commands.Cog):
     async def daily_money_task(self):
         print("Started Task: Daily Money")
 
-        db = self.bot.database["limon"]
+        db = self.bot.database["limlim"]
         collection = db["wallet"]
 
         money = randint(1000, 3400)
