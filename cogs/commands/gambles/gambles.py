@@ -116,7 +116,7 @@ class Gambles(commands.Cog):
         user = interaction.user
         user_data, collection = await create_wallet(self.bot, user.id)
 
-        dice = randint(1,12)
+        dice = randint(2,12)
         message = ""
 
         if (dice % 2 == 0 and int(choose) == 0) or (dice % 2 != 0 and int(choose) == 1):
