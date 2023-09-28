@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
 """
 
+from re import A
 from PIL import Image, ImageDraw, ImageFont
 from ...database.fetchdata import create_career_data, create_wallet
 from ..functions import Functions
@@ -43,7 +44,16 @@ class UserInfo:
                         if user_value >= level_value:
                             badges.append(f"{level_key}_{user_key[:-3]}.png")
                             break
-        return badges
+
+        is_verified = False
+        if user_data["verified"] is True:
+            is_verified = True
+
+        is_elite = False
+        if user_data["old_user"] is True:
+            is_elite = True
+
+        return badges, is_verified, is_elite
 
     async def get_degree(self):
         career, _ = await create_career_data(self.client, self.user.id)
@@ -77,7 +87,7 @@ class UserInfo:
         len_badge = 0
 
         badges = []
-        user_badges = await self.user_badges()
+        user_badges, is_verified, is_elite = await self.user_badges()
 
         name_offset_y = 119
         display_name_offset_y = 65
@@ -107,6 +117,24 @@ class UserInfo:
             name_offset_y = 104
             display_name_offset_y = 45
         img.paste(layer, (0,0), layer)
+
+        # Right Side Badges
+        badge_position_x = 627
+        badge_position_y = 9
+
+        if is_verified is True:
+            verify_badge = Image.open(r"cogs/assets/images/badges/badge_verify.png").convert("RGBA")
+            verify_badge = verify_badge.resize((49,49), Image.LANCZOS)
+            img.paste(verify_badge, (badge_position_x, badge_position_y), verify_badge)
+
+            """if user has an approval badge, the elite badge will slide to right"""
+            badge_position_x += 50
+
+        if is_elite is True:
+            elite_badge = Image.open(r"cogs/assets/images/badges/badge_elite.png").convert("RGBA")
+            elite_badge = elite_badge.resize((49,49), Image.LANCZOS)
+            img.paste(elite_badge, (badge_position_x, badge_position_y), elite_badge)
+
 
         user_data, _ = await create_wallet(self.client, member.id)
         money = f"{user_data['cash']:,}"
@@ -148,7 +176,7 @@ class UserInfo:
         draw.text((227, display_name_offset_y), display_name ,font = acumin_black_50, fill = "#ffffff")
         draw.text((227, name_offset_y), name, font = acumin_bold_50, fill = "#bcbcbc")
         draw.text((44, 320), "USER ID", font =  acumin_black_50, fill = "#ffffff")
-        draw.text((44, 447), "STATUS", font =  acumin_black_50, fill="#ffffff")
+        draw.text((44, 447), "UNVAN", font =  acumin_black_50, fill="#ffffff")
         draw.text((44, 583), "TOP ROLE", font =  acumin_black_50, fill="#ffffff")
 
         # DATE
