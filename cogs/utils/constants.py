@@ -48,7 +48,7 @@ class _Emojis:
 class _Channels:
     suggestions = 1063608269404381255
     report = None
-    verify = 1149512209295224832
+    verify = 1157046007192883303
 
 class _Users:
     admins = [529577110197764096, 1047996741397532763, 1149512209295224832]
