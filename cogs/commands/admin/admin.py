@@ -4,12 +4,15 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 """
-from discord import ui, ButtonStyle, Interaction, TextStyle, Member, Embed
+from re import A
+from discord import app_commands, ui, ButtonStyle, Interaction, TextStyle, Member, Embed
 from discord.ext import commands
 from cogs.utils.database.fetchdata import create_career_data, create_wallet
 from cogs.utils.transactions import DataGenerator
 from cogs.utils.constants import Users
 from cogs.utils.functions import is_admin
+from cogs.utils.cooldown import set_cooldown
+from cogs.utils.log import AdminLogger
 
 class SendMoneyModal(ui.Modal, title= "Send Money"):
     amount = ui.TextInput(
@@ -59,6 +62,7 @@ class UserMenuButtons(ui.View):
         data, collection = await create_career_data(self.bot, self.user.id)
 
         if data['verified'] is True:
+            is_verified = False
             # Set new button
             button.label = "Verify"
             button.style = ButtonStyle.success
@@ -66,12 +70,15 @@ class UserMenuButtons(ui.View):
             data['verified'] = False
             message = f"**{self.user.name}** adlı kullanıcını onayı {user.name} tarafından kaldırıldı!"
         else:
+            is_verified = True
             # Set new button
             button.label = "Unverify"
             button.style = ButtonStyle.danger
 
             data['verified'] = True
             message = f"**{self.user.name}**, {user.name} tarafından onaylandı!"
+
+        await AdminLogger(user, self.user, interaction).verify_message(is_verified)
 
         await collection.replace_one({"_id": self.user.id}, data)
         await interaction.response.edit_message(view = self)
@@ -99,16 +106,25 @@ class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
-    @commands.command(hidden=True)
-    async def admin(self, ctx, uid: int):
-        if is_admin(ctx.author.id) is False:
-            return
+    @app_commands.command(
+            name = "admin", 
+            description = "open admin menu",
+            extras={
+                'category': 'general',
+                'help': "Sadece adminler için :("
+            })
+    @app_commands.describe(target = "Enter the user")
+    @app_commands.checks.dynamic_cooldown(set_cooldown(7200))
+    async def admin(self, interaction: Interaction, target: Member):
+        author = interaction.user
+        if is_admin(author.id) is False:
+            return await interaction.response.send_message(content = ":/", ephemeral = True)
 
-        user = self.bot.get_user(uid)
+        user = self.bot.get_user(target.id)
         if not user:
-            return await ctx.send(content = "Kullanıcı bulunamadı!")
+            return await interaction.response.send_message(content = "Kullanıcı bulunamadı!")
 
-        data, _ = await create_career_data(self.bot, uid)
+        data, _ = await create_career_data(self.bot, target.id)
         view = UserMenuButtons(self.bot, user)
 
         embed = Embed(
@@ -116,15 +132,15 @@ class Admin(commands.Cog):
                 color = 0x2b2d31,
                 description = f"**{user.name}** için ne yapmak istiyorsunuz?")
         embed.set_author(
-                name = f"Menü {ctx.author.name} için açıldı. | {ctx.author.id}", 
-                icon_url = ctx.author.avatar.url)
+                name = f"Menü {author.name} için açıldı. | {author.id}", 
+                icon_url = author.avatar.url)
 
         # Set verify button
         if data['verified'] is True:
             view.verify_callback.label = "Unverify"
             view.verify_callback.style = ButtonStyle.danger
 
-        await ctx.send(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=view)
             
 
 async def setup(bot: commands.Bot):
