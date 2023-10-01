@@ -44,6 +44,8 @@ class _Emojis:
     career = "<:career:1066371667657494709>"
     done = "<:done:1066371678633996359>"
     decline = "<:decline:1066371673189789696>"
+    home = "<:home:1157913068169351240>"
+    transaction = "<:transaction:1157913064138625094>"
 
 class _Channels:
     suggestions = 1063608269404381255

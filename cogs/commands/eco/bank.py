@@ -5,7 +5,6 @@
  * For more information, see README.md and LICENSE
 """
 
-from typing import Any, Coroutine
 from discord import app_commands, Interaction, File, ui, ButtonStyle
 from discord.ext import commands
 from discord.interactions import Interaction
@@ -45,7 +44,7 @@ class Button(ui.View, DrawBankImages):
             return False
         return True
 
-    @ui.button(label=None, style = ButtonStyle.success, disabled = True, emoji='🏡', custom_id="balance_btn")
+    @ui.button(label=None, style = ButtonStyle.success, disabled = True, emoji=Emojis.home, custom_id="balance_btn")
     async def balance_button(self, interaction: Interaction, button):
         await interaction.response.defer()
         self.disable_buttons("balance_btn")
@@ -57,7 +56,7 @@ class Button(ui.View, DrawBankImages):
             x.seek(0)
             await interaction.edit_original_response(attachments = [File(x, "LimonWallet.png")], view=self)
 
-    @ui.button(label=None, style = ButtonStyle.blurple, emoji='📝', custom_id="transaction_btn")
+    @ui.button(label=None, style = ButtonStyle.blurple, emoji=Emojis.transaction, custom_id="transaction_btn")
     async def transaction_button(self, interaction: Interaction, button):
         await interaction.response.defer()
         self.disable_buttons("transaction_btn")
