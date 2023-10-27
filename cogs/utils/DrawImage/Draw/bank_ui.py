@@ -16,6 +16,11 @@ class DrawBankImages:
         self.transactions = transaction_list
         self.balance = balance
 
+    def special_badge(self):
+        special_badge = Image.open(r"cogs/assets/images/100thYear.png").convert("RGBA")
+        special_badge = special_badge.resize((213, 150), Image.LANCZOS)
+        return special_badge
+
     async def draw_bank_balance(self):
         user = self.interaction.user
         transactions = self.transactions
@@ -24,6 +29,10 @@ class DrawBankImages:
         img = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
         rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
         w, h = img.size
+
+        #* --------------PASTE 100th YEAR BADGE-------------
+        special_badge = self.special_badge()
+        img.paste(special_badge, (100, 100), special_badge)
 
         #* --------------COMMAND USER AVATAR--------------
         user_avatar = user.avatar # Command user
@@ -220,6 +229,11 @@ class DrawBankImages:
 
         draw = ImageDraw.Draw(img)
 
+        #* ------------- 100th YEAR BADGE--------------
+        special_badge = self.special_badge()
+
+        img.paste(special_badge, (741, 106), special_badge)
+
         offset_y = 539
 
         user_avatar = user.avatar
@@ -247,8 +261,8 @@ class DrawBankImages:
         img.paste(user_avatar, (76, 76), user_avatar)
         user_name = f"{user.name[:12]}.." if len(user.name)>12 else user.name
 
-        draw.text((296, 76 + 30), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
-        draw.text((296, 128 + 30), text = user_name, font = big_bold, fill = white)
+        draw.text((296, 106), text = "Hoş Geldin", font = small_semibold, fill = "#cacaca")
+        draw.text((296, 158), text = user_name, font = big_bold, fill = white)
         
         if len(transactions) == 0:
             draw.text(((w // 2), (h // 2)), text = "Geçmiş işlem bulunamadı", font = small_semibold, fill = gray, anchor = "ma")
