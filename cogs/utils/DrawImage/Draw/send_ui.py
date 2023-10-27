@@ -39,7 +39,7 @@ class DrawSendImages:
 
         small_font = ImageFont.truetype(Assets.bevietnam_bold, 32, encoding="unic")
         #* --------------COLOURS--------------
-        gray = "#bcbcbc"
+        gray = "#4e4e4e"
         black = "#151515"
 
         #* --------------RECTANGLE--------------
