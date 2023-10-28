@@ -18,7 +18,7 @@ DB_CONNECTION = os.getenv("MONGO_CONNECTION")
 TOKEN = os.getenv("BOT_TOKEN")
 PREFIXES = ('.', '<@994143430504620072>', 'limon', 'lim', '10')
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 
 async def main():
