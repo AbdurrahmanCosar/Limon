@@ -26,7 +26,7 @@ class DrawBankImages:
         transactions = self.transactions
         
         #* --------------BASE IMAGE AND RECTANGLE--------------
-        img = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
+        img = Image.open(r"cogs/assets/images/CumhuriyetBankAccountTemplate.png").convert("RGBA")
         rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
         w, h = img.size
 
@@ -223,17 +223,11 @@ class DrawBankImages:
         user = self.interaction.user
         transactions = self.transactions
 
-        img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
-        rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
+        img = Image.open(r"cogs/assets/images/CumhuriyetTransactionTemplate.png").convert("RGBA")
+        rectangle = Image.open(r"cogs/assets/images/CumhuriyetTransactionRectangle.png").convert("RGBA")
         w, h = img.size
 
         draw = ImageDraw.Draw(img)
-
-        #* ------------- 100th YEAR BADGE--------------
-        special_badge = self.special_badge()
-
-        img.paste(special_badge, (741, 106), special_badge)
-
         offset_y = 539
 
         user_avatar = user.avatar
@@ -248,7 +242,8 @@ class DrawBankImages:
 
         #* --------------COLOURS--------------
         white = "#efefef"
-        gray = "#bcbcbc"
+        black2 = "#2b2b2b"
+        gray = "#d8d8d8"
         black = "#151515"
         green = "#7eb44b"
         red = "#e04339"
@@ -321,7 +316,7 @@ class DrawBankImages:
                 img.paste(avatar, (75, offset_y + 25), avatar)
 
                 draw.text((271, offset_y + 50), text = text, font = big_bold, fill = black)
-                draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = gray)
+                draw.text((271, offset_y + 127), text = transaction_side + name, font = small_bold, fill = black2)
                 draw.text((1168, offset_y + 83), text = amount, font = big_bold, fill = color, anchor = "ra")
                 draw.text(((w/2), 2080), text ="LIBANK", font = big_bold, fill = "#000000", anchor = "ma")
 
