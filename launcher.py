@@ -40,7 +40,7 @@ async def main():
             command_prefix = PREFIXES,
             intents = intents,
             activity = discord.Streaming(
-                name="Eco & Fun {/} | New UPDATE!",
+                name="YAŞASIN CUMHURİYET! Cumhuriyet 100 Yaşında",
                 url="https://www.twitch.tv/iamabduley"),
             database_connection = str(DB_CONNECTION)
     ) as bot:
