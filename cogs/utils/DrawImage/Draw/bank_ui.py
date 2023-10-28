@@ -214,8 +214,8 @@ class DrawBankImages:
             draw.text(((w/2), h/2), text = text, font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
 
         #* --------------BOTTOM OPPORTUNITY BOX--------------
-        draw.text((335,1901), text = "Fırsat Yok", font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
-        draw.text((915,1901), text = "Fırsat Yok", font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
+        #draw.text((335,1901), text = "Fırsat Yok", font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
+        #draw.text((915,1901), text = "Fırsat Yok", font = coolvetica_50, fill = "#bcbcbc", anchor = "ma")
 
         return img
 
