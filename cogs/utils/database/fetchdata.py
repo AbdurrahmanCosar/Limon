@@ -45,7 +45,6 @@ async def create_wallet(bot, _id):
         new_data = {
             "_id": _id,
             "cash": 20000,
-            "accumulated_money": 0,
             "recent_transactions": {
                 "transactions": [
                     {
