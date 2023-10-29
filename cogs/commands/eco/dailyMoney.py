@@ -27,7 +27,7 @@ class DailyMoney(commands.Cog):
                 'category': 'eco',
                 'help': "Hesabınıza yatan günlü LiCash'inizi alın."
             })
-    @app_commands.checks.dynamic_cooldown(set_cooldown(60))
+    @app_commands.checks.dynamic_cooldown(set_cooldown(43200))
     async def daily_money(self, interaction: Interaction):
         user_data, collection = await create_wallet(self.bot, interaction.user.id)
         
