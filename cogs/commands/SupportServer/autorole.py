@@ -1,7 +1,7 @@
 from discord.ext import commands
 
-AUTO_ROLE_ID = 00
-GUILD_ID = 00
+AUTO_ROLE_ID = 1170028803045736458
+GUILD_ID = 884506342843379743
 
 
 class AutoRole(commands.Cog):
@@ -10,6 +10,9 @@ class AutoRole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
+
+        if member.guild.id != GUILD_ID:
+            return
 
         role = member.guild.get_role(AUTO_ROLE_ID)
 
