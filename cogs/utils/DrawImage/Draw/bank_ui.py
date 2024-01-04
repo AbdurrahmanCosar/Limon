@@ -26,7 +26,7 @@ class DrawBankImages:
         transactions = self.transactions
         
         #* --------------BASE IMAGE AND RECTANGLE--------------
-        img = Image.open(r"cogs/assets/images/CumhuriyetBankAccountTemplate.png").convert("RGBA")
+        img = Image.open(r"cogs/assets/images/BankAccountTemplate.png").convert("RGBA")
         rectangle = Image.open(r"cogs/assets/images/Rectangle.png").convert("RGBA")
         w, h = img.size
 
@@ -223,8 +223,8 @@ class DrawBankImages:
         user = self.interaction.user
         transactions = self.transactions
 
-        img = Image.open(r"cogs/assets/images/CumhuriyetTransactionTemplate.png").convert("RGBA")
-        rectangle = Image.open(r"cogs/assets/images/CumhuriyetTransactionRectangle.png").convert("RGBA")
+        img = Image.open(r"cogs/assets/images/TransactionTemplate.png").convert("RGBA")
+        rectangle = Image.open(r"cogs/assets/images/TransactionRectangle.png").convert("RGBA")
         w, h = img.size
 
         draw = ImageDraw.Draw(img)
