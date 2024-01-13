@@ -12,6 +12,7 @@ import discord
 import os
 from main import Limon
 from dotenv import load_dotenv
+from aiohttp import web
 
 load_dotenv()
 DB_CONNECTION = os.getenv("MONGO_CONNECTION")
@@ -21,7 +22,22 @@ PREFIXES = ('.', '<@994143430504620072>', 'limon', 'lim', '10')
 intents = discord.Intents.default()
 intents.members = True
 
+async def hello(request):
+    return web.Response(text="Hello, World!")
+
 async def main():
+
+    # 
+    app = web.Application()
+    app.router.add_get('/', hello)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    site = web.TCPSite(runner, '0.0.0.0', 8000)
+    await site.start()
+    #
+
     logger = logging.getLogger('discord')
     logger.setLevel(logging.INFO)
 
@@ -46,4 +62,7 @@ async def main():
     ) as bot:
         await bot.start(str(TOKEN))
 
-asyncio.run(main())
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+    loop.run_forever()
