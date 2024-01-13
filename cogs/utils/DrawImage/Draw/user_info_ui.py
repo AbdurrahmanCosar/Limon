@@ -31,11 +31,6 @@ class UserInfo:
         self.interaction = interaction
         self.user = user
 
-    def special_badge(self):
-        special_badge = Image.open(r"cogs/assets/images/100thYear.png").convert("RGBA")
-        special_badge = special_badge.resize((119, 79), Image.LANCZOS)
-        return special_badge
-
     async def user_badges(self):
         user_data, _ = await create_career_data(self.client, self.user.id)
         user_points = user_data["xp"]
@@ -86,11 +81,6 @@ class UserInfo:
         layer_draw = ImageDraw.Draw(layer)
 
         member = self.user
-
-        #* ---------- 100th YEAR BADGE ---------------
-
-        special_badge = self.special_badge()
-        img.paste(special_badge, (440 , 300), special_badge)
 
         offset_y = 162
         offset_x = 235
