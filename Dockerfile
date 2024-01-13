@@ -1,6 +1,6 @@
 FROM python:3.11.1
 
-WORKDIR /usr/src/sscord
+WORKDIR /usr/src/Limon
 
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
