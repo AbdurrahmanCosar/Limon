@@ -9,7 +9,6 @@ from discord import app_commands, Interaction, File, ui, ButtonStyle
 from discord.ext import commands
 from discord.interactions import Interaction
 from cogs.utils.constants import Emojis
-from cogs.utils.functions import get_emoji_id
 from cogs.utils.cooldown import set_cooldown
 from cogs.utils.DrawImage.Draw.bank_ui import DrawBankImages
 from cogs.utils.database.fetchdata import create_wallet
